@@ -216,7 +216,7 @@ class hipmer:
             f.write('#SBATCH --ntasks-per-node=24\n')
             f.write('#SBATCH --time=00:30:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
-            f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}')
+            f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
             f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=${SCRATCH}/install-edison}\n')
             f.write('INST=${HIPMER_INSTALL:=$1}\n')
