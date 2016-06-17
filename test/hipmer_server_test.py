@@ -161,7 +161,9 @@ class hipmerTest(unittest.TestCase):
 
 
     def createBogus(self,fname):
-        os.makedirs(self.scratch+'/output')
+        outdir=self.scratch+'/output'
+        if os.path.exists(outdir) is False:
+            os.makedirs(outdir)
         print 'dest: %s/output/%s'%(self.scratch,fname)
         ret=Call(['cp','data/output.contig.fa','%s/output/%s'%(self.scratch,fname)])
         print ret
@@ -173,11 +175,42 @@ class hipmerTest(unittest.TestCase):
         return self.__class__.ctx
 
 
+    #def test_generate_config(self):
+    #    result = self.getImpl().generate_config(self.getContext(),params)
+
+    def test_post(self):
+        pe_lib_info = self.getPairedEndLibInfo()
+        pprint(pe_lib_info)
+
+        # run hipmer
+        params = {
+            'workspace_name': pe_lib_info[7],
+            'read_library_name': pe_lib_info[1],
+            'output_contigset_name': 'output.contigset',
+        }
+        self.createBogus('final_assembly.fa')
+        os.environ['POST']='1'
+
+        result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
+
+        print('RESULT:')
+        pprint(result)
+
+        # check the output
+        info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
+        self.assertEqual(len(info_list),1)
+        contigset_info = info_list[0]
+        self.assertEqual(contigset_info[1],'output.contigset')
+        self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
+
+
     def test_run_hipmer(self):
 
         # figure out where the test data lives
         pe_lib_info = self.getPairedEndLibInfo()
         pprint(pe_lib_info)
+        if 'POST' in os.environ:
+            del os.environ['POST']
 
         # Object Info Contents
         # 0 - obj_id objid
@@ -198,25 +231,20 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'read_library_name': pe_lib_info[1],
             'output_contigset_name': 'output.contigset',
-            #'min_count':2,
-            #'k_min':31,
-            #'k_max':51,
-            #'k_step':10,
-            #'k_list':[31,41],
-            #'min_contig_length':199
         }
-        self.createBogus('final.contigs.fa')
-
         result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
+        self.createBogus('final_assmebly.fa')
+
         print('RESULT:')
         pprint(result)
-
+        self.assertEqual(os.path.exists(self.scratch+'/hipmer.config'),True)
+        self.assertEqual(os.path.exists(self.scratch+'/slurm.submit'),True)
         # check the output
-        info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
-        self.assertEqual(len(info_list),1)
-        contigset_info = info_list[0]
-        self.assertEqual(contigset_info[1],'output.contigset')
-        self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
+        ##info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
+        #self.assertEqual(len(info_list),1)
+        ##contigset_info = info_list[0]
+        #self.assertEqual(contigset_info[1],'output.contigset')
+        #self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
 
 
 

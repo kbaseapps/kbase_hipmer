@@ -128,6 +128,7 @@ class hipmer:
                     forward_reads['file_name']=fr_file_name
                     rev_file_name = 'reverse.fastq'
                     reverse_reads['file_name']=rev_file_name
+                    self.reads=[fr_file_name,rev_file_name]
                 else:
                     # we need to read in reverse reads file separately
                     rev_file_name = reverse_reads['id']
@@ -141,6 +142,7 @@ class hipmer:
                     for chunk in r.iter_content(1024):
                         reverse_reads_file.write(chunk)
                     reverse_reads_file.close()
+                    self.reads=[fr_file_name,rev_file_name]
                     self.log(console, 'done')
                     ### END NOTE
             except Exception as e:
@@ -151,6 +153,80 @@ class hipmer:
 
         return info
 
+    def generate_config(self):
+        """
+        Generate the HipMer config
+        """
+        print self.reads
+        self.config_file='%s/%s'%(self.scratch,'hipmer.config')
+        with open(self.config_file,'w') as f:
+            # Describe the libraries ( one line per library )
+            # lib_seq [ wildcard ][ prefix ][ insAvg ][ insSdev ][ avgReadLen ][ hasInnieArtifact ][ isRevComped ][ useForContigging ][ onoSetId ][ useForGapClosing ][ 5pWiggleRoom ][3pWiggleRoom] [FilesPerPair] [ useForSplinting ]
+            #
+            # TODO: make these params
+            prefix=self.reads[0].split('.')[0]
+            files=','.join(self.reads)
+            insSavg=215
+            insSdev=10
+            avgReadLen=101
+            #
+            hasInnieArtifact=0
+            isRevComped=0
+
+            useForContigging=1
+            onoSetId=1
+            useForGapClosing=1
+            f5pWiggleRoom=0
+            t3pWiggleRoom=0
+            #
+            FilesPerPair=2
+            useForSplinting=1
+            hparams={'genome_size':0.0045,
+                'is_diploid':0,
+                'mer_size':21,
+                'min_depth_cutoff':7,
+                'num_prefix_blocks':4,
+                'gap_close_rpt_depth_ratio':2.0,
+                'no_read_validation':1,
+                'use_cluster':0,
+                'local_num_procs':16,
+                'local_max_retries':0}
+
+            f.write('lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n\n'%(files,prefix,insSavg,insSdev,
+                avgReadLen,hasInnieArtifact,isRevComped,
+                useForContigging,onoSetId,useForGapClosing,
+                f5pWiggleRoom,t3pWiggleRoom,FilesPerPair,useForSplinting))
+
+            #lib_seq small.forward.fq,small.reverse.fq   small  215  10   101 0 0      1 1 1  0 0 2 1
+            for param in hparams:
+                f.write('%s %s\n'%(param,str(hparams[param])))
+            f.close()
+
+        pass
+
+    def generate_submit(self):
+        """
+        Generate SLURM submit script
+        """
+        self.submit='%s/%s'%(self.scratch,'slurm.submit')
+        with open(self.submit,'w') as f:
+            f.write('#!/bin/bash')
+            f.write('#SBATCH --partition=debug')
+            f.write('#SBATCH --nodes=1')
+            f.write('#SBATCH --ntasks-per-node=24')
+            f.write('#SBATCH --time=00:30:00')
+            f.write('#SBATCH --job-name=HipMer')
+            f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}')
+            f.write('N=${N:=${SLURM_NTASKS}}')
+            f.write('INST=${HIPMER_INSTALL:=$1}')
+            f.write('. $INST/env.sh')
+            f.write('export RUNDIR=${RUNDIR:=$SCRATCH/mytest}')
+            f.write('UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB:=1500}')
+            f.write('MPIRUN="srun -n" UPCRUN="upcrun -n" UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB} \\')
+            f.write('    ${INST}/bin/run_hipmer.sh $INST ${RUNDIR}/hipmer.config')
+            f.close()
+
+
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -159,6 +235,7 @@ class hipmer:
         #BEGIN_CONSTRUCTOR
         self.workspaceURL = config['workspace-url']
         self.scratch = os.path.abspath(config['scratch'])
+        self.reads=[]
         #END_CONSTRUCTOR
         pass
 
@@ -196,18 +273,22 @@ class hipmer:
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
 
-        #### Get the read library
-        info=self.get_reads(ctx,params,console)
-
-        # construct the command
-        ws = workspaceService(self.workspaceURL, token=ctx['token'])
-
+        if 'POST' not in os.environ:
+            #### Get the read library
+            print "Running pre stage"
+            info=self.get_reads(ctx,params,console)
 
 
-        # set the output location
-        timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
-        output_dir = os.path.join(self.scratch,'output') #.'+str(timestamp))
-        # Generate submit script
+
+            # set the output location
+            timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
+            output_dir = os.path.join(self.scratch,'output') #.'+str(timestamp))
+            # Generate submit script
+            self.generate_config()
+            self.generate_submit()
+            return
+
+        print "Running POST stage"
 
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
@@ -216,16 +297,13 @@ class hipmer:
         #            stdout = subprocess.PIPE,
         #            stderr = subprocess.STDOUT, shell = False)
 
-        #while True:
-        #    line = p.stdout.readline()
-        #    if not line: break
-        #    self.log(console, line.replace('\n', ''))
-
-        #p.stdout.close()
-        #p.wait()
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        wsinfo=ws.get_workspace_info({'workspace': params['workspace_name']})
+        wsid=wsinfo[0]
 
         # parse the output and save back to KBase
-        output_contigs = os.path.join(output_dir, 'final.contigs.fa')
+        output_dir = os.path.join(self.scratch,'output') #.'+str(timestamp))
+        output_contigs = os.path.join(output_dir, 'final_assembly.fa')
 
         # Warning: this reads everything into memory!  Will not work if
         # the contigset is very large!
@@ -260,7 +338,7 @@ class hipmer:
 
         # save the contigset output
         new_obj_info = ws.save_objects({
-                'id':info[6], # set the output workspace ID
+                'id':wsid, # set the output workspace ID
                 'objects':[
                     {
                         'type':'KBaseGenomes.ContigSet',
@@ -296,7 +374,7 @@ class hipmer:
 
         reportName = 'hipmer_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
-                'id':info[6],
+                'id':wsid,
                 'objects':[
                     {
                         'type':'KBaseReport.Report',
@@ -310,6 +388,8 @@ class hipmer:
             })[0]
 
         output = { 'report_name': reportName, 'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]) }
+
+
         #END run_hipmer_hpc
 
         # At some point might do deeper type checking...
