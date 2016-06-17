@@ -42,10 +42,13 @@ parameters :
 
 description : |
     <p>This is a KBase wrapper for HipMer.</p>
-    <p>HipMer is an assembler ....</p>
-    <p><b>Known limitations</b>: </p>
+    <p>HipMer is a optmized version of the Meraculous assembler.  HipMer uses a Parallel Global Address Space to improve performance and scaling.</p>
+    <p><b>Known limitations</b>: HipMer is still under active development and may fail for some data sets.</p>
 
 publications :
     -
         display-text : |
-            TBD
+            Georganas, Evangelos, et al. "HipMer: an extreme-scale de novo genome assembler." Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis. ACM, 2015.
+    -
+        display-text : |
+            J. A. Chapman, I. Ho, S. Sunkara, S. Luo, G. P. Schroth, and D. S. Rokhsar, "Meraculous: De novo genome assembly with short paired-end reads," PLoS ONE, vol. 6, no. 8, p. e23501, 08 2011. 

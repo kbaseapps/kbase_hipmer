@@ -2,7 +2,7 @@ module-name:
     hipmer
 
 module-description:
-    A KBase module
+    The HipMer assembler
 
 service-language:
     python
@@ -11,5 +11,5 @@ module-version:
     0.0.1
 
 owners:
-    [scanon]
+    [scanon,dylan]
 
