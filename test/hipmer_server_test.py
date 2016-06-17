@@ -161,11 +161,11 @@ class hipmerTest(unittest.TestCase):
 
 
     def createBogus(self,fname):
-        outdir=self.scratch+'/output'
+        outdir=self.scratch
         if os.path.exists(outdir) is False:
             os.makedirs(outdir)
-        print 'dest: %s/output/%s'%(self.scratch,fname)
-        ret=Call(['cp','data/output.contig.fa','%s/output/%s'%(self.scratch,fname)])
+        print 'dest: %s/%s'%(self.scratch,fname)
+        ret=Call(['cp','data/output.contig.fa','%s/%s'%(self.scratch,fname)])
         print ret
 
     def getImpl(self):
@@ -233,7 +233,7 @@ class hipmerTest(unittest.TestCase):
             'output_contigset_name': 'output.contigset',
         }
         result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
-        self.createBogus('final_assmebly.fa')
+        self.createBogus('final_assembly.fa')
 
         print('RESULT:')
         pprint(result)

@@ -284,7 +284,7 @@ class hipmer:
 
             # set the output location
             timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
-            output_dir = os.path.join(self.scratch,'output') #.'+str(timestamp))
+            output_dir = self.scratch  #.'+str(timestamp))
             # Generate submit script
             self.generate_config()
             self.generate_submit()
@@ -304,7 +304,7 @@ class hipmer:
         wsid=wsinfo[0]
 
         # parse the output and save back to KBase
-        output_dir = os.path.join(self.scratch,'output') #.'+str(timestamp))
+        output_dir = self.scratch #.'+str(timestamp))
         output_contigs = os.path.join(output_dir, 'final_assembly.fa')
 
         # Warning: this reads everything into memory!  Will not work if
