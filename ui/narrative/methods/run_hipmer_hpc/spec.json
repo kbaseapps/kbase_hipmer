@@ -35,17 +35,77 @@
 	    }
 	},
 	{
-	    "id" : "min_contig_len",
-	    "optional" : true,
+	    "id" : "mer_size",
+	    "optional" : false,
 	    "advanced" : true,
 	    "allow_multiple" : false,
-	    "default_values" : [ "" ],
+	    "default_values" : [ "21" ],
 	    "field_type" : "text",
 	    "text_options" : {
 		"validate_as": "int",
       		"min_int" : 1
 	    }
-	}
+	},
+    {
+	    "id" : "min_depth_cutoff",
+	    "optional" : false,
+	    "advanced" : true,
+	    "allow_multiple" : false,
+	    "default_values" : [ "7" ],
+	    "field_type" : "text",
+	    "text_options" : {
+		"validate_as": "int",
+      		"min_int" : 1
+	    }
+	},
+    {
+        "id" : "is_diploid",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+	    "default_values" : [ "1" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
+    },
+    {
+        "id" : "dynamic_min_depth",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "1.0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "float",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "gap_close_rpt_depth_ratio",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "2.0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "float",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "assm_scaff_len_cutoff",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "1000" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 1
+        }
+    }
     ],
     "behavior": {
         "service-mapping": {
@@ -55,20 +115,40 @@
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
-		    "target_property": "workspace_name"
+                    "target_property": "workspace_name"
                 },
                 {
-		    "input_parameter": "read_library_name",
-          	    "target_property": "read_library_name"
+                    "input_parameter": "read_library_name",
+                    "target_property": "read_library_name"
                 },
-		{
-		    "input_parameter": "output_contigset_name",
-          	    "target_property": "output_contigset_name"
-		},
-		{
-		    "input_parameter": "min_contig_len",
-          	    "target_property": "min_contig_len"
-		}
+                {
+	                "input_parameter": "output_contigset_name",
+      	            "target_property": "output_contigset_name"
+                },
+                {
+        		    "input_parameter": "mer_size",
+              	    "target_property": "mer_size"
+                },
+                {
+        		    "input_parameter": "min_depth_cutoff",
+              	    "target_property": "min_depth_cutoff"
+                },
+                {
+        		    "input_parameter": "is_diploid",
+              	    "target_property": "is_diploid"
+                },
+                {
+        		    "input_parameter": "dynamic_min_depth",
+              	    "target_property": "dynamic_min_depth"
+                },
+                {
+        		    "input_parameter": "gap_close_rpt_depth_ratio",
+              	    "target_property": "gap_close_rpt_depth_ratio"
+                },
+                {
+        		    "input_parameter": "assm_scaff_len_cutoff",
+              	    "target_property": "assm_scaff_len_cutoff"
+                }
             ],
             "output_mapping": [
                 {
@@ -83,10 +163,10 @@
                     "service_method_output_path": [0, "report_ref"],
                     "target_property": "report_ref"
                 },
-		{
-		    "constant_value": "16",
-		    "target_property": "report_window_line_height"
-		}
+                {
+        		    "constant_value": "16",
+        		    "target_property": "report_window_line_height"
+                }
             ]
         }
     },

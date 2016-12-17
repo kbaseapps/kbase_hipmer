@@ -33,9 +33,55 @@ parameters :
     output_contigset_name:
         ui-name : Output ContigSet name
         short-hint : Enter a name for the assembled contigs data object
-    min_contig_len:
-        ui-name : Minimal contig length
-        short-hint : Minimum length of contigs to output, default 300
+    mer_size:
+        ui-name : k-mer size
+        short-hint : k-mer size to use in the assembly process
+    is_diploid:
+        ui-name : Is the genome diploid (true/false)
+        short-hint : |
+            Is this a diploid genome?  If so, HipMer will attempt to
+            identify and merge haplotype variants (bubbles in the k-mer graph)
+            See also 'bubble_min_depth_cutoff'
+
+    min_depth_cutoff:
+        ui-name : Min Depth Cutoff
+        short-hint : |
+            K-mers present at frequencies less than this cutoff get culled from the assembly
+            early on.  To auto-detect, set to 0
+
+    dynamic_min_depth:
+        ui-name : Dynamic Min Depth
+        short-hint : TBD
+
+    gap_close_rpt_depth_ratio:
+        ui-name : Gap Close Repeat Depth Ratio
+        short-hint : |
+            Scaffolds with depth of coverage this many times higher than the
+            average across all scaffolds are considered repeats
+            and won't participate in gap closure (default 2.0)
+
+    assm_scaff_len_cutoff:
+        ui-name : Assembly Scaffold Lenth cutoff
+        short-hint : TBD
+
+
+# For diploid organisms, this is the depth cutoff to exclude unresolved haplotypes.
+# To auto-detect, set to 0.
+# To keep both haplotypes in cases where they couldn't be merged, set it to 1  (Note, this will hinder gap closing and scaffolding)
+#
+#bubble_min_depth_cutoff
+#
+# min mercount to report: counts below this threshold will not be output by the mercounter.
+# Typically you would leave this at 2.
+#
+#min_mercount_to_report  2
+# Close gaps more aggressively accepting closures that might violate the estimated gap size
+#
+#gap_close_aggressive 1
+#
+# estimated genome size in Gb
+#
+#genome_size 	   1.0
 
 description : |
     <p>KBase wrapper for the HipMer Assembler.</p>

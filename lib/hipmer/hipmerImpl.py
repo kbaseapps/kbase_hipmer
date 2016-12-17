@@ -52,14 +52,14 @@ class hipmer:
         print(message)
         sys.stdout.flush()
 
-
     def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
         pass
 
-    def get_reads(self,ctx,params,console):
+    def get_reads(self, ctx, params, console):
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['read_library_name']}])
+            ref=params['workspace_name']+'/'+params['read_library_name']
+            objects = ws.get_objects([{'ref': ref}])
             data = objects[0]['data']
             info = objects[0]['info']
             # Object Info Contents
@@ -77,9 +77,10 @@ class hipmer:
             # 10 - usermeta meta
             type_name = info[2].split('.')[1].split('-')[0]
         except Exception as e:
-            raise ValueError('Unable to fetch read library object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-
+            raise ValueError(
+                'Unable to fetch read library object from workspace: ' +
+                str(e))
+            # to get the full stack trace: traceback.format_exc()
 
         #### Download the paired end library
         if type_name == 'PairedEndLibrary':
@@ -99,10 +100,9 @@ class hipmer:
                 if 'file_name' in forward_reads:
                     fr_file_name = forward_reads['file_name']
 
-                ### NOTE: this section is what could be replaced by the transform services
-                forward_reads_file_location = os.path.join(self.scratch,fr_file_name)
-                forward_reads_file = open(forward_reads_file_location, 'w', 0)
-                self.log(console, 'downloading reads file: '+str(forward_reads_file_location))
+                forward_reads_file_loc = os.path.join(self.scratch,fr_file_name)
+                forward_reads_file = open(forward_reads_file_loc, 'w', 0)
+                self.log(console, 'downloading reads file: '+str(forward_reads_file_loc))
                 headers = {'Authorization': 'OAuth '+ctx['token']}
                 r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
                 for chunk in r.iter_content(1024):
@@ -114,9 +114,9 @@ class hipmer:
                 if 'interleaved' in data and data['interleaved']:
                     self.log(console, 'extracting forward/reverse reads into separate files')
                     if re.search('gz', fr_file_name, re.I):
-                        bcmdstring = 'gunzip -c ' + forward_reads_file_location
+                        bcmdstring = 'gunzip -c ' + forward_reads_file_loc
                     else:
-                        bcmdstring = 'cat ' + forward_reads_file_location
+                        bcmdstring = 'cat ' + forward_reads_file_loc
 
                     cmdstring = bcmdstring + '| (paste - - - - - - - -  | tee >(cut -f 1-4 | tr "\t" "\n" > '+self.scratch+'/forward.fastq) | cut -f 5-8 | tr "\t" "\n" > '+self.scratch+'/reverse.fastq )'
                     cmdProcess = subprocess.Popen(cmdstring, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
@@ -135,9 +135,9 @@ class hipmer:
                     if 'file_name' in reverse_reads:
                         rev_file_name = reverse_reads['file_name']
                     ### NOTE: this section is what could also be replaced by the transform services
-                    reverse_reads_file_location = os.path.join(self.scratch,rev_file_name)
-                    reverse_reads_file = open(reverse_reads_file_location, 'w', 0)
-                    self.log(console, 'downloading reverse reads file: '+str(reverse_reads_file_location))
+                    reverse_reads_file_loc = os.path.join(self.scratch,rev_file_name)
+                    reverse_reads_file = open(reverse_reads_file_loc, 'w', 0)
+                    self.log(console, 'downloading reverse reads file: '+str(reverse_reads_file_loc))
                     r = requests.get(reverse_reads['url']+'/node/'+reverse_reads['id']+'?download', stream=True, headers=headers)
                     for chunk in r.iter_content(1024):
                         reverse_reads_file.write(chunk)
@@ -158,14 +158,17 @@ class hipmer:
         Generate the HipMer config
         """
         print self.reads
-        self.config_file='%s/%s'%(self.scratch,'hipmer.config')
-        with open(self.config_file,'w') as f:
+        self.config_file = '%s/%s'%(self.scratch, 'hipmer.config')
+        with open(self.config_file, 'w') as f:
             # Describe the libraries ( one line per library )
-            # lib_seq [ wildcard ][ prefix ][ insAvg ][ insSdev ][ avgReadLen ][ hasInnieArtifact ][ isRevComped ][ useForContigging ][ onoSetId ][ useForGapClosing ][ 5pWiggleRoom ][3pWiggleRoom] [FilesPerPair] [ useForSplinting ]
+            # lib_seq [ wildcard ][ prefix ][ insAvg ][ insSdev ][ avgReadLen ]
+            #         [ hasInnieArtifact ][ isRevComped ][ useForContigging ]
+            #         [ onoSetId ][ useForGapClosing ][ 5pWiggleRoom ]
+            #         [3pWiggleRoom] [FilesPerPair] [ useForSplinting ]
             #
             # TODO: make these params
-            prefix=self.reads[0].split('.')[0]
-            files=','.join(self.reads)
+            prefix = self.reads[0].split('.')[0]
+            files = ','.join(self.reads)
             insSavg=215
             insSdev=10
             avgReadLen=101
@@ -179,27 +182,28 @@ class hipmer:
             f5pWiggleRoom=0
             t3pWiggleRoom=0
             #
-            FilesPerPair=2
-            useForSplinting=1
-            hparams={'genome_size':0.0045,
-                'is_diploid':0,
-                'mer_size':21,
-                'min_depth_cutoff':7,
-                'num_prefix_blocks':4,
-                'gap_close_rpt_depth_ratio':2.0,
-                'no_read_validation':1,
-                'use_cluster':0,
-                'local_num_procs':16,
-                'local_max_retries':0}
+            FilesPerPair = 2
+            useForSplinting = 1
+            hparams = {
+                'is_diploid': 0,
+                'dynamic_min_depth': 1.0,
+                'mer_size': 21,
+                'min_depth_cutoff': 7,
+                'gap_close_rpt_depth_ratio': 2.0,
+                'assm_scaff_len_cutoff': 1000
+                }
 
-            f.write('lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n\n'%(files,prefix,insSavg,insSdev,
-                avgReadLen,hasInnieArtifact,isRevComped,
-                useForContigging,onoSetId,useForGapClosing,
-                f5pWiggleRoom,t3pWiggleRoom,FilesPerPair,useForSplinting))
+            #lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
+            #    101 0 0      1 1 1  0 0 2 1
+            f.write(
+                'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n\n'%(
+                    files, prefix, insSavg, insSdev,
+                    avgReadLen, hasInnieArtifact, isRevComped,
+                    useForContigging, onoSetId, useForGapClosing,
+                    f5pWiggleRoom, t3pWiggleRoom, FilesPerPair, useForSplinting))
 
-            #lib_seq small.forward.fq,small.reverse.fq   small  215  10   101 0 0      1 1 1  0 0 2 1
             for param in hparams:
-                f.write('%s %s\n'%(param,str(hparams[param])))
+                f.write('%s %s\n'%(param, str(hparams[param])))
             f.close()
 
         pass
@@ -208,12 +212,12 @@ class hipmer:
         """
         Generate SLURM submit script
         """
-        self.submit='%s/%s'%(self.scratch,'slurm.submit')
+        self.submit='%s/%s'%(self.scratch, 'slurm.submit')
         with open(self.submit,'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
             f.write('#SBATCH --nodes=1 -C haswell\n')
-            f.write('#SBATCH --ntasks-per-node=24\n')
+            f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --time=00:30:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
@@ -221,11 +225,11 @@ class hipmer:
             f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=${SCRATCH}/hipmer-install-cori}\n')
             f.write('INST=${HIPMER_INSTALL:=$1}\n')
             f.write('. $INST/env.sh\n')
-            f.write('printenv\n')
+            f.write('\n')
             f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
-            f.write('UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB:=1500}\n')
-            f.write('MPIRUN="srun -n" UPCRUN="upcrun -n" UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB} \\\n')
-            f.write('    ${INST}/bin/run_hipmer.sh $INST ${RUNDIR}/hipmer.config\n')
+            #f.write('UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB:=1500}\n')
+            #f.write('MPIRUN="srun -n" UPCRUN="upcrun -n" UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB} \\\n')
+            f.write('${INST}/bin/run_hipmer.sh ${RUNDIR}/hipmer.config\n')
             f.close()
 
 

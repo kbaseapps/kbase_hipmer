@@ -10,19 +10,21 @@ module hipmer {
         read_library_name - the name of the PE read library (SE library support in the future)
         output_contig_set_name - the name of the output contigset
 
-        extra_params - assembler specific parameters
-        min_contig_length - minimum length of contigs to output, default 200
+        mer_size -
+        is_diploid - is gnome diploid
 
-        @optional min_contig_len
-        @optional extra_params
     */
     typedef structure {
         string workspace_name;
         string read_library_name;
         string output_contigset_name;
 
-        int min_contig_len;
-        list <string> extra_params;
+        int mer_size;
+        int is_diploid;
+        float dynamic_min_depth;
+        int min_depth_cutoff;
+        float gap_close_rpt_depth_ratio;
+        int assm_scaff_len_cutoff;
     } AssemblyParams;
 
     typedef structure {
