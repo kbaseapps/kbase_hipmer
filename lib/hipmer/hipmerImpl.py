@@ -212,7 +212,7 @@ class hipmer:
         with open(self.submit,'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
-            f.write('#SBATCH --nodes=1\n')
+            f.write('#SBATCH --nodes=1 -C haswell\n')
             f.write('#SBATCH --ntasks-per-node=24\n')
             f.write('#SBATCH --time=00:30:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
