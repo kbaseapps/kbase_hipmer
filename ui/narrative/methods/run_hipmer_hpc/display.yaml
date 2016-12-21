@@ -112,6 +112,12 @@ parameters :
         ui-name : Use for Splinting (T/F)
         short-hint :  TBD
 
+parameter-groups :
+    reads :
+        ui-name : Reads
+        short-hint : |
+            Reads objects and options to use in the assembly.
+
 
 # For diploid organisms, this is the depth cutoff to exclude unresolved haplotypes.
 # To auto-detect, set to 0.

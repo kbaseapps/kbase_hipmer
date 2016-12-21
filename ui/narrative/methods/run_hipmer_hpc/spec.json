@@ -250,6 +250,17 @@
         }
     }
     ],
+    "parameter-groups": [
+	    {
+	      "id": "reads",
+	      "parameters": ["prefix","ins_avg","ins_dev","avg_read_len","has_innie_artifact",
+                "is_rev_comped","use_for_contigging","ono_set_id","use_for_gap_closing",
+                "fp_wiggle_room","tp_wiggle_room","use_for_splinting"],
+	      "optional": true,
+	      "allow_multiple": true,
+	      "with_border": true
+	    }
+    ],
     "behavior": {
         "service-mapping": {
             "url": "",
@@ -291,6 +302,54 @@
                 {
         		    "input_parameter": "assm_scaff_len_cutoff",
               	    "target_property": "assm_scaff_len_cutoff"
+                },
+                {
+        		    "input_parameter": "prefix",
+              	    "target_property": "prefix"
+                },
+                {
+        		    "input_parameter": "ins_avg",
+              	    "target_property": "ins_avg"
+                },
+                {
+        		    "input_parameter": "ins_dev",
+              	    "target_property": "ins_dev"
+                },
+                {
+        		    "input_parameter": "avg_read_len",
+              	    "target_property": "avg_read_len"
+                },
+                {
+        		    "input_parameter": "has_innie_artifact",
+              	    "target_property": "has_innie_artifact"
+                },
+                {
+        		    "input_parameter": "is_rev_comped",
+              	    "target_property": "is_rev_comped"
+                },
+                {
+        		    "input_parameter": "use_for_contigging",
+              	    "target_property": "use_for_contigging"
+                },
+                {
+        		    "input_parameter": "ono_set_id",
+              	    "target_property": "ono_set_id"
+                },
+                {
+        		    "input_parameter": "use_for_gap_closing",
+              	    "target_property": "use_for_gap_closing"
+                },
+                {
+        		    "input_parameter": "fp_wiggle_room",
+              	    "target_property": "fp_wiggle_room"
+                },
+                {
+        		    "input_parameter": "tp_wiggle_room",
+              	    "target_property": "tp_wiggle_room"
+                },
+                {
+        		    "input_parameter": "use_for_splinting",
+              	    "target_property": "use_for_splinting"
                 }
             ],
             "output_mapping": [
