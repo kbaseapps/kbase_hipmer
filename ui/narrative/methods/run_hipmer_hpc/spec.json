@@ -11,17 +11,6 @@
 	"output": "kbaseReportView"
     },
     "parameters": [
-        {
-	    "id": "read_library_name",
-	    "optional": false,
-	    "advanced": false,
-	    "allow_multiple": false,
-	    "default_values": [ "" ],
-	    "field_type": "text",
-	    "text_options": {
-		"valid_ws_types": ["KBaseAssembly.PairedEndLibrary","KBaseFile.PairedEndLibrary"]
-	    }
-        },
 	{
 	    "id" : "output_contigset_name",
 	    "optional" : false,
@@ -107,9 +96,20 @@
         }
     },
     {
+        "id": "read_library_name",
+        "optional": false,
+        "advanced": false,
+        "allow_multiple": false,
+        "default_values": [ "" ],
+        "field_type": "text",
+        "text_options": {
+            "valid_ws_types": ["KBaseAssembly.PairedEndLibrary","KBaseFile.PairedEndLibrary"]
+        }
+    },
+    {
         "id" : "prefix",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "" ],
         "field_type" : "text",
@@ -120,7 +120,7 @@
     {
         "id" : "ins_avg",
         "optional" : true,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "0" ],
         "field_type" : "text",
@@ -132,7 +132,7 @@
     {
         "id" : "ins_dev",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "0" ],
         "field_type" : "text",
@@ -144,7 +144,7 @@
     {
         "id" : "avg_read_len",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "0" ],
         "field_type" : "text",
@@ -216,7 +216,7 @@
     {
         "id" : "fp_wiggle_room",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
 	    "default_values" : [ "0" ],
         "field_type" : "text",
@@ -228,7 +228,7 @@
     {
         "id" : "tp_wiggle_room",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "0" ],
         "field_type" : "text",
@@ -240,7 +240,7 @@
     {
         "id" : "use_for_splinting",
         "optional" : false,
-        "advanced" : true,
+        "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "1" ],
         "field_type" : "checkbox",
@@ -253,7 +253,7 @@
     "parameter-groups": [
 	    {
 	      "id": "reads",
-	      "parameters": ["prefix","ins_avg","ins_dev","avg_read_len","has_innie_artifact",
+	      "parameters": ["read_library_name","prefix","ins_avg","ins_dev","avg_read_len","has_innie_artifact",
                 "is_rev_comped","use_for_contigging","ono_set_id","use_for_gap_closing",
                 "fp_wiggle_room","tp_wiggle_room","use_for_splinting"],
 	      "optional": true,
@@ -270,10 +270,6 @@
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
-                },
-                {
-                    "input_parameter": "read_library_name",
-                    "target_property": "read_library_name"
                 },
                 {
 	                "input_parameter": "output_contigset_name",
@@ -304,52 +300,8 @@
               	    "target_property": "assm_scaff_len_cutoff"
                 },
                 {
-        		    "input_parameter": "prefix",
-              	    "target_property": "prefix"
-                },
-                {
-        		    "input_parameter": "ins_avg",
-              	    "target_property": "ins_avg"
-                },
-                {
-        		    "input_parameter": "ins_dev",
-              	    "target_property": "ins_dev"
-                },
-                {
-        		    "input_parameter": "avg_read_len",
-              	    "target_property": "avg_read_len"
-                },
-                {
-        		    "input_parameter": "has_innie_artifact",
-              	    "target_property": "has_innie_artifact"
-                },
-                {
-        		    "input_parameter": "is_rev_comped",
-              	    "target_property": "is_rev_comped"
-                },
-                {
-        		    "input_parameter": "use_for_contigging",
-              	    "target_property": "use_for_contigging"
-                },
-                {
-        		    "input_parameter": "ono_set_id",
-              	    "target_property": "ono_set_id"
-                },
-                {
-        		    "input_parameter": "use_for_gap_closing",
-              	    "target_property": "use_for_gap_closing"
-                },
-                {
-        		    "input_parameter": "fp_wiggle_room",
-              	    "target_property": "fp_wiggle_room"
-                },
-                {
-        		    "input_parameter": "tp_wiggle_room",
-              	    "target_property": "tp_wiggle_room"
-                },
-                {
-        		    "input_parameter": "use_for_splinting",
-              	    "target_property": "use_for_splinting"
+        		    "input_parameter": "reads",
+              	    "target_property": "reads"
                 }
             ],
             "output_mapping": [
