@@ -64,6 +64,54 @@ parameters :
         ui-name : Assembly Scaffold Lenth cutoff
         short-hint : TBD
 
+    prefix:
+        ui-name : prefix
+        short-hint : TBD
+
+    ins_avg:
+        ui-name : Insert Average (int)
+        short-hint :  Average Insert Length for Parid-End Reads
+
+    ins_dev:
+        ui-name : Insert Deviation (int)
+        short-hint :  Std. Deviation of Insert Length for Parid-End Reads
+
+    avg_read_len:
+        ui-name : Average Read Len (int)
+        short-hint :  Average Read Length
+
+    has_innie_artifact:
+        ui-name : Has Innie Artifact (T/F)
+        short-hint :  Does the read have innie Artifacts
+
+    is_rev_comped:
+        ui-name : Is Reversed Comped (T/F)
+        short-hint :  TBD
+
+    use_for_contigging:
+        ui-name : Use for Contigging (T/F)
+        short-hint :  Should this read be used for Contigging
+
+    ono_set_id:
+        ui-name : ONO Set ID
+        short-hint :  TBD
+
+    use_for_gap_closing:
+        ui-name : Use for Gap Closing (T/F)
+        short-hint :  TBD
+
+    fp_wiggle_room:
+        ui-name : Five Prime Wiggle Room (int)
+        short-hint :  TBD
+
+    tp_wiggle_room:
+        ui-name : Three Prime Wiggle Room (int)
+        short-hint :  TBD
+
+    use_for_splinting:
+        ui-name : Use for Splinting (T/F)
+        short-hint :  TBD
+
 
 # For diploid organisms, this is the depth cutoff to exclude unresolved haplotypes.
 # To auto-detect, set to 0.

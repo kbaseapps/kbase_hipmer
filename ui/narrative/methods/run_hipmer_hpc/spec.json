@@ -105,6 +105,149 @@
             "validate_as": "int",
             "min_integer" : 1
         }
+    },
+    {
+        "id" : "prefix",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "text"
+        }
+    },
+    {
+        "id" : "ins_avg",
+        "optional" : true,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "ins_dev",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "avg_read_len",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "has_innie_artifact",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+        "default_values" : [ "0" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
+    },
+    {
+        "id" : "is_rev_comped",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+	    "default_values" : [ "0" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
+    },
+    {
+        "id" : "use_for_contigging",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+	    "default_values" : [ "1" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
+    },
+    {
+        "id" : "ono_set_id",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+        "default_values" : [ "1" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "use_for_gap_closing",
+        "optional" : false,
+        "advanced" : false,
+        "allow_multiple" : false,
+	    "default_values" : [ "1" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
+    },
+    {
+        "id" : "fp_wiggle_room",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+	    "default_values" : [ "0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "tp_wiggle_room",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "0" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
+        "id" : "use_for_splinting",
+        "optional" : false,
+        "advanced" : true,
+        "allow_multiple" : false,
+        "default_values" : [ "1" ],
+        "field_type" : "checkbox",
+        "checkbox_options":{
+            "checked_value": 1,
+            "unchecked_value": 0
+        }
     }
     ],
     "behavior": {
