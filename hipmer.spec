@@ -32,7 +32,7 @@ module hipmer {
         string report_ref;
     } AssemblyOutput;
 
-    funcdef run_hipmer_hpc(AssemblyParams params) returns (AssemblyOutput output)
+    funcdef run_hipmer_hpc(UnspecifiedObject params) returns (AssemblyOutput output)
         authentication required;
 
 };
