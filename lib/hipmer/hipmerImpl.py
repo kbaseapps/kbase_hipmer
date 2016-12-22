@@ -58,7 +58,10 @@ class hipmer:
     def get_reads(self, ctx, ws_name, read_name, console):
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            ref = ws_name+'/'+read_name
+            if '/' in read_name:
+                ref = read_name
+            else:
+                ref = ws_name+'/'+read_name
             objects = ws.get_objects([{'ref': ref}])
             data = objects[0]['data']
             info = objects[0]['info']
