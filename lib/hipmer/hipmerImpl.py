@@ -1,7 +1,6 @@
 #BEGIN_HEADER
 import os
 import sys
-import shutil
 import hashlib
 import subprocess
 import requests
@@ -55,13 +54,9 @@ class hipmer:
     def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
         pass
 
-    def get_reads(self, ctx, ws_name, read_name, console):
+    def get_reads(self, ctx, ref, console):
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            if '/' in read_name:
-                ref = read_name
-            else:
-                ref = ws_name+'/'+read_name
             objects = ws.get_objects([{'ref': ref}])
             data = objects[0]['data']
             info = objects[0]['info']
@@ -240,27 +235,30 @@ class hipmer:
         # return variables are: output
         #BEGIN run_hipmer_hpc
         console = []
-        self.log(console,'Running run_hipmer_hpc with params=')
+        self.log(console, 'Running run_hipmer_hpc with params=')
         self.log(console, pformat(params))
 
         #### do some basic checks
-        objref = ''
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
         if 'reads' not in params:
             raise ValueError('reads parameter is required')
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
+        ws_name = params['workspace_name']
 
         if 'POST' not in os.environ:
             # Get the read library
             print "Running pre stage"
-            ws_name = params['workspace_name']
-            reads_files = []
             for read in params['reads']:
-                reads = self.get_reads(ctx, ws_name, read['read_library_name'],
-                                       console)
-                read['files']=reads
+                read_name = read['read_library_name']
+                if '/' in read_name:
+                    ref = read_name
+                else:
+                    ref = ws_name+'/'+read_name
+
+                reads = self.get_reads(ctx, ref, console)
+                read['files'] = reads
 
             # set the output location
             timestamp = int((datetime.utcnow() -
@@ -278,67 +276,72 @@ class hipmer:
 
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         wsinfo = ws.get_workspace_info({'workspace': params['workspace_name']})
-        wsid=wsinfo[0]
+        wsid = wsinfo[0]
 
         # parse the output and save back to KBase
-        output_dir = self.scratch #.'+str(timestamp))
+        output_dir = self.scratch # .'+str(timestamp))
         output_contigs = os.path.join(output_dir, 'final_assembly.fa')
 
         # Warning: this reads everything into memory!  Will not work if
         # the contigset is very large!
         contigset_data = {
-            'id':'hipmer.contigset',
-            'source':'User assembled contigs from reads in KBase',
-            'source_id':'none',
+            'id': 'hipmer.contigset',
+            'source': 'User assembled contigs from reads in KBase',
+            'source_id': 'none',
             'md5': 'md5 of what? concat seq? concat md5s?',
-            'contigs':[]
+            'contigs': []
         }
 
         lengths = []
         for seq_record in SeqIO.parse(output_contigs, 'fasta'):
             contig = {
-                'id':seq_record.id,
-                'name':seq_record.name,
-                'description':seq_record.description,
-                'length':len(seq_record.seq),
-                'sequence':str(seq_record.seq),
-                'md5':hashlib.md5(str(seq_record.seq)).hexdigest()
+                'id': seq_record.id,
+                'name': seq_record.name,
+                'description': seq_record.description,
+                'length': len(seq_record.seq),
+                'sequence': str(seq_record.seq),
+                'md5': hashlib.md5(str(seq_record.seq)).hexdigest()
             }
             lengths.append(contig['length'])
             contigset_data['contigs'].append(contig)
-
 
         # load the method provenance from the context object
         provenance = [{}]
         if 'provenance' in ctx:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
-        wso=[]
+        input_objects = []
         for read in params['reads']:
-            wso.append(params['workspace_name']+'/'+read['read_library_name'])
-        provenance[0]['input_ws_objects']=wso
+            read_name = read['read_library_name']
+            if '/' in read_name:
+                ref = read_name
+            else:
+                ref = ws_name+'/'+read_name
+            input_objects.append(ref)
+        provenance[0]['input_ws_objects'] = input_objects
 
         # save the contigset output
         new_obj_info = ws.save_objects({
-                'id':wsid, # set the output workspace ID
-                'objects':[
+                'id': wsid, # set the output workspace ID
+                'objects': [
                     {
-                        'type':'KBaseGenomes.ContigSet',
-                        'data':contigset_data,
-                        'name':params['output_contigset_name'],
-                        'meta':{},
-                        'provenance':provenance
+                        'type': 'KBaseGenomes.ContigSet',
+                        'data': contigset_data,
+                        'name': params['output_contigset_name'],
+                        'meta': {},
+                        'provenance': provenance
                     }
                 ]
             })
 
         # HACK for testing on Mac!!
-        #shutil.move(output_dir,self.host_scratch)
+        # shutil.move(output_dir,self.host_scratch)
         # END HACK!!
 
         # create a Report
+        output_ref = params['workspace_name']+'/'+params['output_contigset_name']
         report = ''
-        report += 'ContigSet saved to: '+params['workspace_name']+'/'+params['output_contigset_name']+'\n'
+        report += 'ContigSet saved to: '+output_ref+'\n'
         report += 'Assembled into '+str(len(contigset_data['contigs'])) + ' contigs.\n'
         report += 'Avg Length: '+str(sum(lengths)/float(len(lengths))) + ' bp.\n'
 
@@ -347,24 +350,27 @@ class hipmer:
         counts, edges = np.histogram(lengths, bins)
         report += 'Contig Length Distribution (# of contigs -- min to max basepairs):\n'
         for c in range(bins):
-            report += '   '+str(counts[c]) + '\t--\t' + str(edges[c]) + ' to ' + str(edges[c+1]) + ' bp\n'
+            report += '   '
+            report += str(counts[c]) + '\t--\t'
+            report += str(edges[c]) + ' to ' + str(edges[c+1]) + ' bp\n'
 
         reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_contigset_name'], 'description':'Assembled contigs'}],
-            'text_message':report
+            'objects_created': [{'ref': output_ref,
+                                 'description': 'Assembled contigs'}],
+            'text_message': report
         }
 
         reportName = 'hipmer_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
-                'id':wsid,
-                'objects':[
+                'id': wsid,
+                'objects': [
                     {
-                        'type':'KBaseReport.Report',
-                        'data':reportObj,
-                        'name':reportName,
-                        'meta':{},
-                        'hidden':1,
-                        'provenance':provenance
+                        'type': 'KBaseReport.Report',
+                        'data': reportObj,
+                        'name': reportName,
+                        'meta': {},
+                        'hidden': 1,
+                        'provenance': provenance
                     }
                 ]
             })[0]
