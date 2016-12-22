@@ -55,26 +55,13 @@ class hipmer:
     def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
         pass
 
-    def get_reads(self, ctx, params, console):
+    def get_reads(self, ctx, ws_name, read_name, console):
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            ref=params['workspace_name']+'/'+params['read_library_name']
+            ref = ws_name+'/'+read_name
             objects = ws.get_objects([{'ref': ref}])
             data = objects[0]['data']
             info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size
-            # 10 - usermeta meta
             type_name = info[2].split('.')[1].split('-')[0]
         except Exception as e:
             raise ValueError(
@@ -82,7 +69,7 @@ class hipmer:
                 str(e))
             # to get the full stack trace: traceback.format_exc()
 
-        #### Download the paired end library
+        # Download the paired end library
         if type_name == 'PairedEndLibrary':
             try:
                 if 'lib1' in data:
@@ -94,7 +81,7 @@ class hipmer:
                 elif 'handle_2' in data:
                     reverse_reads = data['handle_2']
                 else:
-                    reverse_reads={}
+                    reverse_reads = {}
 
                 fr_file_name = forward_reads['id']
                 if 'file_name' in forward_reads:
@@ -102,12 +89,13 @@ class hipmer:
 
                 forward_reads_file_loc = os.path.join(self.scratch,fr_file_name)
                 forward_reads_file = open(forward_reads_file_loc, 'w', 0)
-                self.log(console, 'downloading reads file: '+str(forward_reads_file_loc))
+                self.log(console, 'downloading reads file: ' + str(forward_reads_file_loc))
                 headers = {'Authorization': 'OAuth '+ctx['token']}
-                r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
+                url = forward_reads['url']+'/node/'+forward_reads['id']+'?download'
+                r = requests.get(url, stream=True, headers=headers)
                 for chunk in r.iter_content(1024):
                     forward_reads_file.write(chunk)
-                forward_reads_file.close();
+                forward_reads_file.close()
                 self.log(console, 'done')
                 ### END NOTE
 
@@ -125,10 +113,10 @@ class hipmer:
                     self.log(console, "cmdstring: " + cmdstring + " stdout: " + stdout + " stderr: " + stderr)
 
                     fr_file_name = 'forward.fastq'
-                    forward_reads['file_name']=fr_file_name
+                    forward_reads['file_name'] = fr_file_name
                     rev_file_name = 'reverse.fastq'
-                    reverse_reads['file_name']=rev_file_name
-                    self.reads=[fr_file_name,rev_file_name]
+                    reverse_reads['file_name'] = rev_file_name
+                    reads = [fr_file_name, rev_file_name]
                 else:
                     # we need to read in reverse reads file separately
                     rev_file_name = reverse_reads['id']
@@ -142,7 +130,7 @@ class hipmer:
                     for chunk in r.iter_content(1024):
                         reverse_reads_file.write(chunk)
                     reverse_reads_file.close()
-                    self.reads=[fr_file_name,rev_file_name]
+                    reads=[fr_file_name,rev_file_name]
                     self.log(console, 'done')
                     ### END NOTE
             except Exception as e:
@@ -151,13 +139,12 @@ class hipmer:
         else:
             raise ValueError('Cannot yet handle library type of: '+type_name)
 
-        return info
+        return reads
 
-    def generate_config(self):
+    def generate_config(self, params):
         """
         Generate the HipMer config
         """
-        print self.reads
         self.config_file = '%s/%s'%(self.scratch, 'hipmer.config')
         with open(self.config_file, 'w') as f:
             # Describe the libraries ( one line per library )
@@ -167,43 +154,33 @@ class hipmer:
             #         [3pWiggleRoom] [FilesPerPair] [ useForSplinting ]
             #
             # TODO: make these params
-            prefix = self.reads[0].split('.')[0]
-            files = ','.join(self.reads)
-            insSavg=215
-            insSdev=10
-            avgReadLen=101
             #
-            hasInnieArtifact=0
-            isRevComped=0
+            #FilesPerPair = 2
+            fmt='lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
 
-            useForContigging=1
-            onoSetId=1
-            useForGapClosing=1
-            f5pWiggleRoom=0
-            t3pWiggleRoom=0
-            #
-            FilesPerPair = 2
-            useForSplinting = 1
-            hparams = {
-                'is_diploid': 0,
-                'dynamic_min_depth': 1.0,
-                'mer_size': 21,
-                'min_depth_cutoff': 7,
-                'gap_close_rpt_depth_ratio': 2.0,
-                'assm_scaff_len_cutoff': 1000
-                }
-
-            #lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
-            #    101 0 0      1 1 1  0 0 2 1
-            f.write(
-                'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n\n'%(
-                    files, prefix, insSavg, insSdev,
-                    avgReadLen, hasInnieArtifact, isRevComped,
-                    useForContigging, onoSetId, useForGapClosing,
-                    f5pWiggleRoom, t3pWiggleRoom, FilesPerPair, useForSplinting))
-
+            for r in params['reads']:
+                prefix = r['files'][0].split('.')[0]
+                files = ','.join(r['files'])
+                # lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
+                #    101 0 0      1 1 1  0 0 2 1
+                f.write(fmt % (
+                    files, prefix, r['ins_avg'], r['ins_dev'],
+                    r['avg_read_len'], r['has_innie_artifact'],
+                    r['is_rev_comped'], r['use_for_contigging'],
+                    r['ono_set_id'], r['use_for_gap_closing'],
+                    r['fp_wiggle_room'], r['tp_wiggle_room'],
+                    2, r['use_for_splinting']))
+            f.write('\n')
+            hparams = [
+                'is_diploid',
+                'dynamic_min_depth',
+                'mer_size',
+                'min_depth_cutoff',
+                'gap_close_rpt_depth_ratio',
+                'assm_scaff_len_cutoff'
+                ]
             for param in hparams:
-                f.write('%s %s\n'%(param, str(hparams[param])))
+                f.write('%s %s\n'%(param, str(params[param])))
             f.close()
 
         pass
@@ -212,7 +189,7 @@ class hipmer:
         """
         Generate SLURM submit script
         """
-        self.submit='%s/%s'%(self.scratch, 'slurm.submit')
+        self.submit = '%s/%s'%(self.scratch, 'slurm.submit')
         with open(self.submit,'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
@@ -227,12 +204,8 @@ class hipmer:
             f.write('. $INST/env.sh\n')
             f.write('\n')
             f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
-            #f.write('UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB:=1500}\n')
-            #f.write('MPIRUN="srun -n" UPCRUN="upcrun -n" UPC_SHARED_HEAP_MB=${UPC_SHARED_HEAP_MB} \\\n')
             f.write('${INST}/bin/run_hipmer.sh ${RUNDIR}/hipmer.config\n')
             f.close()
-
-
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -241,11 +214,8 @@ class hipmer:
         #BEGIN_CONSTRUCTOR
         self.workspaceURL = config['workspace-url']
         self.scratch = os.path.abspath(config['scratch'])
-        self.reads=[]
         #END_CONSTRUCTOR
         pass
-
-
 
     def run_hipmer_hpc(self, ctx, params):
         """
@@ -274,23 +244,27 @@ class hipmer:
         objref = ''
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
-        if 'read_library_name' not in params:
-            raise ValueError('read_library_name parameter is required')
+        if 'reads' not in params:
+            raise ValueError('reads parameter is required')
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
 
         if 'POST' not in os.environ:
-            #### Get the read library
+            # Get the read library
             print "Running pre stage"
-            info=self.get_reads(ctx,params,console)
-
-
+            ws_name = params['workspace_name']
+            reads_files = []
+            for read in params['reads']:
+                reads = self.get_reads(ctx, ws_name, read['read_library_name'],
+                                       console)
+                read['files']=reads
 
             # set the output location
-            timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
-            output_dir = self.scratch  #.'+str(timestamp))
+            timestamp = int((datetime.utcnow() -
+                             datetime.utcfromtimestamp(0)).total_seconds()*1000)
+            output_dir = self.scratch  # .'+str(timestamp))
             # Generate submit script
-            self.generate_config()
+            self.generate_config(params)
             self.generate_submit()
             return
 
@@ -298,13 +272,9 @@ class hipmer:
 
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
-        #p = subprocess.Popen(megahit_cmd,
-        #            cwd = self.scratch,
-        #            stdout = subprocess.PIPE,
-        #            stderr = subprocess.STDOUT, shell = False)
 
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
-        wsinfo=ws.get_workspace_info({'workspace': params['workspace_name']})
+        wsinfo = ws.get_workspace_info({'workspace': params['workspace_name']})
         wsid=wsinfo[0]
 
         # parse the output and save back to KBase
@@ -340,7 +310,10 @@ class hipmer:
         if 'provenance' in ctx:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
-        provenance[0]['input_ws_objects']=[params['workspace_name']+'/'+params['read_library_name']]
+        wso=[]
+        for read in params['reads']:
+            wso.append(params['workspace_name']+'/'+read['read_library_name'])
+        provenance[0]['input_ws_objects']=wso
 
         # save the contigset output
         new_obj_info = ws.save_objects({

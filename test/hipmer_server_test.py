@@ -49,6 +49,7 @@ class hipmerTest(unittest.TestCase):
     def tearDownClass(cls):
         if hasattr(cls, 'wsName'):
             cls.ws.delete_workspace({'workspace': cls.wsName})
+            print cls.wsName
             print('Test workspace was deleted')
 
     def getWsClient(self):
@@ -184,12 +185,32 @@ class hipmerTest(unittest.TestCase):
 
         # run hipmer
         params = {
+            'assm_scaff_len_cutoff': 1000,
+            'mer_size': 21,
             'workspace_name': pe_lib_info[7],
-            'read_library_name': pe_lib_info[1],
-            'output_contigset_name': 'output.contigset',
+            'output_contigset_name': 'hipmer.contigs',
+            'min_depth_cutoff': 7,
+            'is_diploid': 1,
+            'dynamic_min_depth': 1,
+            'gap_close_rpt_depth_ratio': 2,
+            'reads': [{
+                'use_for_splinting': 1,
+                'use_for_gap_closing': 1,
+                'has_innie_artifact': 0,
+                'use_for_contigging': 1,
+                'ins_avg': 250,
+                'prefix': 'small',
+                'ono_set_id': 1,
+                'tp_wiggle_room': 0,
+                'fp_wiggle_room': 0,
+                'read_library_name': pe_lib_info[1],
+                'is_rev_comped': 0,
+                'avg_read_len': 101,
+                'ins_dev': 10
+            }]
         }
         self.createBogus('final_assembly.fa')
-        os.environ['POST']='1'
+        os.environ['POST'] = '1'
 
         result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
 
@@ -197,12 +218,11 @@ class hipmerTest(unittest.TestCase):
         pprint(result)
 
         # check the output
-        info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
-        self.assertEqual(len(info_list),1)
+        info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/hipmer.contigs'}], 1)
+        self.assertEqual(len(info_list), 1)
         contigset_info = info_list[0]
-        self.assertEqual(contigset_info[1],'output.contigset')
-        self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
-
+        self.assertEqual(contigset_info[1], 'hipmer.contigs')
+        self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
 
     def test_run_hipmer(self):
 
@@ -225,14 +245,34 @@ class hipmerTest(unittest.TestCase):
         # 9 - int size
         # 10 - usermeta meta
 
-
         # run hipmer
         params = {
+            'assm_scaff_len_cutoff': 1000,
+            'mer_size': 21,
             'workspace_name': pe_lib_info[7],
-            'read_library_name': pe_lib_info[1],
-            'output_contigset_name': 'output.contigset',
+            'output_contigset_name': 'hipmer.contigs',
+            'min_depth_cutoff': 7,
+            'is_diploid': 1,
+            'dynamic_min_depth': 1,
+            'gap_close_rpt_depth_ratio': 2,
+            'reads': [{
+                'use_for_splinting': 1,
+                'use_for_gap_closing': 1,
+                'has_innie_artifact': 0,
+                'use_for_contigging': 1,
+                'ins_avg': 250,
+                'prefix': 'small',
+                'ono_set_id': 1,
+                'tp_wiggle_room': 0,
+                'fp_wiggle_room': 0,
+                'read_library_name': pe_lib_info[1],
+                'is_rev_comped': 0,
+                'avg_read_len': 101,
+                'ins_dev': 10
+            }]
         }
-        result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
+
+        result = self.getImpl().run_hipmer_hpc(self.getContext(), params)
         self.createBogus('final_assembly.fa')
 
         print('RESULT:')
