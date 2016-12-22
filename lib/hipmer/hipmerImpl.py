@@ -7,8 +7,7 @@ import requests
 import re
 import traceback
 import uuid
-from datetime import datetime
-from pprint import pprint, pformat
+from pprint import pformat
 
 import numpy as np
 
@@ -30,7 +29,7 @@ class hipmer:
     A KBase module: hipmer
     '''
 
-    ######## WARNING FOR GEVENT USERS #######
+    # WARNING FOR GEVENT USERS #######
     # Since asynchronous IO can lead to methods - even the same method -
     # interrupting each other, you must be *very* careful when using global
     # state. A method could easily clobber the state set by another while
@@ -85,17 +84,20 @@ class hipmer:
                 if 'file_name' in forward_reads:
                     fr_file_name = forward_reads['file_name']
 
-                forward_reads_file_loc = os.path.join(self.scratch,fr_file_name)
+                forward_reads_file_loc = os.path.join(self.scratch,
+                                                      fr_file_name)
                 forward_reads_file = open(forward_reads_file_loc, 'w', 0)
-                self.log(console, 'downloading reads file: ' + str(forward_reads_file_loc))
-                headers = {'Authorization': 'OAuth '+ctx['token']}
-                url = forward_reads['url']+'/node/'+forward_reads['id']+'?download'
+                self.log(console, 'downloading reads file: ' +
+                         str(forward_reads_file_loc))
+                headers = {'Authorization': 'OAuth ' + ctx['token']}
+                url = forward_reads['url'] + '/node/' + forward_reads['id']
+                url += '?download'
                 r = requests.get(url, stream=True, headers=headers)
                 for chunk in r.iter_content(1024):
                     forward_reads_file.write(chunk)
                 forward_reads_file.close()
                 self.log(console, 'done')
-                ### END NOTE
+                # END NOTE
 
                 if 'interleaved' in data and data['interleaved']:
                     self.log(console, 'extracting forward/reverse reads into separate files')
@@ -104,11 +106,21 @@ class hipmer:
                     else:
                         bcmdstring = 'cat ' + forward_reads_file_loc
 
-                    cmdstring = bcmdstring + '| (paste - - - - - - - -  | tee >(cut -f 1-4 | tr "\t" "\n" > '+self.scratch+'/forward.fastq) | cut -f 5-8 | tr "\t" "\n" > '+self.scratch+'/reverse.fastq )'
-                    cmdProcess = subprocess.Popen(cmdstring, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+                    cmdstring = bcmdstring + '| (paste - - - - - - - -  | '
+                    cmdstring += 'tee >(cut -f 1-4 | tr "\t" "\n" > '
+                    cmdstring += self.scratch
+                    cmdstring += '/forward.fastq) | cut -f 5-8 | '
+                    cmdstring += 'tr "\t" "\n" > '
+                    cmdstring += self.scratch + '/reverse.fastq )'
+                    cmdProcess = subprocess.Popen(cmdstring,
+                                                  stdout=subprocess.PIPE,
+                                                  stderr=subprocess.PIPE,
+                                                  shell=True,
+                                                  executable='/bin/bash')
                     stdout, stderr = cmdProcess.communicate()
-
-                    self.log(console, "cmdstring: " + cmdstring + " stdout: " + stdout + " stderr: " + stderr)
+                    message = "cmdstring: " + cmdstring + " stdout: "
+                    message += stdout + " stderr: " + stderr
+                    self.log(console, message)
 
                     fr_file_name = 'forward.fastq'
                     forward_reads['file_name'] = fr_file_name
@@ -120,22 +132,27 @@ class hipmer:
                     rev_file_name = reverse_reads['id']
                     if 'file_name' in reverse_reads:
                         rev_file_name = reverse_reads['file_name']
-                    ### NOTE: this section is what could also be replaced by the transform services
-                    reverse_reads_file_loc = os.path.join(self.scratch,rev_file_name)
+                    # NOTE: Replace with local method call
+                    reverse_reads_file_loc = os.path.join(self.scratch,
+                                                          rev_file_name)
                     reverse_reads_file = open(reverse_reads_file_loc, 'w', 0)
-                    self.log(console, 'downloading reverse reads file: '+str(reverse_reads_file_loc))
-                    r = requests.get(reverse_reads['url']+'/node/'+reverse_reads['id']+'?download', stream=True, headers=headers)
+                    message = 'downloading reverse reads file: '
+                    message += str(reverse_reads_file_loc)
+                    self.log(console, message)
+                    url = reverse_reads['url'] + '/node/' + reverse_reads['id']
+                    url += '?download'
+                    r = requests.get(url, stream=True, headers=headers)
                     for chunk in r.iter_content(1024):
                         reverse_reads_file.write(chunk)
                     reverse_reads_file.close()
-                    reads=[fr_file_name,rev_file_name]
+                    reads = [fr_file_name, rev_file_name]
                     self.log(console, 'done')
-                    ### END NOTE
+                    # END NOTE
             except Exception as e:
                 print(traceback.format_exc())
                 raise ValueError('Unable to download paired-end read library files: ' + str(e))
         else:
-            raise ValueError('Cannot yet handle library type of: '+type_name)
+            raise ValueError('Cannot yet handle library type of: ' + type_name)
 
         return reads
 
@@ -143,7 +160,7 @@ class hipmer:
         """
         Generate the HipMer config
         """
-        self.config_file = '%s/%s'%(self.scratch, 'hipmer.config')
+        self.config_file = '%s/%s' % (self.scratch, 'hipmer.config')
         with open(self.config_file, 'w') as f:
             # Describe the libraries ( one line per library )
             # lib_seq [ wildcard ][ prefix ][ insAvg ][ insSdev ][ avgReadLen ]
@@ -153,32 +170,35 @@ class hipmer:
             #
             # TODO: make these params
             #
-            #FilesPerPair = 2
-            fmt='lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
+            # FilesPerPair = 2
+            fmt = 'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
 
             for r in params['reads']:
-                prefix = r['files'][0].split('.')[0]
+                # TODO: check read type and set count
+                count = len(r['files'])
                 files = ','.join(r['files'])
                 # lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
                 #    101 0 0      1 1 1  0 0 2 1
                 f.write(fmt % (
-                    files, prefix, r['ins_avg'], r['ins_dev'],
+                    files, r['prefix'], r['ins_avg'], r['ins_dev'],
                     r['avg_read_len'], r['has_innie_artifact'],
                     r['is_rev_comped'], r['use_for_contigging'],
                     r['ono_set_id'], r['use_for_gap_closing'],
                     r['fp_wiggle_room'], r['tp_wiggle_room'],
-                    2, r['use_for_splinting']))
+                    count, r['use_for_splinting']))
             f.write('\n')
-            hparams = [
-                'is_diploid',
-                'dynamic_min_depth',
-                'mer_size',
-                'min_depth_cutoff',
-                'gap_close_rpt_depth_ratio',
-                'assm_scaff_len_cutoff'
-                ]
-            for param in hparams:
-                f.write('%s %s\n'%(param, str(params[param])))
+            paramf = {
+                'is_diploid': 'is_diploid %d\n',
+                'dynamic_min_depth': 'dynamic_min_depth %f\n',
+                'mer_size': 'mer_size %d\n',
+                'min_depth_cutoff': 'min_depth_cutoff %d\n',
+                'gap_close_rpt_depth_ratio': 'gap_close_rpt_depth_ratio %f\n',
+                'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n'
+            }
+            if params['is_diploid'] == 1:
+                paramf['bubble_min_depth_cutoff'] = 'bubble_min_depth_cutoff %d'
+            for param in paramf:
+                f.write(paramf[param] % (params[param]))
             f.close()
 
         pass
@@ -187,8 +207,8 @@ class hipmer:
         """
         Generate SLURM submit script
         """
-        self.submit = '%s/%s'%(self.scratch, 'slurm.submit')
-        with open(self.submit,'w') as f:
+        self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
+        with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
             f.write('#SBATCH --nodes=1 -C haswell\n')
@@ -238,7 +258,7 @@ class hipmer:
         self.log(console, 'Running run_hipmer_hpc with params=')
         self.log(console, pformat(params))
 
-        #### do some basic checks
+        # do some basic checks
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
         if 'reads' not in params:
@@ -255,15 +275,13 @@ class hipmer:
                 if '/' in read_name:
                     ref = read_name
                 else:
-                    ref = ws_name+'/'+read_name
+                    ref = ws_name + '/' + read_name
 
                 reads = self.get_reads(ctx, ref, console)
                 read['files'] = reads
 
             # set the output location
-            timestamp = int((datetime.utcnow() -
-                             datetime.utcfromtimestamp(0)).total_seconds()*1000)
-            output_dir = self.scratch  # .'+str(timestamp))
+            output_dir = self.scratch
             # Generate submit script
             self.generate_config(params)
             self.generate_submit()
@@ -279,7 +297,7 @@ class hipmer:
         wsid = wsinfo[0]
 
         # parse the output and save back to KBase
-        output_dir = self.scratch # .'+str(timestamp))
+        output_dir = self.scratch
         output_contigs = os.path.join(output_dir, 'final_assembly.fa')
 
         # Warning: this reads everything into memory!  Will not work if
@@ -316,34 +334,40 @@ class hipmer:
             if '/' in read_name:
                 ref = read_name
             else:
-                ref = ws_name+'/'+read_name
+                ref = ws_name + '/' + read_name
             input_objects.append(ref)
         provenance[0]['input_ws_objects'] = input_objects
 
         # save the contigset output
-        new_obj_info = ws.save_objects({
-                'id': wsid, # set the output workspace ID
-                'objects': [
-                    {
-                        'type': 'KBaseGenomes.ContigSet',
-                        'data': contigset_data,
-                        'name': params['output_contigset_name'],
-                        'meta': {},
-                        'provenance': provenance
-                    }
-                ]
-            })
+        wsObj = {
+            'id': wsid,  # set the output workspace ID
+            'objects': [
+                {
+                    'type': 'KBaseGenomes.ContigSet',
+                    'data': contigset_data,
+                    'name': params['output_contigset_name'],
+                    'meta': {},
+                    'provenance': provenance
+                }
+            ]
+        }
+        new_obj_info = ws.save_objects(wsObj)
+        if new_obj_info is None:
+            self.log(console, "Failed to save object")
 
         # HACK for testing on Mac!!
         # shutil.move(output_dir,self.host_scratch)
         # END HACK!!
 
         # create a Report
-        output_ref = params['workspace_name']+'/'+params['output_contigset_name']
+        output_ref = params['workspace_name'] + '/'
+        output_ref += params['output_contigset_name']
         report = ''
-        report += 'ContigSet saved to: '+output_ref+'\n'
-        report += 'Assembled into '+str(len(contigset_data['contigs'])) + ' contigs.\n'
-        report += 'Avg Length: '+str(sum(lengths)/float(len(lengths))) + ' bp.\n'
+        report += 'ContigSet saved to: ' + output_ref + '\n'
+        report += 'Assembled into '
+        report += str(len(contigset_data['contigs'])) + ' contigs.\n'
+        report += 'Avg Length: ' + str(sum(lengths) / float(len(lengths)))
+        report += ' bp.\n'
 
         # compute a simple contig length distribution
         bins = 10
@@ -352,7 +376,7 @@ class hipmer:
         for c in range(bins):
             report += '   '
             report += str(counts[c]) + '\t--\t'
-            report += str(edges[c]) + ' to ' + str(edges[c+1]) + ' bp\n'
+            report += str(edges[c]) + ' to ' + str(edges[c + 1]) + ' bp\n'
 
         reportObj = {
             'objects_created': [{'ref': output_ref,
@@ -360,23 +384,26 @@ class hipmer:
             'text_message': report
         }
 
-        reportName = 'hipmer_report_'+str(hex(uuid.getnode()))
-        report_obj_info = ws.save_objects({
-                'id': wsid,
-                'objects': [
-                    {
-                        'type': 'KBaseReport.Report',
-                        'data': reportObj,
-                        'name': reportName,
-                        'meta': {},
-                        'hidden': 1,
-                        'provenance': provenance
-                    }
-                ]
-            })[0]
+        reportName = 'hipmer_report_' + str(hex(uuid.getnode()))
+        repObj = {
+            'id': wsid,
+            'objects': [
+                {
+                    'type': 'KBaseReport.Report',
+                    'data': reportObj,
+                    'name': reportName,
+                    'meta': {},
+                    'hidden': 1,
+                    'provenance': provenance
+                }
+            ]
+        }
+        report_obj_info = ws.save_objects(repObj)[0]
 
-        output = { 'report_name': reportName, 'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]) }
-
+        report_ref = str(report_obj_info[6]) + '/'
+        report_ref += str(report_obj_info[0]) + '/' + str(report_obj_info[4])
+        output = {'report_name': reportName,
+                  'report_ref': report_ref}
 
         #END run_hipmer_hpc
 

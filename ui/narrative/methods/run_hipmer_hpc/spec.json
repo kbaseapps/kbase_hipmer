@@ -60,6 +60,18 @@
         }
     },
     {
+        "id" : "bubble_min_depth_cutoff",
+        "optional" : true,
+        "advanced" : false,
+        "allow_multiple" : false,
+        "default_values" : [ "" ],
+        "field_type" : "text",
+        "text_options" : {
+            "validate_as": "int",
+            "min_integer" : 0
+        }
+    },
+    {
         "id" : "dynamic_min_depth",
         "optional" : false,
         "advanced" : true,
@@ -286,6 +298,10 @@
                 {
         		    "input_parameter": "is_diploid",
               	    "target_property": "is_diploid"
+                },
+                {
+        		    "input_parameter": "bubble_min_depth_cutoff",
+              	    "target_property": "bubble_min_depth_cutoff"
                 },
                 {
         		    "input_parameter": "dynamic_min_depth",

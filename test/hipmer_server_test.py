@@ -190,7 +190,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': 1,
+            'is_diploid': 0,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -252,7 +252,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': 1,
+            'is_diploid': 0,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{

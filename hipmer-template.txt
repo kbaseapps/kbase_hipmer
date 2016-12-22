@@ -1,0 +1,73 @@
+A multi-argument parameter defining various properties of the input datasets.
+Normally, for every sequencing library, a separate lib_seq parameter line should
+be given. The following are the mandatory arguments that must be given as
+values-only on a single line, in the exact order they’re listed here, separated by
+one or more spaces or tabs. None can be omitted.
+
+[ wildcard ] - a bash-style expression (typically a full path) defining the
+sequence files for a single library. If fwd and rev read pairs are in
+separate files, then two wildcards should be provided, separated by a comma,
+without spaces. (See section 'Input data preparation' for more on input data
+requirements.)
+
+[ name ] - name of the library
+(caps, numbers)
+
+[ insertAvg ] - estimated average insert size in bp
+
+[ insertSdev ] - estimated std deviation of insert size in bp
+
+[ avgReadLn ] - estimated average read length in bp
+
+[ hasInnieArtifact] - Whether or not a significant fraction of read pairs is in nondominant
+orientation, e.g. "innies" in an "outie" library or vice versa.
+(0=false, 1=true)
+
+[ isRevComped ] - Whether or not the read pairs are in the "outie" orientation,
+i.e <-- -->.
+(0=false, 1=true)
+
+[ useForContiging ]- Whether or not to use this libray for initial contig
+generation. Our recommendation is to use only paired-end libraries for this
+purpose.
+(0=false, 1=true)
+
+[ scaffRound ] - Assigns the library to a scaffolding round. Libraries of the
+same type and similar insert size should be grouped into the same round for the
+sake of performance. To completely exclude a library from being used in
+scaffolding, set this to 0.
+(positive integers, can be non-consecutive)
+
+[ useForGapClosing] - Whether or not to use this library for gap closing. It’s best
+to use the same libraries that were used for contig generation for this purpose.
+(0=false, 1=true)
+
+[ 5p_wiggleRoom ] - During linkage analysis and gap closure, allow reads from
+this library to have an unaligned 5' end up to this many bp. This option is for
+cases when a library is known to contain untrimmed adapter sequence.
+(positive integer, 0 for default behavior)
+
+[ 3p_wiggleRoom ] - During linkage analysis and gap closure, allow reads from
+this library to have an unaligned 3' end up to this many bp. This option can be
+used when the library is of poor sequence quality at the 3' end. Beware that
+allowing reads to map with large unaligned segments can potentially lead to
+erroneus linkage and other problems in the assembly. Use at your own risk!
+(positive integer, 0 for default behavior)
+Example 1: two sets of files - one with fwd reads and the other with reverse
+reads
+lib_seq /path/fastq*.0,/path/fastq*.1 ECO1 200 20 36 0 0 1 1 1 0 0
+Example 2: one set of files, all with fwd/rev reads interleaved and up to 20 bp
+of 5' adapter present
+lib_seq /path/to/fastq ECO2 200 20 100 0 0 0 1 0 20 0
+genome_size Approximate genome size in Gb. Used in estimating depth of read coverage.
+(positive integer or float)
+mer_size The k-mer size to use in meraculous. Must be an odd integer less than the size
+of the smallest read in the dataset. The optimal k-mer size depends on the
+quality of the sequence data and on the genome's repeat content. Picking a kmer
+size that's too small means a given sequence will have a lower likelihood of
+being unique. Too large, and you're increasing the likelihood that the sequence
+will contain an error, which will cause it to be thrown out entirely by the lowdepth
+filter. To have Meraculous auto-select one based on genome_size, set
+this parameter to 0
+There are a number of 3rd party tools available that help you pick the best k-mer
+size (e.g. kmergenie), but the following are ballpark guidelines for genomes of 

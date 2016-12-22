@@ -64,53 +64,95 @@ parameters :
         ui-name : Assembly Scaffold Lenth cutoff
         short-hint : TBD
 
+    bubble_min_depth_cutoff:
+        ui-name : Bubble Min Depth Cutoff
+        short-hint : |
+            For diploid organisms, this is the depth cutoff to exclude
+            unresolved haplotypes. To auto-detect, set to 0.  To keep both
+            haplotypes in cases where they couldn't be merged, set it to 1
+            (Note, this will hinder gap closing and scaffolding)
+
     prefix:
         ui-name : prefix
-        short-hint : TBD
+        short-hint : Name of the library
 
     ins_avg:
         ui-name : Insert Average (int)
-        short-hint :  Average Insert Length for Parid-End Reads
+        short-hint :  Estimated average Insert Length for Parid-End Reads in bp
 
     ins_dev:
         ui-name : Insert Deviation (int)
-        short-hint :  Std. Deviation of Insert Length for Parid-End Reads
+        short-hint :  Estimated std. Deviation of insert size in bp
 
     avg_read_len:
         ui-name : Average Read Len (int)
-        short-hint :  Average Read Length
+        short-hint :  Estimated average read Length
 
     has_innie_artifact:
         ui-name : Has Innie Artifact (T/F)
-        short-hint :  Does the read have innie Artifacts
+        short-hint : |
+            Whether or not a significant fraction of read pairs is in
+            nondominant orientation, e.g. "innies" in an "outie" library or
+            vice versa. (T/F)
 
     is_rev_comped:
         ui-name : Is Reversed Comped (T/F)
-        short-hint :  TBD
+        short-hint : |
+            Whether or not the read pairs are in the "outie" orientation,
+            i.e <-- -->. (T/F)
 
     use_for_contigging:
         ui-name : Use for Contigging (T/F)
-        short-hint :  Should this read be used for Contigging
+        short-hint :  |
+            Whether or not to use this libray for initial contig generation.
+            The recommendation is to use only paired-end libraries for this
+            purpose. (T/F)
 
     ono_set_id:
-        ui-name : ONO Set ID
-        short-hint :  TBD
+        ui-name : Scaffoling round (pos. int)
+        short-hint : |
+            Assigns the library to a scaffolding round. Libraries of the same
+            type and similar insert size should be grouped into the same round
+            for the sake of performance. To completely exclude a library from
+            being used in scaffolding, set this to 0. (positive integers,
+            can be non-consecutive)
 
     use_for_gap_closing:
         ui-name : Use for Gap Closing (T/F)
-        short-hint :  TBD
+        short-hint : |
+            Whether or not to use this library for gap closing. It's best to
+            use the same libraries that were used for contig generation for
+            this purpose. (T/F)
 
     fp_wiggle_room:
-        ui-name : Five Prime Wiggle Room (int)
-        short-hint :  TBD
+        ui-name : 5' Wiggle Room (int)
+        short-hint : |
+            During linkage analysis and gap closure, allow reads from this
+            library to have an unaligned 5' end up to this many bp. This
+            option is for cases when a library is known to contain untrimmed
+            adapter sequence. (positive integer, 0 for default behavior)
 
     tp_wiggle_room:
-        ui-name : Three Prime Wiggle Room (int)
-        short-hint :  TBD
+        ui-name : 3' Wiggle Room (int)
+        short-hint : |
+            During linkage analysis and gap closure, allow reads from this
+            library to have an unaligned 3' end up to this many bp. This
+            option can be used when the library is of poor sequence quality
+            at the 3' end. Beware that allowing reads to map with large
+            unaligned segments can potentially lead to erroneus linkage and
+            other problems in the assembly. Use at your own risk! (positive
+            integer, 0 for default behavior)
+
 
     use_for_splinting:
         ui-name : Use for Splinting (T/F)
-        short-hint :  TBD
+        short-hint : |
+            Whether or not to use reads from this library to "splint" small
+            gaps during scaffolding.  Splints are single reads aligning across
+            two contigs, which can be used to determine the gap size more
+            precisely and to confirm/reject a less precise but wider reaching
+            pairwise linkage (aka "spans"). We recommend using only fragment
+            libraries for splinting.
 
 parameter-groups :
     reads :
@@ -119,16 +161,7 @@ parameter-groups :
             Reads objects and options to use in the assembly.
 
 
-# For diploid organisms, this is the depth cutoff to exclude unresolved haplotypes.
-# To auto-detect, set to 0.
-# To keep both haplotypes in cases where they couldn't be merged, set it to 1  (Note, this will hinder gap closing and scaffolding)
-#
-#bubble_min_depth_cutoff
-#
-# min mercount to report: counts below this threshold will not be output by the mercounter.
-# Typically you would leave this at 2.
-#
-#min_mercount_to_report  2
+
 # Close gaps more aggressively accepting closures that might violate the estimated gap size
 #
 #gap_close_aggressive 1
