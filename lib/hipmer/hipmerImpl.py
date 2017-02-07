@@ -9,11 +9,17 @@ import traceback
 import uuid
 from pprint import pformat
 
-import numpy as np
-
 from Bio import SeqIO
 
 from biokbase.workspace.client import Workspace as workspaceService
+from ReadsUtils.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
+from ReadsUtils.baseclient import ServerError
+from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
+#from KBaseReport.KBaseReportClient import KBaseReport
+#from KBaseReport.baseclient import ServerError as _RepError
+#from kb_quast.kb_quastClient import kb_quast
+#from kb_quast.baseclient import ServerError as QUASTError
+#from kb_ea_utils.kb_ea_utilsClient import kb_ea_utils
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
@@ -52,6 +58,34 @@ class hipmer:
 
     def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
         pass
+
+    def get_reads_RU(self, ctx, reads_params, console):
+        readcli = ReadsUtils(self.callbackURL, token=ctx['token'],
+                             service_ver='dev')
+
+        typeerr = ('Supported types: KBaseFile.SingleEndLibrary ' +
+                   'KBaseFile.PairedEndLibrary ' +
+                   'KBaseAssembly.SingleEndLibrary ' +
+                   'KBaseAssembly.PairedEndLibrary')
+        try:
+            reads = readcli.download_reads({'read_libraries': [reads_params],
+                                            'interleaved': 'false',
+                                            'gzipped': None
+                                            })['files']
+        except ServerError as se:
+            self.log(console, 'logging stacktrace from dynamic client error')
+            self.log(console, se.data)
+            if typeerr in se.message:
+                prefix = se.message.split('.')[0]
+                raise ValueError(
+                    prefix + '. Only the types ' +
+                    'KBaseAssembly.PairedEndLibrary ' +
+                    'and KBaseFile.PairedEndLibrary are supported')
+            else:
+                raise
+
+        self.log(console, 'Got reads data from converter:\n' + pformat(reads))
+        return reads
 
     def get_reads(self, ctx, ref, console):
         try:
@@ -224,81 +258,16 @@ class hipmer:
             f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
             f.write('${INST}/bin/run_hipmer.sh ${RUNDIR}/hipmer.config\n')
             f.close()
-    #END_CLASS_HEADER
 
-    # config contains contents of config file in a hash or None if it couldn't
-    # be found
-    def __init__(self, config):
-        #BEGIN_CONSTRUCTOR
-        self.workspaceURL = config['workspace-url']
-        self.scratch = os.path.abspath(config['scratch'])
-        #END_CONSTRUCTOR
-        pass
+    def get_wsid(self, ws_name, token):
+        ws = workspaceService(self.workspaceURL, token=token)
+        wsinfo = ws.get_workspace_info({'workspace': ws_name})
+        return wsinfo[0]
 
-    def run_hipmer_hpc(self, ctx, params):
-        """
-        :param params: instance of type "AssemblyParams" (Run assembler
-           workspace_name - the name of the workspace for input/output
-           read_library_name - the name of the PE read library (SE library
-           support in the future) output_contig_set_name - the name of the
-           output contigset extra_params - assembler specific parameters
-           min_contig_length - minimum length of contigs to output, default
-           200 @optional min_contig_len @optional extra_params) -> structure:
-           parameter "workspace_name" of String, parameter
-           "read_library_name" of String, parameter "output_contigset_name"
-           of String, parameter "min_contig_len" of Long, parameter
-           "extra_params" of list of String
-        :returns: instance of type "AssemblyOutput" -> structure: parameter
-           "report_name" of String, parameter "report_ref" of String
-        """
-        # ctx is the context object
-        # return variables are: output
-        #BEGIN run_hipmer_hpc
-        console = []
-        self.log(console, 'Running run_hipmer_hpc with params=')
-        self.log(console, pformat(params))
-
-        # do some basic checks
-        if 'workspace_name' not in params:
-            raise ValueError('workspace_name parameter is required')
-        if 'reads' not in params:
-            raise ValueError('reads parameter is required')
-        if 'output_contigset_name' not in params:
-            raise ValueError('output_contigset_name parameter is required')
-        ws_name = params['workspace_name']
-
-        if 'POST' not in os.environ:
-            # Get the read library
-            print "Running pre stage"
-            for read in params['reads']:
-                read_name = read['read_library_name']
-                if '/' in read_name:
-                    ref = read_name
-                else:
-                    ref = ws_name + '/' + read_name
-
-                reads = self.get_reads(ctx, ref, console)
-                read['files'] = reads
-
-            # set the output location
-            output_dir = self.scratch
-            # Generate submit script
-            self.generate_config(params)
-            self.generate_submit()
-            return
-
-        print "Running POST stage"
-
-        # run hipmer, capture output as it happens
-        self.log(console, 'running hipmer:')
-
-        ws = workspaceService(self.workspaceURL, token=ctx['token'])
-        wsinfo = ws.get_workspace_info({'workspace': params['workspace_name']})
-        wsid = wsinfo[0]
+    def save_assembly_old(self, output_contigs, ctx, params, console, ws, ws_name):
+        wsid = self.get_wsid()
 
         # parse the output and save back to KBase
-        output_dir = self.scratch
-        output_contigs = os.path.join(output_dir, 'final_assembly.fa')
 
         # Warning: this reads everything into memory!  Will not work if
         # the contigset is very large!
@@ -355,34 +324,117 @@ class hipmer:
         if new_obj_info is None:
             self.log(console, "Failed to save object")
 
+    def save_assembly(self, wsname, output_contigs, token, name, console):
+        self.log(console, 'Uploading FASTA file to Assembly')
+        assemblyUtil = AssemblyUtil(self.callbackURL, token=token,
+                                    service_ver='dev')
+        assemblyUtil.save_assembly_from_fasta({'file': {'path': output_contigs},
+                                               'workspace_name': wsname,
+                                               'assembly_name': name
+                                               })
+    #END_CLASS_HEADER
+
+    # config contains contents of config file in a hash or None if it couldn't
+    # be found
+    def __init__(self, config):
+        #BEGIN_CONSTRUCTOR
+        self.workspaceURL = config['workspace-url']
+        self.scratch = os.path.abspath(config['scratch'])
+        self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        #END_CONSTRUCTOR
+        pass
+
+    def run_hipmer_hpc(self, ctx, params):
+        """
+        :param params: instance of type "AssemblyParams" (Run assembler
+           workspace_name - the name of the workspace for input/output
+           read_library_name - the name of the PE read library (SE library
+           support in the future) output_contig_set_name - the name of the
+           output contigset extra_params - assembler specific parameters
+           min_contig_length - minimum length of contigs to output, default
+           200 @optional min_contig_len @optional extra_params) -> structure:
+           parameter "workspace_name" of String, parameter
+           "read_library_name" of String, parameter "output_contigset_name"
+           of String, parameter "min_contig_len" of Long, parameter
+           "extra_params" of list of String
+        :returns: instance of type "AssemblyOutput" -> structure: parameter
+           "report_name" of String, parameter "report_ref" of String
+        """
+        # ctx is the context object
+        # return variables are: output
+        #BEGIN run_hipmer_hpc
+        console = []
+        self.log(console, 'Running run_hipmer_hpc with params=')
+        self.log(console, pformat(params))
+
+        # do some basic checks
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'reads' not in params:
+            raise ValueError('reads parameter is required')
+        if 'output_contigset_name' not in params:
+            raise ValueError('output_contigset_name parameter is required')
+        ws_name = params['workspace_name']
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+
+        if 'POST' not in os.environ:
+            # Get the read library
+            print "Running pre stage"
+            for read in params['reads']:
+                read_name = read['read_library_name']
+                if '/' in read_name:
+                    ref = read_name
+                else:
+                    ref = ws_name + '/' + read_name
+
+                reads = self.get_reads_RU(ctx, ref, console)
+                read['files'] = reads
+
+            # set the output location
+            output_dir = self.scratch
+            # Generate submit script
+            self.generate_config(params)
+            self.generate_submit()
+            return
+
+        print "Running POST stage"
+
+        # run hipmer, capture output as it happens
+        self.log(console, 'running hipmer:')
+
+        output_dir = self.scratch
+        output_contigs = os.path.join(output_dir, 'final_assembly.fa')
+        output_name = params['output_contigset_name']
+        wsname = params['workspace_name']
+        self.save_assembly(wsname,
+                           output_contigs,
+                           ctx['token'],
+                           output_name,
+                           console)
         # HACK for testing on Mac!!
         # shutil.move(output_dir,self.host_scratch)
         # END HACK!!
 
         # create a Report
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+
         output_ref = params['workspace_name'] + '/'
         output_ref += params['output_contigset_name']
         report = ''
         report += 'ContigSet saved to: ' + output_ref + '\n'
         report += 'Assembled into '
-        report += str(len(contigset_data['contigs'])) + ' contigs.\n'
-        report += 'Avg Length: ' + str(sum(lengths) / float(len(lengths)))
-        report += ' bp.\n'
-
-        # compute a simple contig length distribution
-        bins = 10
-        counts, edges = np.histogram(lengths, bins)
-        report += 'Contig Length Distribution (# of contigs -- min to max basepairs):\n'
-        for c in range(bins):
-            report += '   '
-            report += str(counts[c]) + '\t--\t'
-            report += str(edges[c]) + ' to ' + str(edges[c + 1]) + ' bp\n'
+        report += 'XX contigs.\n'
+        report += 'Avg Length: XX bp\n'
 
         reportObj = {
             'objects_created': [{'ref': output_ref,
                                  'description': 'Assembled contigs'}],
             'text_message': report
         }
+
+        wsid = self.get_wsid(params['workspace_name'], ctx['token'])
 
         reportName = 'hipmer_report_' + str(hex(uuid.getnode()))
         repObj = {

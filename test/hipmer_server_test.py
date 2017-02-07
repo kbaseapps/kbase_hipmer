@@ -222,7 +222,8 @@ class hipmerTest(unittest.TestCase):
         self.assertEqual(len(info_list), 1)
         contigset_info = info_list[0]
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
-        self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
+        self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
+        #self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
 
     def test_run_hipmer(self):
 
