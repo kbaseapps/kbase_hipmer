@@ -341,6 +341,7 @@ class hipmer:
         self.workspaceURL = config['workspace-url']
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        print "Callback=%s" % (self.callbackURL)
         #END_CONSTRUCTOR
         pass
 
