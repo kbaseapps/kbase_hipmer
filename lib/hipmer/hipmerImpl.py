@@ -59,7 +59,7 @@ class hipmer:
     def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
         pass
 
-    def get_reads_RU(self, ctx, reads_params, console):
+    def get_reads_RU(self, ctx, refs, console):
         readcli = ReadsUtils(self.callbackURL, token=ctx['token'],
                              service_ver='dev')
 
@@ -68,7 +68,7 @@ class hipmer:
                    'KBaseAssembly.SingleEndLibrary ' +
                    'KBaseAssembly.PairedEndLibrary')
         try:
-            reads = readcli.download_reads({'read_libraries': [reads_params],
+            reads = readcli.download_reads({'read_libraries': refs,
                                             'interleaved': 'false',
                                             'gzipped': None
                                             })['files']
@@ -206,11 +206,17 @@ class hipmer:
             #
             # FilesPerPair = 2
             fmt = 'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
-
+            cwd = os.getcwd() + '/'
             for r in params['reads']:
                 # TODO: check read type and set count
-                count = len(r['files'])
-                files = ','.join(r['files'])
+                files_obj = params['readsfiles'][r['ref']]['files']
+                filelist = [files_obj['fwd'].replace(cwd, './')]
+                if 'rev' in files_obj:
+                    rfile = files_obj['rev'].replace(cwd, './')
+                    filelist.append(rfile)
+
+                count = len(filelist)
+                files = ','.join(filelist)
                 # lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
                 #    101 0 0      1 1 1  0 0 2 1
                 f.write(fmt % (
@@ -381,15 +387,17 @@ class hipmer:
         if 'POST' not in os.environ:
             # Get the read library
             print "Running pre stage"
+            refs = []
             for read in params['reads']:
                 read_name = read['read_library_name']
                 if '/' in read_name:
                     ref = read_name
                 else:
                     ref = ws_name + '/' + read_name
+                refs.append(ref)
+                read['ref'] = ref
 
-                reads = self.get_reads_RU(ctx, ref, console)
-                read['files'] = reads
+            params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
 
             # set the output location
             output_dir = self.scratch
