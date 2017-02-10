@@ -206,13 +206,13 @@ class hipmer:
             #
             # FilesPerPair = 2
             fmt = 'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
-            cwd = os.getcwd() + '/'
+            wd = '/kb/module/work/tmp'
             for r in params['reads']:
                 # TODO: check read type and set count
                 files_obj = params['readsfiles'][r['ref']]['files']
-                filelist = [files_obj['fwd'].replace(cwd, './')]
+                filelist = [files_obj['fwd'].replace(wd, '.')]
                 if 'rev' in files_obj:
-                    rfile = files_obj['rev'].replace(cwd, './')
+                    rfile = files_obj['rev'].replace(wd, '.')
                     filelist.append(rfile)
 
                 count = len(filelist)
