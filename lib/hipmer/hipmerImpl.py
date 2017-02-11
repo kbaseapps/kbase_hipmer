@@ -7,6 +7,7 @@ import requests
 import re
 import traceback
 import uuid
+import numpy as np
 from pprint import pformat
 
 from Bio import SeqIO
@@ -15,10 +16,10 @@ from biokbase.workspace.client import Workspace as workspaceService
 from ReadsUtils.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from ReadsUtils.baseclient import ServerError
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
-#from KBaseReport.KBaseReportClient import KBaseReport
-#from KBaseReport.baseclient import ServerError as _RepError
-#from kb_quast.kb_quastClient import kb_quast
-#from kb_quast.baseclient import ServerError as QUASTError
+from KBaseReport.KBaseReportClient import KBaseReport
+from KBaseReport.baseclient import ServerError as _RepError
+from kb_quast.kb_quastClient import kb_quast
+from kb_quast.baseclient import ServerError as QUASTError
 #from kb_ea_utils.kb_ea_utilsClient import kb_ea_utils
 
 import requests.packages.urllib3
@@ -382,7 +383,7 @@ class hipmer:
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
         ws_name = params['workspace_name']
-        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        #ws = workspaceService(self.workspaceURL, token=ctx['token'])
 
         if 'POST' not in os.environ:
             # Get the read library
@@ -415,57 +416,80 @@ class hipmer:
         output_contigs = os.path.join(output_dir, 'final_assembly.fa')
         output_name = params['output_contigset_name']
         wsname = params['workspace_name']
-        self.save_assembly(wsname,
-                           output_contigs,
-                           ctx['token'],
-                           output_name,
-                           console)
-        # HACK for testing on Mac!!
-        # shutil.move(output_dir,self.host_scratch)
-        # END HACK!!
-
+        #output_data_ref = self.save_assembly(wsname,
+        #                                     output_contigs,
+        #                                     ctx['token'],
+        #                                     output_name,
+        #                                     console)
+        self.log(console, 'Uploading FASTA file to Assembly')
+        assemblyUtil = AssemblyUtil(self.callbackURL, token=ctx['token'],
+                                    service_ver='dev')
+        save_input = {'file': {'path': output_contigs},
+                      'workspace_name': wsname,
+                      'assembly_name': output_name
+                      }
+        output_data_ref = assemblyUtil.save_assembly_from_fasta(save_input)
+        print 'ref: ' + output_data_ref
         # create a Report
-        provenance = [{}]
-        if 'provenance' in ctx:
-            provenance = ctx['provenance']
+        # compute a simple contig length distribution for the report
+        lengths = []
+        for seq_record in SeqIO.parse(output_contigs, 'fasta'):
+            lengths.append(len(seq_record.seq))
 
-        output_ref = params['workspace_name'] + '/'
-        output_ref += params['output_contigset_name']
         report = ''
-        report += 'ContigSet saved to: ' + output_ref + '\n'
-        report += 'Assembled into '
-        report += 'XX contigs.\n'
-        report += 'Avg Length: XX bp\n'
+        report += 'ContigSet saved to: ' + params['workspace_name'] + '/'
+        report += params['output_contigset_name'] + '\n'
+        report += 'Assembled into ' + str(len(lengths)) + ' contigs.\n'
+        report += 'Avg Length: ' + str(sum(lengths) / float(len(lengths))) + ' bp.\n'
 
-        reportObj = {
-            'objects_created': [{'ref': output_ref,
-                                 'description': 'Assembled contigs'}],
-            'text_message': report
-        }
+        bins = 10
+        counts, edges = np.histogram(lengths, bins)
+        report += 'Contig Length Distribution (# of contigs -- min to max basepairs):\n'
+        for c in range(bins):
+            report += '   \%d\t--\t%d' % (counts[c], edges[c])
+            report += ' to %d bp\n' % (edges[c + 1])
 
-        wsid = self.get_wsid(params['workspace_name'], ctx['token'])
+        print('Running QUAST')
+        kbq = kb_quast(self.callbackURL)
+        try:
+            quastret = kbq.run_QUAST({'files': [{'path': output_contigs,
+                                                 'label': params['output_contigset_name']}]})
+        except QUASTError as qe:
+            # not really any way to test this, all inputs have been checked
+            # earlier and should be ok
+            print('Logging exception from running QUAST')
+            print(str(qe))
+            # TODO delete shock node
+            raise
 
-        reportName = 'hipmer_report_' + str(hex(uuid.getnode()))
-        repObj = {
-            'id': wsid,
-            'objects': [
-                {
-                    'type': 'KBaseReport.Report',
-                    'data': reportObj,
-                    'name': reportName,
-                    'meta': {},
-                    'hidden': 1,
-                    'provenance': provenance
-                }
-            ]
-        }
-        report_obj_info = ws.save_objects(repObj)[0]
+        print('Saving report')
+        kbr = KBaseReport(self.callbackURL)
+        try:
+            report_info = kbr.create_extended_report(
+                {'message': report,
+                 'objects_created': [{'ref': output_data_ref,
+                                      'description': 'Assembled contigs'}],
+                 'direct_html_link_index': 0,
+                 'html_links': [{'shock_id': quastret['shock_id'],
+                                 'name': 'report.html',
+                                 'label': 'QUAST report'}
+                                ],
+                 'report_object_name': 'kb_megahit_report_' + str(uuid.uuid4()),
+                 'workspace_name': params['workspace_name']
+                 })
+        except _RepError as re:
+            # not really any way to test this, all inputs have been checked earlier and should be
+            # ok
+            print('Logging exception from creating report object')
+            print(str(re))
+            # TODO delete shock node
+            raise
 
-        report_ref = str(report_obj_info[6]) + '/'
-        report_ref += str(report_obj_info[0]) + '/' + str(report_obj_info[4])
-        output = {'report_name': reportName,
-                  'report_ref': report_ref}
-
+        # STEP 6: contruct the output to send back
+        output = {'report_name': report_info['name'],
+                  'report_ref': report_info['ref']
+                  }
+        return [output]
         #END run_hipmer_hpc
 
         # At some point might do deeper type checking...
