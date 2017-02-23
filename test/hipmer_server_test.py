@@ -137,7 +137,12 @@ class hipmerTest(unittest.TestCase):
 
             },
             'interleaved':0,
-            'sequencing_tech':'artificial reads'
+            'sequencing_tech':'artificial reads',
+            'read_length_mean': 100,
+            'insert_size_mean': 250,
+            'insert_size_std_dev': 10,
+            'total_bases': 125000,
+            'read_orientation_outward': 1
         }
 
         new_obj_info = self.ws.save_objects({
@@ -198,15 +203,11 @@ class hipmerTest(unittest.TestCase):
                 'use_for_gap_closing': 1,
                 'has_innie_artifact': 0,
                 'use_for_contigging': 1,
-                'ins_avg': 250,
                 'prefix': 'small',
                 'ono_set_id': 1,
                 'tp_wiggle_room': 0,
                 'fp_wiggle_room': 0,
-                'read_library_name': pe_lib_info[1],
-                'is_rev_comped': 0,
-                'avg_read_len': 101,
-                'ins_dev': 10
+                'read_library_name': pe_lib_info[1]
             }]
         }
         self.createBogus('final_assembly.fa')
@@ -261,15 +262,11 @@ class hipmerTest(unittest.TestCase):
                 'use_for_gap_closing': 1,
                 'has_innie_artifact': 0,
                 'use_for_contigging': 1,
-                'ins_avg': 250,
                 'prefix': 'small',
                 'ono_set_id': 1,
                 'tp_wiggle_room': 0,
                 'fp_wiggle_room': 0,
-                'read_library_name': pe_lib_info[1],
-                'is_rev_comped': 0,
-                'avg_read_len': 101,
-                'ins_dev': 10
+                'read_library_name': pe_lib_info[1]
             }]
         }
 

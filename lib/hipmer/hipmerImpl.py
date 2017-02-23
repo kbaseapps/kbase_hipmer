@@ -208,6 +208,7 @@ class hipmer:
             # FilesPerPair = 2
             fmt = 'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
             wd = '/kb/module/work/tmp'
+            total_bases = 0
             for r in params['reads']:
                 # TODO: check read type and set count
                 files_obj = params['readsfiles'][r['ref']]['files']
@@ -215,6 +216,14 @@ class hipmer:
                 if 'rev' in files_obj and files_obj['rev'] is not None:
                     rfile = files_obj['rev'].replace(wd, '.')
                     filelist.append(rfile)
+                reads_obj = params['readsfiles'][r['ref']]
+                r['ins_avg'] = int(reads_obj['insert_size_mean'])
+                r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
+                r['avg_read_len'] = int(reads_obj['read_length_mean'])
+                r['is_rev_comped'] = 0
+                if 'read_orientation_outward' in reads_obj and \
+                        reads_obj['read_orientation_outward'][0].lower() == 't':
+                    r['is_rev_comped'] = 1
 
                 count = len(filelist)
                 files = ','.join(filelist)
@@ -227,6 +236,7 @@ class hipmer:
                     r['ono_set_id'], r['use_for_gap_closing'],
                     r['fp_wiggle_room'], r['tp_wiggle_room'],
                     count, r['use_for_splinting']))
+                total_bases += reads_obj['total_bases']
             f.write('\n')
             paramf = {
                 'is_diploid': 'is_diploid %d\n',
@@ -242,17 +252,19 @@ class hipmer:
                 f.write(paramf[param] % (params[param]))
             f.close()
 
-        pass
+        return total_bases
 
-    def generate_submit(self):
+    def generate_submit(self, tsize):
         """
         Generate SLURM submit script
         """
+        bpn = 1000000000
+        nodes = int((tsize + bpn - 1) / bpn)
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
-            f.write('#SBATCH --nodes=1 -C haswell\n')
+            f.write('#SBATCH --nodes=%d -C haswell\n' % nodes)
             f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --time=00:30:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
@@ -403,8 +415,8 @@ class hipmer:
             # set the output location
             output_dir = self.scratch
             # Generate submit script
-            self.generate_config(params)
-            self.generate_submit()
+            ts = self.generate_config(params)
+            self.generate_submit(ts)
             return
 
         print "Running POST stage"

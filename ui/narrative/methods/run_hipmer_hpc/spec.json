@@ -130,59 +130,11 @@
         }
     },
     {
-        "id" : "ins_avg",
-        "optional" : true,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "ins_dev",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "avg_read_len",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
         "id" : "has_innie_artifact",
         "optional" : false,
         "advanced" : false,
         "allow_multiple" : false,
         "default_values" : [ "0" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    },
-    {
-        "id" : "is_rev_comped",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-	    "default_values" : [ "0" ],
         "field_type" : "checkbox",
         "checkbox_options":{
             "checked_value": 1,
@@ -265,8 +217,8 @@
     "parameter-groups": [
 	    {
 	      "id": "reads",
-	      "parameters": ["read_library_name","prefix","ins_avg","ins_dev","avg_read_len","has_innie_artifact",
-                "is_rev_comped","use_for_contigging","ono_set_id","use_for_gap_closing",
+	      "parameters": ["read_library_name","prefix","has_innie_artifact",
+                "use_for_contigging","ono_set_id","use_for_gap_closing",
                 "fp_wiggle_room","tp_wiggle_room","use_for_splinting"],
 	      "optional": true,
 	      "allow_multiple": true,

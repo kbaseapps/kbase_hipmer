@@ -76,17 +76,17 @@ parameters :
         ui-name : prefix
         short-hint : Name of the library
 
-    ins_avg:
-        ui-name : Insert Average (int)
-        short-hint :  Estimated average Insert Length for Parid-End Reads in bp
+    #ins_avg:
+    #    ui-name : Insert Average (int)
+    #    short-hint :  Estimated average Insert Length for Parid-End Reads in bp
 
-    ins_dev:
-        ui-name : Insert Deviation (int)
-        short-hint :  Estimated std. Deviation of insert size in bp
+    #ins_dev:
+    #    ui-name : Insert Deviation (int)
+    #    short-hint :  Estimated std. Deviation of insert size in bp
 
-    avg_read_len:
-        ui-name : Average Read Len (int)
-        short-hint :  Estimated average read Length
+    #avg_read_len:
+    #    ui-name : Average Read Len (int)
+    #    short-hint :  Estimated average read Length
 
     has_innie_artifact:
         ui-name : Has Innie Artifact (T/F)
@@ -95,11 +95,11 @@ parameters :
             nondominant orientation, e.g. "innies" in an "outie" library or
             vice versa. (T/F)
 
-    is_rev_comped:
-        ui-name : Is Reversed Comped (T/F)
-        short-hint : |
-            Whether or not the read pairs are in the "outie" orientation,
-            i.e <-- -->. (T/F)
+    #is_rev_comped:
+    #    ui-name : Is Reversed Comped (T/F)
+    #    short-hint : |
+    #        Whether or not the read pairs are in the "outie" orientation,
+    #        i.e <-- -->. (T/F)
 
     use_for_contigging:
         ui-name : Use for Contigging (T/F)
