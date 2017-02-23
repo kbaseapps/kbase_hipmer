@@ -70,7 +70,7 @@ class hipmer:
                    'KBaseAssembly.PairedEndLibrary')
         try:
             reads = readcli.download_reads({'read_libraries': refs,
-                                            'interleaved': 'false',
+                                            'interleaved': 'true',
                                             'gzipped': None
                                             })['files']
         except ServerError as se:
