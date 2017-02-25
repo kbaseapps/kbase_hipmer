@@ -1,18 +1,13 @@
 #BEGIN_HEADER
 import os
 import sys
-import hashlib
-import subprocess
 import requests
-import re
-import traceback
 import uuid
 import numpy as np
 from pprint import pformat
 
 from Bio import SeqIO
 
-from biokbase.workspace.client import Workspace as workspaceService
 from ReadsUtils.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from ReadsUtils.baseclient import ServerError
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
@@ -57,9 +52,6 @@ class hipmer:
         print(message)
         sys.stdout.flush()
 
-    def get_pe_library_deinterleaved(self, ws_data, ws_info, forward, reverse):
-        pass
-
     def get_reads_RU(self, ctx, refs, console):
         readcli = ReadsUtils(self.callbackURL, token=ctx['token'],
                              service_ver='dev')
@@ -86,109 +78,6 @@ class hipmer:
                 raise
 
         self.log(console, 'Got reads data from converter:\n' + pformat(reads))
-        return reads
-
-    def get_reads(self, ctx, ref, console):
-        try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': ref}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            type_name = info[2].split('.')[1].split('-')[0]
-        except Exception as e:
-            raise ValueError(
-                'Unable to fetch read library object from workspace: ' +
-                str(e))
-            # to get the full stack trace: traceback.format_exc()
-
-        # Download the paired end library
-        if type_name == 'PairedEndLibrary':
-            try:
-                if 'lib1' in data:
-                    forward_reads = data['lib1']['file']
-                elif 'handle_1' in data:
-                    forward_reads = data['handle_1']
-                if 'lib2' in data:
-                    reverse_reads = data['lib2']['file']
-                elif 'handle_2' in data:
-                    reverse_reads = data['handle_2']
-                else:
-                    reverse_reads = {}
-
-                fr_file_name = forward_reads['id']
-                if 'file_name' in forward_reads:
-                    fr_file_name = forward_reads['file_name']
-
-                forward_reads_file_loc = os.path.join(self.scratch,
-                                                      fr_file_name)
-                forward_reads_file = open(forward_reads_file_loc, 'w', 0)
-                self.log(console, 'downloading reads file: ' +
-                         str(forward_reads_file_loc))
-                headers = {'Authorization': 'OAuth ' + ctx['token']}
-                url = forward_reads['url'] + '/node/' + forward_reads['id']
-                url += '?download'
-                r = requests.get(url, stream=True, headers=headers)
-                for chunk in r.iter_content(1024):
-                    forward_reads_file.write(chunk)
-                forward_reads_file.close()
-                self.log(console, 'done')
-                # END NOTE
-
-                if 'interleaved' in data and data['interleaved']:
-                    self.log(console, 'extracting forward/reverse reads into separate files')
-                    if re.search('gz', fr_file_name, re.I):
-                        bcmdstring = 'gunzip -c ' + forward_reads_file_loc
-                    else:
-                        bcmdstring = 'cat ' + forward_reads_file_loc
-
-                    cmdstring = bcmdstring + '| (paste - - - - - - - -  | '
-                    cmdstring += 'tee >(cut -f 1-4 | tr "\t" "\n" > '
-                    cmdstring += self.scratch
-                    cmdstring += '/forward.fastq) | cut -f 5-8 | '
-                    cmdstring += 'tr "\t" "\n" > '
-                    cmdstring += self.scratch + '/reverse.fastq )'
-                    cmdProcess = subprocess.Popen(cmdstring,
-                                                  stdout=subprocess.PIPE,
-                                                  stderr=subprocess.PIPE,
-                                                  shell=True,
-                                                  executable='/bin/bash')
-                    stdout, stderr = cmdProcess.communicate()
-                    message = "cmdstring: " + cmdstring + " stdout: "
-                    message += stdout + " stderr: " + stderr
-                    self.log(console, message)
-
-                    fr_file_name = 'forward.fastq'
-                    forward_reads['file_name'] = fr_file_name
-                    rev_file_name = 'reverse.fastq'
-                    reverse_reads['file_name'] = rev_file_name
-                    reads = [fr_file_name, rev_file_name]
-                else:
-                    # we need to read in reverse reads file separately
-                    rev_file_name = reverse_reads['id']
-                    if 'file_name' in reverse_reads:
-                        rev_file_name = reverse_reads['file_name']
-                    # NOTE: Replace with local method call
-                    reverse_reads_file_loc = os.path.join(self.scratch,
-                                                          rev_file_name)
-                    reverse_reads_file = open(reverse_reads_file_loc, 'w', 0)
-                    message = 'downloading reverse reads file: '
-                    message += str(reverse_reads_file_loc)
-                    self.log(console, message)
-                    url = reverse_reads['url'] + '/node/' + reverse_reads['id']
-                    url += '?download'
-                    r = requests.get(url, stream=True, headers=headers)
-                    for chunk in r.iter_content(1024):
-                        reverse_reads_file.write(chunk)
-                    reverse_reads_file.close()
-                    reads = [fr_file_name, rev_file_name]
-                    self.log(console, 'done')
-                    # END NOTE
-            except Exception as e:
-                print(traceback.format_exc())
-                raise ValueError('Unable to download paired-end read library files: ' + str(e))
-        else:
-            raise ValueError('Cannot yet handle library type of: ' + type_name)
-
         return reads
 
     def generate_config(self, params):
@@ -260,11 +149,15 @@ class hipmer:
         """
         bpn = 1000000000
         nodes = int((tsize + bpn - 1) / bpn)
+        # It seems like hipmer fails with odd numbers of nodes
+        # So let's add one if it is odd.
+        if nodes % 2:
+            nodes += 1
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --partition=debug\n')
-            f.write('#SBATCH --nodes=%d -C haswell\n' % nodes)
+            f.write('#SBATCH --nodes=%d\n' % nodes)
             f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --time=00:30:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
@@ -277,71 +170,6 @@ class hipmer:
             f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
             f.write('${INST}/bin/run_hipmer.sh ${RUNDIR}/hipmer.config\n')
             f.close()
-
-    def get_wsid(self, ws_name, token):
-        ws = workspaceService(self.workspaceURL, token=token)
-        wsinfo = ws.get_workspace_info({'workspace': ws_name})
-        return wsinfo[0]
-
-    def save_assembly_old(self, output_contigs, ctx, params, console, ws, ws_name):
-        wsid = self.get_wsid()
-
-        # parse the output and save back to KBase
-
-        # Warning: this reads everything into memory!  Will not work if
-        # the contigset is very large!
-        contigset_data = {
-            'id': 'hipmer.contigset',
-            'source': 'User assembled contigs from reads in KBase',
-            'source_id': 'none',
-            'md5': 'md5 of what? concat seq? concat md5s?',
-            'contigs': []
-        }
-
-        lengths = []
-        for seq_record in SeqIO.parse(output_contigs, 'fasta'):
-            contig = {
-                'id': seq_record.id,
-                'name': seq_record.name,
-                'description': seq_record.description,
-                'length': len(seq_record.seq),
-                'sequence': str(seq_record.seq),
-                'md5': hashlib.md5(str(seq_record.seq)).hexdigest()
-            }
-            lengths.append(contig['length'])
-            contigset_data['contigs'].append(contig)
-
-        # load the method provenance from the context object
-        provenance = [{}]
-        if 'provenance' in ctx:
-            provenance = ctx['provenance']
-        # add additional info to provenance here, in this case the input data object reference
-        input_objects = []
-        for read in params['reads']:
-            read_name = read['read_library_name']
-            if '/' in read_name:
-                ref = read_name
-            else:
-                ref = ws_name + '/' + read_name
-            input_objects.append(ref)
-        provenance[0]['input_ws_objects'] = input_objects
-
-        # save the contigset output
-        wsObj = {
-            'id': wsid,  # set the output workspace ID
-            'objects': [
-                {
-                    'type': 'KBaseGenomes.ContigSet',
-                    'data': contigset_data,
-                    'name': params['output_contigset_name'],
-                    'meta': {},
-                    'provenance': provenance
-                }
-            ]
-        }
-        new_obj_info = ws.save_objects(wsObj)
-        if new_obj_info is None:
-            self.log(console, "Failed to save object")
 
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
