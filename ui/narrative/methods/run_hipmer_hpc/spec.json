@@ -48,18 +48,6 @@
 	    }
 	},
     {
-        "id" : "is_diploid",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-	    "default_values" : [ "1" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    },
-    {
         "id" : "bubble_min_depth_cutoff",
         "optional" : true,
         "advanced" : false,
@@ -222,6 +210,13 @@
                 "fp_wiggle_room","tp_wiggle_room","use_for_splinting"],
 	      "optional": true,
 	      "allow_multiple": true,
+	      "with_border": true
+	    },
+	    {
+	      "id": "is_diploid",
+	      "parameters": ["bubble_min_depth_cutoff"],
+	      "optional": true,
+	      "allow_multiple": false,
 	      "with_border": true
 	    }
     ],

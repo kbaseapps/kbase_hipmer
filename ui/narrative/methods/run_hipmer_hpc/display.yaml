@@ -36,12 +36,6 @@ parameters :
     mer_size:
         ui-name : k-mer size
         short-hint : k-mer size to use in the assembly process
-    is_diploid:
-        ui-name : Is the genome diploid (true/false)
-        short-hint : |
-            Is this a diploid genome?  If so, HipMer will attempt to
-            identify and merge haplotype variants (bubbles in the k-mer graph)
-            See also 'bubble_min_depth_cutoff'
 
     min_depth_cutoff:
         ui-name : Min Depth Cutoff
@@ -155,6 +149,12 @@ parameters :
             libraries for splinting.
 
 parameter-groups :
+    is_diploid:
+        ui-name : Is the genome diploid (Enable=true)
+        short-hint : |
+            Is this a diploid genome?  If so, HipMer will attempt to
+            identify and merge haplotype variants (bubbles in the k-mer graph)
+            See also 'bubble_min_depth_cutoff'
     reads :
         ui-name : Reads
         short-hint : |

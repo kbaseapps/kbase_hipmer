@@ -10,6 +10,7 @@ from Bio import SeqIO
 
 from ReadsUtils.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from ReadsUtils.baseclient import ServerError
+from ReadsAPI.ReadsAPIClient import ReadsAPI  # @IgnorePep8
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from KBaseReport.baseclient import ServerError as _RepError
@@ -51,6 +52,21 @@ class hipmer:
             target.append(message)
         print(message)
         sys.stdout.flush()
+
+    def check_reads(self, ctx, refs, console):
+        # Hipmer requires some parameters to be set for the reads.
+        # Let's check those first before wasting time with downloads.
+        rapi = ReadsAPI(self.callbackURL, token=ctx['token'],
+                        service_ver='dev')
+
+        for ref in refs:
+            p = {'workspace_obj_ref': ref}
+            info = rapi.get_reads_info_all_formatted(p)
+            if info['Insert_Size_Mean'] == 'Not Specified' or \
+               info['Insert_Size_Std_Dev'] == 'Not Specified':
+                return False
+
+        return True
 
     def get_reads_RU(self, ctx, refs, console):
         readcli = ReadsUtils(self.callbackURL, token=ctx['token'],
@@ -237,6 +253,8 @@ class hipmer:
                     ref = ws_name + '/' + read_name
                 refs.append(ref)
                 read['ref'] = ref
+            if not self.check_reads(ctx, refs, console):
+                sys.exit(1)
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
 
