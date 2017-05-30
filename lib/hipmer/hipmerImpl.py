@@ -144,15 +144,19 @@ class hipmer:
                 total_bases += reads_obj['total_bases']
             f.write('\n')
             paramf = {
-                'is_diploid': 'is_diploid %d\n',
+                'diploid': 'is_diploid %d\n',
                 'dynamic_min_depth': 'dynamic_min_depth %f\n',
                 'mer_size': 'mer_size %d\n',
                 'min_depth_cutoff': 'min_depth_cutoff %d\n',
                 'gap_close_rpt_depth_ratio': 'gap_close_rpt_depth_ratio %f\n',
                 'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n'
             }
-            if params['is_diploid'] == 1:
-                paramf['bubble_min_depth_cutoff'] = 'bubble_min_depth_cutoff %d'
+            if params['is_diploid'] is not None:
+                paramf['bubble'] = 'bubble_min_depth_cutoff %d'
+                params['bubble'] = params['is_diploid']['bubble_min_depth_cutoff']
+                params['diploid'] = 1
+            else:
+                params['diploid'] = 0
             for param in paramf:
                 f.write(paramf[param] % (params[param]))
             f.close()
