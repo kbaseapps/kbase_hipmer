@@ -58,12 +58,16 @@ class hipmer:
         # Let's check those first before wasting time with downloads.
         rapi = ReadsAPI(self.callbackURL, token=ctx['token'],
                         service_ver='dev')
-
+        err_msg = '%s does not specify a mean insert size\n'
+        err_msg += 'Please re-upload the reads and used the advanced parameters'
+        err_msg += 'options to specify the insert size parameters.\n'
+        err_msg += 'This is required to run HipMer.'
         for ref in refs:
             p = {'workspace_obj_ref': ref}
             info = rapi.get_reads_info_all_formatted(p)
             if info['Insert_Size_Mean'] == 'Not Specified' or \
                info['Insert_Size_Std_Dev'] == 'Not Specified':
+                sys.stderr.write(err_msg % (info['Name']))
                 return False
 
         return True
@@ -258,6 +262,7 @@ class hipmer:
                 refs.append(ref)
                 read['ref'] = ref
             if not self.check_reads(ctx, refs, console):
+                sys.stderr.write('The reads failed validation\n')
                 sys.exit(1)
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)

@@ -15,6 +15,7 @@ from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
 from hipmer.hipmerImpl import hipmer
 from hipmer.hipmerServer import MethodContext
 
+
 class hipmerTest(unittest.TestCase):
 
     @classmethod
@@ -42,8 +43,7 @@ class hipmerTest(unittest.TestCase):
         cls.shockURL = cls.cfg['shock-url']
         cls.handleURL = cls.cfg['handle-service-url']
         cls.scratch = cls.cfg['scratch']
-        print "shock %s"%(cls.shockURL)
-
+        print "shock %s" % (cls.shockURL)
 
     @classmethod
     def tearDownClass(cls):
@@ -79,15 +79,13 @@ class hipmerTest(unittest.TestCase):
         # 1) upload files to shock
         token = self.ctx['token']
         forward_shock_file = self.upload_file_to_shock(
-            shock_service_url = self.shockURL,
-            filePath = 'data/small.forward.fq',
-            token = token
-            )
+            shock_service_url=self.shockURL,
+            filePath='data/small.forward.fq',
+            token=token)
         reverse_shock_file = self.upload_file_to_shock(
-            shock_service_url = self.shockURL,
-            filePath = 'data/small.reverse.fq',
-            token = token
-            )
+            shock_service_url=self.shockURL,
+            filePath='data/small.reverse.fq',
+            token=token)
         #pprint(forward_shock_file)
         #pprint(reverse_shock_file)
 
@@ -195,7 +193,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': 0,
+            'is_diploid': None,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -254,7 +252,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': 0,
+            'is_diploid': None,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
