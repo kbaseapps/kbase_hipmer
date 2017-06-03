@@ -262,8 +262,7 @@ class hipmer:
                 refs.append(ref)
                 read['ref'] = ref
             if not self.check_reads(ctx, refs, console):
-                sys.stderr.write('The reads failed validation\n')
-                sys.exit(1)
+                raise ValueError('The reads failed validation\n')
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
 
