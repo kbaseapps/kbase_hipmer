@@ -3,7 +3,7 @@
 #
 name: Assemble with HipMer
 tooltip: |
-    Assemble paired-end microbial reads using the HipMer assembly pipeline.
+    Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
 screenshots: []
 
 icon: icon.png
