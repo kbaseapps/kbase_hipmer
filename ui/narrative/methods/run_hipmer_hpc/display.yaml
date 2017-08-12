@@ -6,7 +6,7 @@ tooltip: |
     Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
 screenshots: []
 
-icon: icon.png
+icon: hipmer-blue.png
 
 #
 # define a set of similar methods that might be useful to the user
