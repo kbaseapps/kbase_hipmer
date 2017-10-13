@@ -165,11 +165,11 @@ class hipmerTest(unittest.TestCase):
 
 
     def createBogus(self,fname):
-        outdir=self.scratch
+        outdir=self.scratch+'/results/'
         if os.path.exists(outdir) is False:
             os.makedirs(outdir)
-        print 'dest: %s/%s'%(self.scratch,fname)
-        ret=Call(['cp','data/output.contig.fa','%s/%s'%(self.scratch,fname)])
+        print 'dest: %s/%s'%(outdir,fname)
+        ret=Call(['cp','data/output.contig.fa','%s/%s'%(outdir,fname)])
         print ret
 
     def getImpl(self):

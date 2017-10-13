@@ -187,7 +187,7 @@ class hipmer:
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
-            f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=${SCRATCH}/hipmer-install-cori}\n')
+            f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=${SCRATCH}/hipmer-v0.9.6}\n')
             f.write('INST=${HIPMER_INSTALL:=$1}\n')
             f.write('. $INST/env.sh\n')
             f.write('\n')
@@ -266,8 +266,6 @@ class hipmer:
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
 
-            # set the output location
-            output_dir = self.scratch
             # Generate submit script
             ts = self.generate_config(params)
             self.generate_submit(ts)
@@ -278,8 +276,7 @@ class hipmer:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-        output_dir = self.scratch
-        output_contigs = os.path.join(output_dir, 'final_assembly.fa')
+        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_name = params['output_contigset_name']
         wsname = params['workspace_name']
         #output_data_ref = self.save_assembly(wsname,
@@ -364,6 +361,7 @@ class hipmer:
                              'output is not type dict as required.')
         # return the results
         return [output]
+
 
     def status(self, ctx):
         #BEGIN_STATUS
