@@ -187,7 +187,7 @@ class hipmer:
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
-            f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=${SCRATCH}/hipmer-v0.9.6}\n')
+            f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=$(pwd)/hipmer-v0.9.6}\n')
             f.write('INST=${HIPMER_INSTALL:=$1}\n')
             f.write('. $INST/env.sh\n')
             f.write('\n')

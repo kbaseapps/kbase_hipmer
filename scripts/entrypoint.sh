@@ -15,7 +15,7 @@ elif [ "${1}" = "test" ] ; then
   make test
 elif [ "${1}" = "async" ] ; then
   pwd
-  tar xzf $SCRATCH/hipmer-v0.9.6.tgz
+  (cd work/tmp && tar xzf $SCRATCH/hipmer-v0.9.6.tgz)
   sh ./scripts/run_async.sh
 elif [ "${1}" = "init" ] ; then
   echo "Initialize module"
