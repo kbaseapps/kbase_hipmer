@@ -53,6 +53,38 @@ class hipmer:
         print(message)
         sys.stdout.flush()
 
+    def _validate_inputs(self, params):
+        # do some basic checks
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'reads' not in params:
+            raise ValueError('reads parameter is required')
+        if 'output_contigset_name' not in params:
+            raise ValueError('output_contigset_name parameter is required')
+        # Check mer_sizes
+        if 'mer_sizes' not in params:
+            raise ValueError('mer_sizes is a required parameter')
+        # Remove white spaces
+        mer_sizes = params['mer_sizes'].replace(' ', '').replace('\t', '')
+        for mer in mer_sizes.split(','):
+            try:
+                meri = int(mer)
+            except:
+                raise ValueError('mer sizes should be an integer')
+            if meri < 10 and mer > 100:
+                raise ValueError('mer sizes should be between 10 and 100')
+
+        diploid = False
+        metagenome = False
+        if 'is_diploid' in params and params['is_diploid'] is not None:
+            diploid = True
+        if 'is_metagenome' in params and params['is_metagenome'] is not None:
+            metagenome = True
+
+        if diploid and metagenome:
+            raise ValueError('Cannot set both diploid and metagenome mode')
+        return True
+
     def check_reads(self, ctx, refs, console):
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
@@ -149,8 +181,9 @@ class hipmer:
             f.write('\n')
             paramf = {
                 'diploid': 'is_diploid %d\n',
+                'metagenome': 'is_metagenome %d\n',
                 'dynamic_min_depth': 'dynamic_min_depth %f\n',
-                'mer_size': 'mer_size %d\n',
+                'mer_sizes': 'mer_sizes %s\n',
                 'min_depth_cutoff': 'min_depth_cutoff %d\n',
                 'gap_close_rpt_depth_ratio': 'gap_close_rpt_depth_ratio %f\n',
                 'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n'
@@ -161,6 +194,15 @@ class hipmer:
                 params['diploid'] = 1
             else:
                 params['diploid'] = 0
+
+            if params['is_metagenome'] is not None:
+                for p in ['alpha', 'beta', 'tau']:
+                    paramf[p] = '%s %%f\n' % (p)
+                    params[p] = params['is_metagenome'][p]
+                params['metagenome'] = 1
+            else:
+                params['metagenome'] = 0
+
             for param in paramf:
                 f.write(paramf[param] % (params[param]))
             f.close()
@@ -239,13 +281,9 @@ class hipmer:
         self.log(console, 'Running run_hipmer_hpc with params=')
         self.log(console, pformat(params))
 
-        # do some basic checks
-        if 'workspace_name' not in params:
-            raise ValueError('workspace_name parameter is required')
-        if 'reads' not in params:
-            raise ValueError('reads parameter is required')
-        if 'output_contigset_name' not in params:
-            raise ValueError('output_contigset_name parameter is required')
+        # Validate parameters.  This will raise an error if there
+        # is a problem.
+        self._validate_inputs(params)
         ws_name = params['workspace_name']
         #ws = workspaceService(self.workspaceURL, token=ctx['token'])
 
@@ -292,7 +330,6 @@ class hipmer:
                       'assembly_name': output_name
                       }
         output_data_ref = assemblyUtil.save_assembly_from_fasta(save_input)
-        print 'ref: ' + output_data_ref
         # create a Report
         # compute a simple contig length distribution for the report
         lengths = []
@@ -361,7 +398,6 @@ class hipmer:
                              'output is not type dict as required.')
         # return the results
         return [output]
-
 
     def status(self, ctx):
         #BEGIN_STATUS

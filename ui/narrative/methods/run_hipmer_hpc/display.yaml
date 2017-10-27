@@ -33,9 +33,11 @@ parameters :
     output_contigset_name:
         ui-name : Output ContigSet name
         short-hint : Enter a name for the assembled contigs data object
-    mer_size:
-        ui-name : k-mer size
-        short-hint : k-mer size to use in the assembly process
+    mer_sizes:
+        ui-name : k-mer sizes
+        short-hint : k-mer sizes to use in the assembly process.  This is a
+        comma seperated list of integers to use as mer sizes.  For metagenomes
+        you may want to use 21,31,51,77,95.
 
     min_depth_cutoff:
         ui-name : Min Depth Cutoff
@@ -46,6 +48,11 @@ parameters :
     dynamic_min_depth:
         ui-name : Dynamic Min Depth
         short-hint : TBD
+
+    error_rate:
+        ui-name : Error Rate
+        short-hint : |
+            Estimated error rate (default 0.9).
 
     gap_close_rpt_depth_ratio:
         ui-name : Gap Close Repeat Depth Ratio
@@ -65,6 +72,34 @@ parameters :
             unresolved haplotypes. To auto-detect, set to 0.  To keep both
             haplotypes in cases where they couldn't be merged, set it to 1
             (Note, this will hinder gap closing and scaffolding)
+
+    alpha:
+        ui-name : Alpha Parameter
+        short-hint : |
+            This along with beta and tau are advanced parameters for metagenome
+            assembly.  Use the default (0.1) unless you are an expert.
+            Contigs which are forks in the graph are pruned when
+            there is a fork that is of much lower depth than the other
+            surrounding contigs. This happens in a loop where Tau is the
+            minimum (and grows by 1+alpha at the end of the loop),
+            and beta is the fraction of the "neighborhood depth" that a
+            contig must exceed to be kept.  The loop stops when no
+            contigs have been dropped.
+
+
+    beta:
+        ui-name : Beta Parameter
+        short-hint : |
+            This is an advanced parameter for metagenome assembly.  Use the
+            default (0.2) unless you are an expert.  See the alpha parameter
+            for more detail.
+
+    tau:
+        ui-name : Tau Parameter
+        short-hint : |
+            This is an advanced parameter for metagenome assembly.  Use the
+            default (2.0) unless your are an expert.  See the alpha parameter
+            for more detail.
 
     prefix:
         ui-name : prefix
@@ -155,6 +190,10 @@ parameter-groups :
             Is this a diploid genome?  If so, HipMer will attempt to
             identify and merge haplotype variants (bubbles in the k-mer graph)
             See also 'bubble_min_depth_cutoff'
+    is_metagenome:
+        ui-name : Is the data set for a metagenome (Enable=true)
+        short-hint : |
+            Is this a metagenome?'
     reads :
         ui-name : Reads
         short-hint : |

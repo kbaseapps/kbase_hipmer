@@ -1,6 +1,5 @@
 import unittest
 import os
-import json
 import time
 import requests
 
@@ -91,109 +90,194 @@ class hipmerTest(unittest.TestCase):
 
         # 2) create handle
         hs = HandleService(url=self.handleURL, token=token)
-        forward_handle = hs.persist_handle({
-                                        'id' : forward_shock_file['id'],
-                                        'type' : 'shock',
-                                        'url' : self.shockURL,
-                                        'file_name': forward_shock_file['file']['name'],
-                                        'remote_md5': forward_shock_file['file']['checksum']['md5']})
+        handf = {
+            'id': forward_shock_file['id'],
+            'type': 'shock',
+            'url': self.shockURL,
+            'file_name': forward_shock_file['file']['name'],
+            'remote_md5': forward_shock_file['file']['checksum']['md5']
+        }
+        forward_handle = hs.persist_handle(handf)
+        handr = {
+            'id': reverse_shock_file['id'],
+            'type': 'shock',
+            'url': self.shockURL,
+            'file_name': reverse_shock_file['file']['name'],
+            'remote_md5': reverse_shock_file['file']['checksum']['md5']
+        }
 
-        reverse_handle = hs.persist_handle({
-                                        'id' : reverse_shock_file['id'],
-                                        'type' : 'shock',
-                                        'url' : self.shockURL,
-                                        'file_name': reverse_shock_file['file']['name'],
-                                        'remote_md5': reverse_shock_file['file']['checksum']['md5']})
+        reverse_handle = hs.persist_handle(handr)
 
         # 3) save to WS
         paired_end_library = {
             'lib1': {
                 'file': {
-                    'hid':forward_handle,
+                    'hid': forward_handle,
                     'file_name': forward_shock_file['file']['name'],
                     'id': forward_shock_file['id'],
                     'url': self.shockURL,
-                    'type':'shock',
-                    'remote_md5':forward_shock_file['file']['checksum']['md5']
+                    'type': 'shock',
+                    'remote_md5': forward_shock_file['file']['checksum']['md5']
                 },
-                'encoding':'UTF8',
-                'type':'fastq',
-                'size':forward_shock_file['file']['size']
+                'encoding': 'UTF8',
+                'type': 'fastq',
+                'size': forward_shock_file['file']['size']
             },
             'lib2': {
                 'file': {
-                    'hid':reverse_handle,
+                    'hid': reverse_handle,
                     'file_name': reverse_shock_file['file']['name'],
                     'id': reverse_shock_file['id'],
                     'url': self.shockURL,
-                    'type':'shock',
-                    'remote_md5':reverse_shock_file['file']['checksum']['md5']
+                    'type': 'shock',
+                    'remote_md5': reverse_shock_file['file']['checksum']['md5']
                 },
-                'encoding':'UTF8',
-                'type':'fastq',
-                'size':reverse_shock_file['file']['size']
+                'encoding': 'UTF8',
+                'type': 'fastq',
+                'size': reverse_shock_file['file']['size']
 
             },
-            'interleaved':0,
-            'sequencing_tech':'artificial reads',
+            'interleaved': 0,
+            'sequencing_tech': 'artificial reads',
             'read_length_mean': 100,
             'insert_size_mean': 250,
             'insert_size_std_dev': 10,
             'total_bases': 125000,
             'read_orientation_outward': 1
         }
+        ws_obj = {
+            'workspace': self.getWsName(),
+            'objects': [
+                {
+                    'type': 'KBaseFile.PairedEndLibrary',
+                    'data': paired_end_library,
+                    'name': 'test.pe.reads',
+                    'meta': {},
+                    'provenance': [
+                        {
+                            'service': 'hipmer',
+                            'method': 'test_hipmer'
+                        }
+                    ]
+                }]
+        }
 
-        new_obj_info = self.ws.save_objects({
-                        'workspace':self.getWsName(),
-                        'objects':[
-                            {
-                                'type':'KBaseFile.PairedEndLibrary',
-                                'data':paired_end_library,
-                                'name':'test.pe.reads',
-                                'meta':{},
-                                'provenance':[
-                                    {
-                                        'service':'hipmer',
-                                        'method':'test_hipmer'
-                                    }
-                                ]
-                            }]
-                        })
+        new_obj_info = self.ws.save_objects(ws_obj)
         self.__class__.pairedEndLibInfo = new_obj_info[0]
         return new_obj_info[0]
 
-
-
-    def createBogus(self,fname):
-        outdir=self.scratch+'/results/'
+    def createBogus(self, fname):
+        outdir = self.scratch + '/results/'
         if os.path.exists(outdir) is False:
             os.makedirs(outdir)
-        print 'dest: %s/%s'%(outdir,fname)
-        ret=Call(['cp','data/output.contig.fa','%s/%s'%(outdir,fname)])
+        print 'dest: %s/%s' % (outdir, fname)
+        ret = Call(['cp', 'data/output.contig.fa', '%s/%s' % (outdir, fname)])
         print ret
 
-    def getImpl(self):
-        return self.__class__.serviceImpl
+    def test_0validate(self):
+        # run hipmer
+        params = {
+            'assm_scaff_len_cutoff': 1000,
+            'mer_sizes': "21",
+            'workspace_name': 'bogus',
+            'output_contigset_name': 'hipmer.contigs',
+            'min_depth_cutoff': 7,
+            'is_diploid': None,
+            'is_metagenome': None,
+            'dynamic_min_depth': 1,
+            'gap_close_rpt_depth_ratio': 2,
+            'reads': [{
+                'use_for_splinting': 1,
+                'use_for_gap_closing': 1,
+                'has_innie_artifact': 0,
+                'use_for_contigging': 1,
+                'prefix': 'small',
+                'ono_set_id': 1,
+                'tp_wiggle_room': 0,
+                'fp_wiggle_room': 0,
+                'read_library_name': 'bogus'
+            }]
+        }
+        result = self.getImpl()._validate_inputs(params)
+        self.assertTrue(result)
+        params['mer_sizes'] = 'asdf,asdfa,asdf'
+        with self.assertRaises(ValueError):
+            result = self.getImpl()._validate_inputs(params)
+        params['mer_sizes'] = '1,11,100'
+        with self.assertRaises(ValueError):
+            result = self.getImpl()._validate_inputs(params)
+        # Simulate diploid and metagenome both being set
+        params['mer_sizes'] = '21'
+        params['is_diploid'] = {'bubble_min_depth_cutoff': 1}
+        params['is_metagenome'] = {'alpha': 0.1, 'beta': 0.2, 'tau': 2.0}
+        with self.assertRaises(ValueError):
+            result = self.getImpl()._validate_inputs(params)
 
-    def getContext(self):
-        return self.__class__.ctx
+    def test_0config(self):
+        # run hipmer
+        configf = os.path.join(self.scratch, 'hipmer.config')
+        if os.path.exists(configf):
+            os.remove(configf)
+        readobj = {
+            'files': {'fwd': 'fwd.q'},
+            'insert_size_mean': '1000',
+            'insert_size_std_dev': '100',
+            'read_length_mean': '100',
+            'total_bases': 10000
+        }
+        params = {
+            'assm_scaff_len_cutoff': 1000,
+            'mer_sizes': "21",
+            'workspace_name': 'bogus',
+            'output_contigset_name': 'hipmer.contigs',
+            'min_depth_cutoff': 7,
+            'is_diploid': None,
+            'is_metagenome': {'alpha': 0.1, 'beta': 0.2, 'tau': 2.0},
+            'dynamic_min_depth': 1,
+            'gap_close_rpt_depth_ratio': 2,
+            'readsfiles': {'1/2/3': readobj},
+            'reads': [{
+                'use_for_splinting': 1,
+                'use_for_gap_closing': 1,
+                'has_innie_artifact': 0,
+                'use_for_contigging': 1,
+                'prefix': 'small',
+                'ono_set_id': 1,
+                'tp_wiggle_room': 0,
+                'fp_wiggle_room': 0,
+                'read_library_name': 'bogus',
+                'ref': '1/2/3'
+            }]
+        }
 
-
-    #def test_generate_config(self):
-    #    result = self.getImpl().generate_config(self.getContext(),params)
+        #reads_obj = params['readsfiles'][r['ref']]
+        result = self.getImpl().generate_config(params)
+        self.assertTrue(result)
+        self.assertTrue(os.path.exists(configf))
+        configs = dict()
+        # Read in config file and parse contents
+        with open(configf) as conf:
+            for lines in conf:
+                templist = lines.rstrip().split(' ')
+                if len(templist) == 2:
+                    configs[templist[0]] = templist[1]
+        # Confirm metagenome options are set as expected
+        self.assertIn('alpha', configs)
+        self.assertEquals(configs['is_metagenome'], '1')
 
     def test_post(self):
         pe_lib_info = self.getPairedEndLibInfo()
-        pprint(pe_lib_info)
+        #pprint(pe_lib_info)
 
         # run hipmer
         params = {
             'assm_scaff_len_cutoff': 1000,
-            'mer_size': 21,
+            'mer_sizes': '21',
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
             'is_diploid': None,
+            'is_metagenome': None,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -211,13 +295,13 @@ class hipmerTest(unittest.TestCase):
         self.createBogus('final_assembly.fa')
         os.environ['POST'] = '1'
 
-        result = self.getImpl().run_hipmer_hpc(self.getContext(),params)
+        result = self.getImpl().run_hipmer_hpc(self.getContext(), params)
 
         print('RESULT:')
         pprint(result)
 
         # check the output
-        info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/hipmer.contigs'}], 1)
+        info_list = self.ws.get_object_info([{'ref': pe_lib_info[7] + '/hipmer.contigs'}], 1)
         self.assertEqual(len(info_list), 1)
         contigset_info = info_list[0]
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
@@ -228,31 +312,19 @@ class hipmerTest(unittest.TestCase):
 
         # figure out where the test data lives
         pe_lib_info = self.getPairedEndLibInfo()
-        pprint(pe_lib_info)
+        #pprint(pe_lib_info)
         if 'POST' in os.environ:
             del os.environ['POST']
-
-        # Object Info Contents
-        # 0 - obj_id objid
-        # 1 - obj_name name
-        # 2 - type_string type
-        # 3 - timestamp save_date
-        # 4 - int version
-        # 5 - username saved_by
-        # 6 - ws_id wsid
-        # 7 - ws_name workspace
-        # 8 - string chsum
-        # 9 - int size
-        # 10 - usermeta meta
 
         # run hipmer
         params = {
             'assm_scaff_len_cutoff': 1000,
-            'mer_size': 21,
+            'mer_sizes': '21',
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
             'is_diploid': None,
+            'is_metagenome': None,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -273,8 +345,8 @@ class hipmerTest(unittest.TestCase):
 
         print('RESULT:')
         pprint(result)
-        self.assertEqual(os.path.exists(self.scratch+'/hipmer.config'),True)
-        self.assertEqual(os.path.exists(self.scratch+'/slurm.submit'),True)
+        self.assertEqual(os.path.exists(self.scratch + '/hipmer.config'), True)
+        self.assertEqual(os.path.exists(self.scratch + '/slurm.submit'), True)
         # check the output
         ##info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
         #self.assertEqual(len(info_list),1)
@@ -282,15 +354,12 @@ class hipmerTest(unittest.TestCase):
         #self.assertEqual(contigset_info[1],'output.contigset')
         #self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
 
-
-
-
     # Helper script borrowed from the transform service, logger removed
     def upload_file_to_shock(self,
-                             shock_service_url = None,
-                             filePath = None,
-                             ssl_verify = True,
-                             token = None):
+                             shock_service_url=None,
+                             filePath=None,
+                             ssl_verify=True,
+                             token=None):
         """
         Use HTTP multi-part POST to save a file to a SHOCK instance.
         """
@@ -311,7 +380,10 @@ class hipmerTest(unittest.TestCase):
 
         #logger.info("Sending {0} to {1}".format(filePath,shock_service_url))
         try:
-            response = requests.post(shock_service_url + "/node", headers=header, data=m, allow_redirects=True, verify=ssl_verify)
+            response = requests.post(shock_service_url + "/node",
+                                     headers=header, data=m,
+                                     allow_redirects=True,
+                                     verify=ssl_verify)
             dataFile.close()
         except:
             dataFile.close()

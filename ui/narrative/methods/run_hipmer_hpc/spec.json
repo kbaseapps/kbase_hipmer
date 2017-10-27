@@ -1,291 +1,426 @@
 {
-    "ver": "0.9.9",
     "authors": [
         "scanon"
     ],
-    "contact": "help@kbase.us",
-    "visible": true,
-    "categories": ["active","assembly"],
-    "widgets": {
-        "input": null,
-	"output": "kbaseReportView"
-    },
-    "parameters": [
-	{
-	    "id" : "output_contigset_name",
-	    "optional" : false,
-	    "advanced" : false,
-	    "allow_multiple" : false,
-	    "default_values" : [ "hipmer.contigs" ],
-	    "field_type" : "text",
-	    "text_options" : {
-		"valid_ws_types" : [ "KBaseGenomes.ContigSet" ],
-		"is_output_name":true
-	    }
-	},
-	{
-	    "id" : "mer_size",
-	    "optional" : false,
-	    "advanced" : true,
-	    "allow_multiple" : false,
-	    "default_values" : [ "21" ],
-	    "field_type" : "text",
-	    "text_options" : {
-		"validate_as": "int",
-      		"min_int" : 1
-	    }
-	},
-    {
-	    "id" : "min_depth_cutoff",
-	    "optional" : false,
-	    "advanced" : true,
-	    "allow_multiple" : false,
-	    "default_values" : [ "7" ],
-	    "field_type" : "text",
-	    "text_options" : {
-		"validate_as": "int",
-      		"min_int" : 1
-	    }
-	},
-    {
-        "id" : "bubble_min_depth_cutoff",
-        "optional" : true,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "dynamic_min_depth",
-        "optional" : false,
-        "advanced" : true,
-        "allow_multiple" : false,
-        "default_values" : [ "1.0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "float",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "gap_close_rpt_depth_ratio",
-        "optional" : false,
-        "advanced" : true,
-        "allow_multiple" : false,
-        "default_values" : [ "2.0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "float",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "assm_scaff_len_cutoff",
-        "optional" : false,
-        "advanced" : true,
-        "allow_multiple" : false,
-        "default_values" : [ "1000" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 1
-        }
-    },
-    {
-        "id": "read_library_name",
-        "optional": false,
-        "advanced": false,
-        "allow_multiple": false,
-        "default_values": [ "" ],
-        "field_type": "text",
-        "text_options": {
-            "valid_ws_types": ["KBaseAssembly.PairedEndLibrary","KBaseFile.PairedEndLibrary"]
-        }
-    },
-    {
-        "id" : "prefix",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "text"
-        }
-    },
-    {
-        "id" : "has_innie_artifact",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "0" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    },
-    {
-        "id" : "use_for_contigging",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-	    "default_values" : [ "1" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    },
-    {
-        "id" : "ono_set_id",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "1" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "use_for_gap_closing",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-	    "default_values" : [ "1" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    },
-    {
-        "id" : "fp_wiggle_room",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-	    "default_values" : [ "0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "tp_wiggle_room",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "0" ],
-        "field_type" : "text",
-        "text_options" : {
-            "validate_as": "int",
-            "min_integer" : 0
-        }
-    },
-    {
-        "id" : "use_for_splinting",
-        "optional" : false,
-        "advanced" : false,
-        "allow_multiple" : false,
-        "default_values" : [ "1" ],
-        "field_type" : "checkbox",
-        "checkbox_options":{
-            "checked_value": 1,
-            "unchecked_value": 0
-        }
-    }
-    ],
-    "parameter-groups": [
-	    {
-	      "id": "reads",
-	      "parameters": ["read_library_name","prefix","has_innie_artifact",
-                "use_for_contigging","ono_set_id","use_for_gap_closing",
-                "fp_wiggle_room","tp_wiggle_room","use_for_splinting"],
-	      "optional": true,
-	      "allow_multiple": true,
-	      "with_border": true
-	    },
-	    {
-	      "id": "is_diploid",
-	      "parameters": ["bubble_min_depth_cutoff"],
-	      "optional": true,
-	      "allow_multiple": false,
-	      "with_border": true
-	    }
-    ],
     "behavior": {
         "service-mapping": {
-            "url": "",
-            "name": "hipmer",
-            "method": "run_hipmer_hpc",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
                 },
                 {
-	                "input_parameter": "output_contigset_name",
-      	            "target_property": "output_contigset_name"
+                    "input_parameter": "output_contigset_name",
+                    "target_property": "output_contigset_name"
                 },
                 {
-        		    "input_parameter": "mer_size",
-              	    "target_property": "mer_size"
+                    "input_parameter": "mer_sizes",
+                    "target_property": "mer_sizes"
                 },
                 {
-        		    "input_parameter": "min_depth_cutoff",
-              	    "target_property": "min_depth_cutoff"
+                    "input_parameter": "min_depth_cutoff",
+                    "target_property": "min_depth_cutoff"
                 },
                 {
-        		    "input_parameter": "is_diploid",
-              	    "target_property": "is_diploid"
+                    "input_parameter": "is_diploid",
+                    "target_property": "is_diploid"
                 },
                 {
-        		    "input_parameter": "bubble_min_depth_cutoff",
-              	    "target_property": "bubble_min_depth_cutoff"
+                    "input_parameter": "bubble_min_depth_cutoff",
+                    "target_property": "bubble_min_depth_cutoff"
                 },
                 {
-        		    "input_parameter": "dynamic_min_depth",
-              	    "target_property": "dynamic_min_depth"
+                    "input_parameter": "dynamic_min_depth",
+                    "target_property": "dynamic_min_depth"
                 },
                 {
-        		    "input_parameter": "gap_close_rpt_depth_ratio",
-              	    "target_property": "gap_close_rpt_depth_ratio"
+                    "input_parameter": "gap_close_rpt_depth_ratio",
+                    "target_property": "gap_close_rpt_depth_ratio"
                 },
                 {
-        		    "input_parameter": "assm_scaff_len_cutoff",
-              	    "target_property": "assm_scaff_len_cutoff"
+                    "input_parameter": "assm_scaff_len_cutoff",
+                    "target_property": "assm_scaff_len_cutoff"
                 },
                 {
-        		    "input_parameter": "reads",
-              	    "target_property": "reads"
+                    "input_parameter": "reads",
+                    "target_property": "reads"
+                },
+                {
+                    "input_parameter": "is_metagenome",
+                    "target_property": "is_metagenome"
+                },
+                {
+                    "input_parameter": "alpha",
+                    "target_property": "alpha"
+                },
+                {
+                    "input_parameter": "beta",
+                    "target_property": "beta"
+                },
+                {
+                    "input_parameter": "tau",
+                    "target_property": "tau"
                 }
             ],
+            "method": "run_hipmer_hpc",
+            "name": "hipmer",
             "output_mapping": [
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
                 },
                 {
-                    "service_method_output_path": [0, "report_name"],
+                    "service_method_output_path": [
+                        0,
+                        "report_name"
+                    ],
                     "target_property": "report_name"
                 },
                 {
-                    "service_method_output_path": [0, "report_ref"],
+                    "service_method_output_path": [
+                        0,
+                        "report_ref"
+                    ],
                     "target_property": "report_ref"
                 },
                 {
-        		    "constant_value": "16",
-        		    "target_property": "report_window_line_height"
+                    "constant_value": "16",
+                    "target_property": "report_window_line_height"
                 }
-            ]
+            ],
+            "url": ""
         }
     },
-    "job_id_output_field": "docker"
+    "categories": [
+        "active",
+        "assembly"
+    ],
+    "contact": "help@kbase.us",
+    "job_id_output_field": "docker",
+    "parameter-groups": [
+        {
+            "allow_multiple": true,
+            "id": "reads",
+            "optional": true,
+            "parameters": [
+                "read_library_name",
+                "prefix",
+                "has_innie_artifact",
+                "use_for_contigging",
+                "ono_set_id",
+                "use_for_gap_closing",
+                "fp_wiggle_room",
+                "tp_wiggle_room",
+                "use_for_splinting"
+            ],
+            "with_border": true
+        },
+        {
+            "allow_multiple": false,
+            "id": "is_diploid",
+            "optional": true,
+            "parameters": [
+                "bubble_min_depth_cutoff"
+            ],
+            "with_border": true
+        },
+        {
+            "allow_multiple": false,
+            "id": "is_metagenome",
+            "optional": true,
+            "parameters": [
+                "alpha",
+                "beta",
+                "tau"
+            ],
+            "with_border": true
+        }
+    ],
+    "parameters": [
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "hipmer.contigs"
+            ],
+            "field_type": "text",
+            "id": "output_contigset_name",
+            "optional": false,
+            "text_options": {
+                "is_output_name": true,
+                "valid_ws_types": [
+                    "KBaseGenomes.ContigSet"
+                ]
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "21"
+            ],
+            "field_type": "text",
+            "id": "mer_sizes",
+            "optional": false,
+            "text_options": {
+                "validate_as": "text"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "7"
+            ],
+            "field_type": "text",
+            "id": "min_depth_cutoff",
+            "optional": false,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                ""
+            ],
+            "field_type": "text",
+            "id": "bubble_min_depth_cutoff",
+            "optional": true,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "1.0"
+            ],
+            "field_type": "text",
+            "id": "dynamic_min_depth",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "0.9"
+            ],
+            "field_type": "text",
+            "id": "error_rate",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "2.0"
+            ],
+            "field_type": "text",
+            "id": "gap_close_rpt_depth_ratio",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "1000"
+            ],
+            "field_type": "text",
+            "id": "assm_scaff_len_cutoff",
+            "optional": false,
+            "text_options": {
+                "min_integer": 1,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "0.1"
+            ],
+            "field_type": "text",
+            "id": "alpha",
+            "optional": true,
+            "text_options": {
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "0.2"
+            ],
+            "field_type": "text",
+            "id": "beta",
+            "optional": true,
+            "text_options": {
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "2.0"
+            ],
+            "field_type": "text",
+            "id": "tau",
+            "optional": true,
+            "text_options": {
+                "validate_as": "float"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                ""
+            ],
+            "field_type": "text",
+            "id": "read_library_name",
+            "optional": false,
+            "text_options": {
+                "valid_ws_types": [
+                    "KBaseAssembly.PairedEndLibrary",
+                    "KBaseFile.PairedEndLibrary"
+                ]
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                ""
+            ],
+            "field_type": "text",
+            "id": "prefix",
+            "optional": false,
+            "text_options": {
+                "validate_as": "text"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "0"
+            ],
+            "field_type": "checkbox",
+            "id": "has_innie_artifact",
+            "optional": false
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "1"
+            ],
+            "field_type": "checkbox",
+            "id": "use_for_contigging",
+            "optional": false
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "1"
+            ],
+            "field_type": "text",
+            "id": "ono_set_id",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "1"
+            ],
+            "field_type": "checkbox",
+            "id": "use_for_gap_closing",
+            "optional": false
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "0"
+            ],
+            "field_type": "text",
+            "id": "fp_wiggle_room",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "0"
+            ],
+            "field_type": "text",
+            "id": "tp_wiggle_room",
+            "optional": false,
+            "text_options": {
+                "min_integer": 0,
+                "validate_as": "int"
+            }
+        },
+        {
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "1"
+            ],
+            "field_type": "checkbox",
+            "id": "use_for_splinting",
+            "optional": false
+        }
+    ],
+    "ver": "0.9.9",
+    "visible": true,
+    "widgets": {
+        "input": null,
+        "output": "null"
+    }
 }
