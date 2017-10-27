@@ -35,9 +35,10 @@ parameters :
         short-hint : Enter a name for the assembled contigs data object
     mer_sizes:
         ui-name : k-mer sizes
-        short-hint : k-mer sizes to use in the assembly process.  This is a
-        comma seperated list of integers to use as mer sizes.  For metagenomes
-        you may want to use 21,31,51,77,95.
+        short-hint : |
+            k-mer sizes to use in the assembly process.  This is a
+            comma seperated list of integers to use as mer sizes.  For
+            metagenomes you may want to use 21,31,51,77,95.
 
     min_depth_cutoff:
         ui-name : Min Depth Cutoff

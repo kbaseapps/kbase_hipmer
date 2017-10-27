@@ -46,6 +46,10 @@
                     "target_property": "reads"
                 },
                 {
+                    "input_parameter": "error_rate",
+                    "target_property": "error_rate"
+                },
+                {
                     "input_parameter": "is_metagenome",
                     "target_property": "is_metagenome"
                 },
