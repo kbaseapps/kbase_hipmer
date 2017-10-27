@@ -160,6 +160,7 @@ class hipmer:
                     rfile = files_obj['rev'].replace(wd, '.')
                     filelist.append(rfile)
                 reads_obj = params['readsfiles'][r['ref']]
+                print files_obj
                 if files_obj['otype'] == 'paired':
                     r['ins_avg'] = int(reads_obj['insert_size_mean'])
                     r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
@@ -204,7 +205,7 @@ class hipmer:
                 params['diploid'] = 0
 
             if params['is_metagenome'] is not None:
-                for p in ['alpha', 'beta', 'tau']:
+                for p in ['alpha', 'beta', 'tau', 'error_rate']:
                     paramf[p] = '%s %%f\n' % (p)
                     params[p] = params['is_metagenome'][p]
                 params['metagenome'] = 1
