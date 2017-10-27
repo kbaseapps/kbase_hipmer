@@ -218,8 +218,15 @@ class hipmerTest(unittest.TestCase):
         configf = os.path.join(self.scratch, 'hipmer.config')
         if os.path.exists(configf):
             os.remove(configf)
-        readobj = {
-            'files': {'fwd': 'fwd.q'},
+        readobj1 = {
+            'files': {'fwd': 'unmerged.q', 'otype': 'paired'},
+            'insert_size_mean': '1000',
+            'insert_size_std_dev': '100',
+            'read_length_mean': '100',
+            'total_bases': 10000
+        }
+        readobj2 = {
+            'files': {'fwd': 'merged.q', 'otype': 'single'},
             'insert_size_mean': '1000',
             'insert_size_std_dev': '100',
             'read_length_mean': '100',
@@ -235,7 +242,7 @@ class hipmerTest(unittest.TestCase):
             'is_metagenome': {'alpha': 0.1, 'beta': 0.2, 'tau': 2.0},
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
-            'readsfiles': {'1/2/3': readobj},
+            'readsfiles': {'1/2/3': readobj1, '1/2/4': readobj2},
             'reads': [{
                 'use_for_splinting': 1,
                 'use_for_gap_closing': 1,
@@ -247,6 +254,17 @@ class hipmerTest(unittest.TestCase):
                 'fp_wiggle_room': 0,
                 'read_library_name': 'bogus',
                 'ref': '1/2/3'
+            },{
+                'use_for_splinting': 1,
+                'use_for_gap_closing': 1,
+                'has_innie_artifact': 0,
+                'use_for_contigging': 1,
+                'prefix': 'small',
+                'ono_set_id': 1,
+                'tp_wiggle_room': 0,
+                'fp_wiggle_room': 0,
+                'read_library_name': 'bogus2',
+                'ref': '1/2/4'
             }]
         }
 
@@ -258,6 +276,7 @@ class hipmerTest(unittest.TestCase):
         # Read in config file and parse contents
         with open(configf) as conf:
             for lines in conf:
+                print lines.rstrip()
                 templist = lines.rstrip().split(' ')
                 if len(templist) == 2:
                     configs[templist[0]] = templist[1]

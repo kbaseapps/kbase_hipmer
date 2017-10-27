@@ -97,6 +97,8 @@ class hipmer:
         for ref in refs:
             p = {'workspace_obj_ref': ref}
             info = rapi.get_reads_info_all_formatted(p)
+            if info['Type'] != 'Paired End':
+                continue
             if info['Insert_Size_Mean'] == 'Not Specified' or \
                info['Insert_Size_Std_Dev'] == 'Not Specified':
                 sys.stderr.write(err_msg % (info['Name']))
@@ -158,15 +160,20 @@ class hipmer:
                     rfile = files_obj['rev'].replace(wd, '.')
                     filelist.append(rfile)
                 reads_obj = params['readsfiles'][r['ref']]
-                r['ins_avg'] = int(reads_obj['insert_size_mean'])
-                r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
+                if files_obj['otype'] == 'paired':
+                    r['ins_avg'] = int(reads_obj['insert_size_mean'])
+                    r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
+                    count = len(filelist)
+                else:
+                    r['ins_avg'] = 0
+                    r['ins_dev'] = 0
+                    count = 0
                 r['avg_read_len'] = int(reads_obj['read_length_mean'])
                 r['is_rev_comped'] = 0
                 if 'read_orientation_outward' in reads_obj and \
                         reads_obj['read_orientation_outward'][0].lower() == 't':
                     r['is_rev_comped'] = 1
 
-                count = len(filelist)
                 files = ','.join(filelist)
                 # lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
                 #    101 0 0      1 1 1  0 0 2 1
