@@ -171,6 +171,7 @@ class hipmer:
                 r['avg_read_len'] = int(reads_obj['read_length_mean'])
                 r['is_rev_comped'] = 0
                 if 'read_orientation_outward' in reads_obj and \
+                        reads_obj['read_orientation_outward'] is not None and \
                         reads_obj['read_orientation_outward'][0].lower() == 't':
                     r['is_rev_comped'] = 1
 
