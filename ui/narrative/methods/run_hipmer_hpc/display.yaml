@@ -27,6 +27,9 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
+    type :
+        ui-name : Type
+        short-hint : Type (uniploid, diploid, metagenome)
     read_library_name :
         ui-name : Read Library
         short-hint : Read library (only PairedEnd Libs supported now)
@@ -185,16 +188,6 @@ parameters :
             libraries for splinting.
 
 parameter-groups :
-    is_diploid:
-        ui-name : Is the genome diploid (Enable=true)
-        short-hint : |
-            Is this a diploid genome?  If so, HipMer will attempt to
-            identify and merge haplotype variants (bubbles in the k-mer graph)
-            See also 'bubble_min_depth_cutoff'
-    is_metagenome:
-        ui-name : Is the data set for a metagenome (Enable=true)
-        short-hint : |
-            Is this a metagenome?'
     reads :
         ui-name : Reads
         short-hint : |

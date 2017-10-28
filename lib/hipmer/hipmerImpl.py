@@ -66,23 +66,22 @@ class hipmer:
             raise ValueError('mer_sizes is a required parameter')
         # Remove white spaces
         mer_sizes = params['mer_sizes'].replace(' ', '').replace('\t', '')
+        mer_sizes_int = []
+        mer_max = 0
         for mer in mer_sizes.split(','):
             try:
                 meri = int(mer)
+                mer_sizes_int.append(meri)
+                if meri > mer_max:
+                    mer_max = meri
             except:
                 raise ValueError('mer sizes should be an integer')
             if meri < 10 and mer > 100:
                 raise ValueError('mer sizes should be between 10 and 100')
 
-        diploid = False
-        metagenome = False
-        if 'is_diploid' in params and params['is_diploid'] is not None:
-            diploid = True
-        if 'is_metagenome' in params and params['is_metagenome'] is not None:
-            metagenome = True
-
-        if diploid and metagenome:
-            raise ValueError('Cannot set both diploid and metagenome mode')
+        params['mer_sizes_int'] = mer_sizes_int
+        params['mer_max'] = mer_max
+        params['la_mer_max'] = mer_max + 2
         return True
 
     def check_reads(self, ctx, refs, console):
@@ -161,14 +160,14 @@ class hipmer:
                     filelist.append(rfile)
                 reads_obj = params['readsfiles'][r['ref']]
                 print files_obj
-                if files_obj['otype'] == 'paired':
-                    r['ins_avg'] = int(reads_obj['insert_size_mean'])
-                    r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
-                    count = len(filelist)
-                else:
+                if files_obj['otype'] == 'single':
                     r['ins_avg'] = 0
                     r['ins_dev'] = 0
                     count = 0
+                else:
+                    r['ins_avg'] = int(reads_obj['insert_size_mean'])
+                    r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
+                    count = len(filelist)
                 r['avg_read_len'] = int(reads_obj['read_length_mean'])
                 r['is_rev_comped'] = 0
                 if 'read_orientation_outward' in reads_obj and \
@@ -181,7 +180,7 @@ class hipmer:
                 #    101 0 0      1 1 1  0 0 2 1
                 f.write(fmt % (
                     files, r['prefix'], r['ins_avg'], r['ins_dev'],
-                    r['avg_read_len'], r['has_innie_artifact'],
+                    0, r['has_innie_artifact'],
                     r['is_rev_comped'], r['use_for_contigging'],
                     r['ono_set_id'], r['use_for_gap_closing'],
                     r['fp_wiggle_room'], r['tp_wiggle_room'],
@@ -189,27 +188,29 @@ class hipmer:
                 total_bases += reads_obj['total_bases']
             f.write('\n')
             paramf = {
-                'diploid': 'is_diploid %d\n',
-                'metagenome': 'is_metagenome %d\n',
                 'dynamic_min_depth': 'dynamic_min_depth %f\n',
                 'mer_sizes': 'mer_sizes %s\n',
                 'min_depth_cutoff': 'min_depth_cutoff %d\n',
                 'gap_close_rpt_depth_ratio': 'gap_close_rpt_depth_ratio %f\n',
-                'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n'
+                'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n',
+                'mer_max': 'scaff_mer_size %d\n',
+                'la_mer_max': 'la_mer_size_max %d\n'
             }
-            if params['is_diploid'] is not None:
-                paramf['bubble'] = 'bubble_min_depth_cutoff %d'
-                params['bubble'] = params['is_diploid']['bubble_min_depth_cutoff']
+            if params['type'] == 'diploid':
+                paramf['bubble'] = 'bubble_min_depth_cutoff %d\n'
+                params['bubble'] = params['bubble_min_depth_cutoff']
+                paramf['diploid'] = 'is_diploid %d\n'
                 params['diploid'] = 1
-            else:
-                params['diploid'] = 0
-
-            if params['is_metagenome'] is not None:
+            elif params['type'] == 'metagenome':
                 for p in ['alpha', 'beta', 'tau', 'error_rate']:
                     paramf[p] = '%s %%f\n' % (p)
-                    params[p] = params['is_metagenome'][p]
+                    params[p] = params[p]
+                paramf['bubble'] = 'bubble_min_depth_cutoff %d\n'
+                params['bubble'] = params['bubble_min_depth_cutoff']
+                paramf['metagenome'] = 'is_metagenome %d\n'
                 params['metagenome'] = 1
             else:
+                params['diploid'] = 0
                 params['metagenome'] = 0
 
             for param in paramf:

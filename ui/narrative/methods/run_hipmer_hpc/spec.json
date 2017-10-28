@@ -10,6 +10,10 @@
                     "target_property": "workspace_name"
                 },
                 {
+                    "input_parameter": "type",
+                    "target_property": "type"
+                },
+                {
                     "input_parameter": "output_contigset_name",
                     "target_property": "output_contigset_name"
                 },
@@ -20,10 +24,6 @@
                 {
                     "input_parameter": "min_depth_cutoff",
                     "target_property": "min_depth_cutoff"
-                },
-                {
-                    "input_parameter": "is_diploid",
-                    "target_property": "is_diploid"
                 },
                 {
                     "input_parameter": "bubble_min_depth_cutoff",
@@ -48,10 +48,6 @@
                 {
                     "input_parameter": "error_rate",
                     "target_property": "error_rate"
-                },
-                {
-                    "input_parameter": "is_metagenome",
-                    "target_property": "is_metagenome"
                 },
                 {
                     "input_parameter": "alpha",
@@ -118,29 +114,33 @@
                 "use_for_splinting"
             ],
             "with_border": true
-        },
-        {
-            "allow_multiple": false,
-            "id": "is_diploid",
-            "optional": true,
-            "parameters": [
-                "bubble_min_depth_cutoff"
-            ],
-            "with_border": true
-        },
-        {
-            "allow_multiple": false,
-            "id": "is_metagenome",
-            "optional": true,
-            "parameters": [
-                "alpha",
-                "beta",
-                "tau"
-            ],
-            "with_border": true
         }
     ],
     "parameters": [
+      {
+            "id" : "type",
+            "optional" : true,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "" ],
+            "field_type" : "dropdown",
+            "dropdown_options":{
+              "options": [
+                {
+                  "value": "uniploid",
+                  "display": "Uniploid"
+                },
+                {
+                  "value": "diploid",
+                  "display": "diploid"
+                },
+                {
+                  "value": "metagenome",
+                  "display": "metagenome"
+                }
+              ]
+            }
+        },
         {
             "advanced": false,
             "allow_multiple": false,
@@ -161,7 +161,7 @@
             "advanced": true,
             "allow_multiple": false,
             "default_values": [
-                "21"
+                "21,41,63,95,127"
             ],
             "field_type": "text",
             "id": "mer_sizes",
@@ -185,10 +185,10 @@
             }
         },
         {
-            "advanced": false,
+            "advanced": true,
             "allow_multiple": false,
             "default_values": [
-                ""
+                "1"
             ],
             "field_type": "text",
             "id": "bubble_min_depth_cutoff",

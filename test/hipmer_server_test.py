@@ -182,8 +182,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': 'bogus',
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': None,
-            'is_metagenome': None,
+            'type': 'uniploid',
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -204,12 +203,6 @@ class hipmerTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = self.getImpl()._validate_inputs(params)
         params['mer_sizes'] = '1,11,100'
-        with self.assertRaises(ValueError):
-            result = self.getImpl()._validate_inputs(params)
-        # Simulate diploid and metagenome both being set
-        params['mer_sizes'] = '21'
-        params['is_diploid'] = {'bubble_min_depth_cutoff': 1}
-        params['is_metagenome'] = {'alpha': 0.1, 'beta': 0.2, 'tau': 2.0}
         with self.assertRaises(ValueError):
             result = self.getImpl()._validate_inputs(params)
 
@@ -238,8 +231,12 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': 'bogus',
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': None,
-            'is_metagenome': {'alpha': 0.1, 'beta': 0.2, 'tau': 2.0},
+            'type': 'metagenome',
+            'alpha': 0.1,
+            'beta': 0.2,
+            'tau': 2.0,
+            'bubble_min_depth_cutoff': 1,
+            'error_rate': 0.9,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'readsfiles': {'1/2/3': readobj1, '1/2/4': readobj2},
@@ -254,7 +251,7 @@ class hipmerTest(unittest.TestCase):
                 'fp_wiggle_room': 0,
                 'read_library_name': 'bogus',
                 'ref': '1/2/3'
-            },{
+            }, {
                 'use_for_splinting': 1,
                 'use_for_gap_closing': 1,
                 'has_innie_artifact': 0,
@@ -273,16 +270,28 @@ class hipmerTest(unittest.TestCase):
         self.assertTrue(result)
         self.assertTrue(os.path.exists(configf))
         configs = dict()
+        libs = dict()
         # Read in config file and parse contents
         with open(configf) as conf:
-            for lines in conf:
-                print lines.rstrip()
-                templist = lines.rstrip().split(' ')
-                if len(templist) == 2:
-                    configs[templist[0]] = templist[1]
+            for line in conf:
+                line = line.rstrip().replace('  ', ' ').replace('  ', ' ')
+                print line
+                tl = line.split(' ')
+                if len(tl) == 2:
+                    configs[tl[0]] = tl[1]
+                if len(tl) > 2:
+                    lib = tl[1]
+                    libs[lib] = {'ins': tl[3], 'ct': tl[13]}
+        #lib_seq ./517bf2c4-2e3d-4341-a196-12d0a5f20bbf.inter.fastq small 250
+        #    10   100 0 1   1 1 1  0 0 1 1
+
         # Confirm metagenome options are set as expected
-        self.assertIn('alpha', configs)
+        for k in ['alpha', 'beta', 'tau', 'error_rate']:
+            self.assertIn(k, configs)
         self.assertEquals(configs['is_metagenome'], '1')
+        self.assertEqual(libs['unmerged.q']['ins'], '1000')
+        self.assertEqual(libs['unmerged.q']['ct'], '1')
+        self.assertEqual(libs['merged.q']['ct'], '0')
 
     def test_post(self):
         pe_lib_info = self.getPairedEndLibInfo()
@@ -295,8 +304,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': None,
-            'is_metagenome': None,
+            'type': 'uniploid',
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
@@ -342,8 +350,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
-            'is_diploid': None,
-            'is_metagenome': None,
+            'type': 'uniploid',
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
             'reads': [{
