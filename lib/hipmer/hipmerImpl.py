@@ -326,6 +326,20 @@ class hipmer:
 
         output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_name = params['output_contigset_name']
+        if not os.path.exists(output_contigs):
+            print "It looks like HipMER failed for some reason."
+            print "Show errors in log file"
+            logfile = ''
+            for fn in os.listdir():
+                if fn.startswith('slurm-'):
+                    logfile = fn
+            if logfile != '':
+                with open(logfile, 'r') as f:
+                    for line in f:
+                        if line.lower().find('error') >= 0:
+                            print line
+            raise RuntimeError("Error in HipMER execution")
+
         wsname = params['workspace_name']
         #output_data_ref = self.save_assembly(wsname,
         #                                     output_contigs,
