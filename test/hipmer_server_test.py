@@ -239,6 +239,9 @@ class hipmerTest(unittest.TestCase):
             'error_rate': 0.9,
             'dynamic_min_depth': 1,
             'gap_close_rpt_depth_ratio': 2,
+            'mer_max': 250,
+            'la_mer_max': 252,
+            'mer_sizes_int': [250],
             'readsfiles': {'1/2/3': readobj1, '1/2/4': readobj2},
             'reads': [{
                 'use_for_splinting': 1,

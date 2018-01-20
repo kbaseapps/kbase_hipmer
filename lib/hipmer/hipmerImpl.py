@@ -105,6 +105,40 @@ class hipmer:
 
         return True
 
+    def fix_pe_fq(self, fn):
+        inf = open(fn, 'r')
+        line = inf.readline()
+        fields = line.split()
+        if fields[0].find('.') < 0 and fields[0].find('/') > 0:
+            return
+        print "Need to convert fastq"
+        os.rename(fn, fn + ".orig")
+        out = open(fn, 'w')
+        inf.seek(0)
+        ln = 1
+        pair = 1
+        for line in inf:
+            if ln == 1:
+                name = line.split(' ')[0].replace('.', ':')
+                line = '%s/%s\n' % (name, pair)
+                pair += 1
+                if pair == 3:
+                    pair = 1
+            elif ln == 3:
+                line = "+\n"
+            out.write(line)
+            ln += 1
+            if ln == 5:
+                ln = 1
+        inf.close()
+        out.close()
+
+    def fixup_reads(self, params):
+        for r in params['reads']:
+            files_obj = params['readsfiles'][r['ref']]['files']
+            if 'rev' not in files_obj or files_obj['rev'] is None:
+                self.fix_pe_fq(files_obj['fwd'])
+
     def get_reads_RU(self, ctx, refs, console):
         readcli = ReadsUtils(self.callbackURL, token=ctx['token'],
                              service_ver='dev')
@@ -313,6 +347,7 @@ class hipmer:
                 raise ValueError('The reads failed validation\n')
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
+            self.fixup_reads(params)
 
             # Generate submit script
             ts = self.generate_config(params)
@@ -330,7 +365,7 @@ class hipmer:
             print "It looks like HipMER failed for some reason."
             print "Show errors in log file"
             logfile = ''
-            for fn in os.listdir():
+            for fn in os.listdir('.'):
                 if fn.startswith('slurm-'):
                     logfile = fn
             if logfile != '':
