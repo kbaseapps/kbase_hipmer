@@ -257,7 +257,7 @@ class hipmer:
         """
         Generate SLURM submit script
         """
-        bpn = 1000000000
+        bpn = 500000000
         nodes = int((tsize + bpn - 1) / bpn)
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
