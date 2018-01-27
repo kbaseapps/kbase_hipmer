@@ -266,10 +266,10 @@ class hipmer:
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
-            f.write('#SBATCH --partition=debug\n')
+            f.write('#SBATCH -q regular\n')
             f.write('#SBATCH --nodes=%d\n' % nodes)
             f.write('#SBATCH --ntasks-per-node=32\n')
-            f.write('#SBATCH --time=00:30:00\n')
+            f.write('#SBATCH --time=02:00:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
@@ -347,7 +347,8 @@ class hipmer:
                 raise ValueError('The reads failed validation\n')
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
-            self.fixup_reads(params)
+            # Disable for now
+            # self.fixup_reads(params)
 
             # Generate submit script
             ts = self.generate_config(params)
