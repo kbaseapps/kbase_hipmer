@@ -109,9 +109,13 @@ class hipmer:
         inf = open(fn, 'r')
         line = inf.readline()
         fields = line.split()
-        if fields[0].find('.') < 0 and fields[0].find('/') > 0:
+        rid = fields[0]
+        if rid.startswith('@SRR') and rid.count('.') == 1 \
+           and rid.find('/') < 0:
+            print "Need to convert SRA fastq"
+        else:
+            inf.close()
             return
-        print "Need to convert fastq"
         os.rename(fn, fn + ".orig")
         out = open(fn, 'w')
         inf.seek(0)
@@ -119,7 +123,7 @@ class hipmer:
         pair = 1
         for line in inf:
             if ln == 1:
-                name = line.split(' ')[0].replace('.', ':')
+                name = line.split(' ')[0].replace('.', ':').rstrip()
                 line = '%s/%s\n' % (name, pair)
                 pair += 1
                 if pair == 3:
@@ -347,8 +351,7 @@ class hipmer:
                 raise ValueError('The reads failed validation\n')
 
             params['readsfiles'] = self.get_reads_RU(ctx, refs, console)
-            # Disable for now
-            # self.fixup_reads(params)
+            self.fixup_reads(params)
 
             # Generate submit script
             ts = self.generate_config(params)

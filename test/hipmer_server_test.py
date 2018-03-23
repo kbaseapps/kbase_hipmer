@@ -2,6 +2,7 @@ import unittest
 import os
 import time
 import requests
+import shutil
 
 from os import environ
 from ConfigParser import ConfigParser
@@ -337,6 +338,22 @@ class hipmerTest(unittest.TestCase):
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
         self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
         #self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
+
+    def test_fixup(self):
+        params = {
+            'reads': [{'ref': '1/2/3'}],
+            'readsfiles': {
+                '1/2/3': {'files': {'fwd': '/kb/module/work/t.fq'}}
+            }
+        }
+        shutil.copyfile('/kb/module/test/data/sra.fq', '/kb/module/work/t.fq')
+        self.getImpl().fixup_reads(params)
+        self.assertTrue(os.path.exists('/kb/module/work/t.fq.orig'))
+
+        os.remove('/kb/module/work/t.fq.orig')
+        shutil.copyfile('/kb/module/test/data/nosra.fq', '/kb/module/work/t.fq')
+        self.getImpl().fixup_reads(params)
+        self.assertFalse(os.path.exists('/kb/module/work/t.fq.orig'))
 
     def test_run_hipmer(self):
 
