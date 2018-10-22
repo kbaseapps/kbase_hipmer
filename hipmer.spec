@@ -11,7 +11,7 @@ module hipmer {
         output_contig_set_name - the name of the output contigset
 
         mer_size -
-        is_diploid - is gnome diploid
+        is_diploid - is genome diploid
 
     */
     typedef structure {
