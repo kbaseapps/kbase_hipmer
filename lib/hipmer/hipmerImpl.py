@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #BEGIN_HEADER
 import os
 import sys
@@ -32,15 +33,15 @@ class hipmer:
     A KBase module: hipmer
     '''
 
-    # WARNING FOR GEVENT USERS #######
+    ######## WARNING FOR GEVENT USERS ####### noqa
     # Since asynchronous IO can lead to methods - even the same method -
     # interrupting each other, you must be *very* careful when using global
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
-    #########################################
-    VERSION = "0.0.1"
+    ######################################### noqa
+    VERSION = "0.0.4"
     GIT_URL = "git@github.com:kbaseapps/kbase_hipmer.git"
-    GIT_COMMIT_HASH = "cf9790a0f15a0f8a08a6e1a654af969bd072cb5a"
+    GIT_COMMIT_HASH = "31a2f650af82b4caa11491f224f2c0c05544660f"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -76,7 +77,7 @@ class hipmer:
                     mer_max = meri
             except:
                 raise ValueError('mer sizes should be an integer')
-            if meri < 10 and mer > 100:
+            if meri < 10 or meri > 100:
                 raise ValueError('mer sizes should be between 10 and 100')
 
         params['mer_sizes_int'] = mer_sizes_int
@@ -112,7 +113,7 @@ class hipmer:
         rid = fields[0]
         if rid.startswith('@SRR') and rid.count('.') == 1 \
            and rid.find('/') < 0:
-            print "Need to convert SRA fastq"
+            print("Need to convert SRA fastq")
         else:
             inf.close()
             return
@@ -197,7 +198,7 @@ class hipmer:
                     rfile = files_obj['rev'].replace(wd, '.')
                     filelist.append(rfile)
                 reads_obj = params['readsfiles'][r['ref']]
-                print files_obj
+                print(files_obj)
                 if files_obj['otype'] == 'single':
                     r['ins_avg'] = 0
                     r['ins_dev'] = 0
@@ -302,23 +303,12 @@ class hipmer:
         self.workspaceURL = config['workspace-url']
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
-        print "Callback=%s" % (self.callbackURL)
+        print("Callback=%s" % (self.callbackURL))
         #END_CONSTRUCTOR
-        pass
 
     def run_hipmer_hpc(self, ctx, params):
         """
-        :param params: instance of type "AssemblyParams" (Run assembler
-           workspace_name - the name of the workspace for input/output
-           read_library_name - the name of the PE read library (SE library
-           support in the future) output_contig_set_name - the name of the
-           output contigset extra_params - assembler specific parameters
-           min_contig_length - minimum length of contigs to output, default
-           200 @optional min_contig_len @optional extra_params) -> structure:
-           parameter "workspace_name" of String, parameter
-           "read_library_name" of String, parameter "output_contigset_name"
-           of String, parameter "min_contig_len" of Long, parameter
-           "extra_params" of list of String
+        :param params: instance of unspecified object
         :returns: instance of type "AssemblyOutput" -> structure: parameter
            "report_name" of String, parameter "report_ref" of String
         """
@@ -337,7 +327,7 @@ class hipmer:
 
         if 'POST' not in os.environ:
             # Get the read library
-            print "Running pre stage"
+            print("Running pre stage")
             refs = []
             for read in params['reads']:
                 read_name = read['read_library_name']
@@ -358,7 +348,7 @@ class hipmer:
             self.generate_submit(ts)
             return
 
-        print "Running POST stage"
+        print("Running POST stage")
 
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
@@ -366,8 +356,8 @@ class hipmer:
         output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_name = params['output_contigset_name']
         if not os.path.exists(output_contigs):
-            print "It looks like HipMER failed for some reason."
-            print "Show errors in log file"
+            print("It looks like HipMER failed for some reason.")
+            print("Show errors in log file")
             logfile = ''
             for fn in os.listdir('.'):
                 if fn.startswith('slurm-'):
@@ -376,7 +366,7 @@ class hipmer:
                 with open(logfile, 'r') as f:
                     for line in f:
                         if line.lower().find('error') >= 0:
-                            print line
+                            print(line)
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
@@ -421,7 +411,7 @@ class hipmer:
             # not really any way to test this, all inputs have been checked
             # earlier and should be ok
             print('Logging exception from running QUAST')
-            print(str(qe))
+            print((str(qe)))
             # TODO delete shock node
             raise
 
@@ -444,7 +434,7 @@ class hipmer:
             # not really any way to test this, all inputs have been checked earlier and should be
             # ok
             print('Logging exception from creating report object')
-            print(str(re))
+            print((str(re)))
             # TODO delete shock node
             raise
 

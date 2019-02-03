@@ -5,13 +5,13 @@ import requests
 import shutil
 
 from os import environ
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from pprint import pprint
 from requests_toolbelt import MultipartEncoder
 from subprocess import call as Call
 
-from biokbase.workspace.client import Workspace as workspaceService
-from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+from installed_clients.AbstractHandleClient import AbstractHandle as HandleService
 from hipmer.hipmerImpl import hipmer
 from hipmer.hipmerServer import MethodContext
 
@@ -43,13 +43,13 @@ class hipmerTest(unittest.TestCase):
         cls.shockURL = cls.cfg['shock-url']
         cls.handleURL = cls.cfg['handle-service-url']
         cls.scratch = cls.cfg['scratch']
-        print "shock %s" % (cls.shockURL)
+        print("shock %s" % (cls.shockURL))
 
     @classmethod
     def tearDownClass(cls):
         if hasattr(cls, 'wsName'):
             cls.ws.delete_workspace({'workspace': cls.wsName})
-            print cls.wsName
+            print(cls.wsName)
             print('Test workspace was deleted')
 
     def getWsClient(self):
@@ -61,7 +61,7 @@ class hipmerTest(unittest.TestCase):
         suffix = int(time.time() * 1000)
         wsName = "test_hipmer_" + str(suffix)
         ret = self.getWsClient().create_workspace({'workspace': wsName})
-        print ret
+        print(ret)
         self.__class__.wsName = wsName
         return wsName
 
@@ -171,9 +171,9 @@ class hipmerTest(unittest.TestCase):
         outdir = self.scratch + '/results/'
         if os.path.exists(outdir) is False:
             os.makedirs(outdir)
-        print 'dest: %s/%s' % (outdir, fname)
+        print('dest: %s/%s' % (outdir, fname))
         ret = Call(['cp', 'data/output.contig.fa', '%s/%s' % (outdir, fname)])
-        print ret
+        print(ret)
 
     def test_0validate(self):
         # run hipmer
@@ -279,7 +279,7 @@ class hipmerTest(unittest.TestCase):
         with open(configf) as conf:
             for line in conf:
                 line = line.rstrip().replace('  ', ' ').replace('  ', ' ')
-                print line
+                print(line)
                 tl = line.split(' ')
                 if len(tl) == 2:
                     configs[tl[0]] = tl[1]
@@ -292,7 +292,7 @@ class hipmerTest(unittest.TestCase):
         # Confirm metagenome options are set as expected
         for k in ['alpha', 'beta', 'tau', 'error_rate']:
             self.assertIn(k, configs)
-        self.assertEquals(configs['is_metagenome'], '1')
+        self.assertEqual(configs['is_metagenome'], '1')
         self.assertEqual(libs['unmerged.q']['ins'], '1000')
         self.assertEqual(libs['unmerged.q']['ct'], '1')
         self.assertEqual(libs['merged.q']['ct'], '0')

@@ -17,16 +17,13 @@ default: compile
 
 all: compile build build-startup-script build-executable-script build-test-script
 
+# The stock sdk doesn't generate a good server
+
 compile:
 	kb-sdk compile $(SPEC_FILE) \
 		--out $(LIB_DIR) \
-		--plclname $(SERVICE_CAPS)::$(SERVICE_CAPS)Client \
-		--jsclname javascript/Client \
-		--pyclname $(SERVICE_CAPS).$(SERVICE_CAPS)Client \
-		--javasrc src \
-		--java \
-		--pysrvname $(SERVICE_CAPS).$(SERVICE_CAPS)Server \
-		--pyimplname $(SERVICE_CAPS).$(SERVICE_CAPS)Impl;
+		--pysrvname $(SERVICE_CAPS).$(SERVICE_CAPS)Server  \
+		--pyimplname $(SERVICE_CAPS).$(SERVICE_CAPS)Impl
 
 build:
 	chmod +x $(SCRIPTS_DIR)/entrypoint.sh
