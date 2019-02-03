@@ -258,7 +258,7 @@ class hipmer:
 
         return total_bases
 
-    def generate_submit(self, tsize):
+    def generate_submit(self, tsize, debug=False):
         """
         Generate SLURM submit script
         """
@@ -271,10 +271,15 @@ class hipmer:
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
-            f.write('#SBATCH -q regular\n')
+            if debug:
+                f.write('#SBATCH -q debug\n')
+                f.write('#SBATCH --time=0:30:00\n')
+            else:
+                f.write('#SBATCH -q regular\n')
+                f.write('#SBATCH --time=02:00:00\n')
+
             f.write('#SBATCH --nodes=%d\n' % nodes)
             f.write('#SBATCH --ntasks-per-node=32\n')
-            f.write('#SBATCH --time=02:00:00\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
@@ -345,7 +350,10 @@ class hipmer:
 
             # Generate submit script
             ts = self.generate_config(params)
-            self.generate_submit(ts)
+            debug = False
+            if 'usedebug' in params and params['usedebug'] > 0:
+                debug = True
+            self.generate_submit(ts, debug=debug)
             return
 
         print("Running POST stage")

@@ -30,6 +30,10 @@ parameters :
     type :
         ui-name : Type
         short-hint : Type (uniploid, diploid, metagenome)
+    usedebug :
+        ui-name : Debug
+        short-hint : Use Debug queue (not recommended)
+
     read_library_name :
         ui-name : Read Library
         short-hint : Read library (only PairedEnd Libs supported now)
