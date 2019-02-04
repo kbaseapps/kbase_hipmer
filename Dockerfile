@@ -1,5 +1,6 @@
-FROM kbase/kbase:sdkbase.latest
-MAINTAINER KBase Developer
+FROM kbase/sdkbase2:python
+
+LABEL maintainer="scanon@lbl.gov"
 # -----------------------------------------
 
 # Insert apt-get instructions here to install
