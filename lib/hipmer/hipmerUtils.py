@@ -256,6 +256,7 @@ class hipmerUtils:
             f.write('#SBATCH --nodes=%d\n' % nodes)
             f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --job-name=HipMer\n')
+            f.write('#SBATCH -o slurm.out\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('N=${N:=${SLURM_NTASKS}}\n')
             f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=$(pwd)/hipmer-v0.9.6}\n')
@@ -327,17 +328,12 @@ class hipmerUtils:
         output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_name = params['output_contigset_name']
         if not os.path.exists(output_contigs):
-            print("It looks like HipMER failed for some reason.")
-            print("Show errors in log file")
-            logfile = ''
-            for fn in os.listdir('.'):
-                if fn.startswith('slurm-'):
-                    logfile = fn
-            if logfile != '':
-                with open(logfile, 'r') as f:
-                    for line in f:
-                        if line.lower().find('error') >= 0:
-                            print(line)
+            self.log(console, "It looks like HipMER failed for some reason.")
+            self.log(console, "Show errors in log file")
+            with open('slurm.out', 'r') as f:
+                for line in f:
+                    if line.lower().find('error') >= 0:
+                        self.log(console, line)
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
