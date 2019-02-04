@@ -52,24 +52,15 @@ class hipmerTest(unittest.TestCase):
             print(cls.wsName)
             print('Test workspace was deleted')
 
-    def getWsClient(self):
-        return self.__class__.ws
-
     def getWsName(self):
         if hasattr(self.__class__, 'wsName'):
             return self.__class__.wsName
         suffix = int(time.time() * 1000)
         wsName = "test_hipmer_" + str(suffix)
-        ret = self.getWsClient().create_workspace({'workspace': wsName})
+        ret = self.ws.create_workspace({'workspace': wsName})
         print(ret)
         self.__class__.wsName = wsName
         return wsName
-
-    def getImpl(self):
-        return self.__class__.serviceImpl
-
-    def getContext(self):
-        return self.__class__.ctx
 
     # call this method to get the WS object info of a Paired End Library (will
     # upload the example data if this is the first time the method is called during tests)
@@ -175,12 +166,15 @@ class hipmerTest(unittest.TestCase):
         ret = Call(['cp', 'data/output.contig.fa', '%s/%s' % (outdir, fname)])
         print(ret)
 
-    def test_0validate(self):
+
+    def test_post(self):
+
         # run hipmer
+        wsn = self.getWsName()
         params = {
             'assm_scaff_len_cutoff': 1000,
-            'mer_sizes': "21",
-            'workspace_name': 'bogus',
+            'mer_sizes': '21',
+            'workspace_name': wsn,
             'output_contigset_name': 'hipmer.contigs',
             'min_depth_cutoff': 7,
             'type': 'uniploid',
@@ -198,162 +192,21 @@ class hipmerTest(unittest.TestCase):
                 'read_library_name': 'bogus'
             }]
         }
-        result = self.getImpl()._validate_inputs(params)
-        self.assertTrue(result)
-        params['mer_sizes'] = 'asdf,asdfa,asdf'
-        with self.assertRaises(ValueError):
-            result = self.getImpl()._validate_inputs(params)
-        params['mer_sizes'] = '1,11,100'
-        with self.assertRaises(ValueError):
-            result = self.getImpl()._validate_inputs(params)
-
-    def test_0config(self):
-        # run hipmer
-        configf = os.path.join(self.scratch, 'hipmer.config')
-        if os.path.exists(configf):
-            os.remove(configf)
-        readobj1 = {
-            'files': {'fwd': 'unmerged.q', 'otype': 'paired'},
-            'insert_size_mean': '1000',
-            'insert_size_std_dev': '100',
-            'read_length_mean': '100',
-            'total_bases': 10000
-        }
-        readobj2 = {
-            'files': {'fwd': 'merged.q', 'otype': 'single'},
-            'insert_size_mean': '1000',
-            'insert_size_std_dev': '100',
-            'read_length_mean': '100',
-            'total_bases': 10000
-        }
-        params = {
-            'assm_scaff_len_cutoff': 1000,
-            'mer_sizes': "21",
-            'workspace_name': 'bogus',
-            'output_contigset_name': 'hipmer.contigs',
-            'min_depth_cutoff': 7,
-            'type': 'metagenome',
-            'alpha': 0.1,
-            'beta': 0.2,
-            'tau': 2.0,
-            'bubble_min_depth_cutoff': 1,
-            'error_rate': 0.9,
-            'dynamic_min_depth': 1,
-            'gap_close_rpt_depth_ratio': 2,
-            'mer_max': 250,
-            'la_mer_max': 252,
-            'mer_sizes_int': [250],
-            'readsfiles': {'1/2/3': readobj1, '1/2/4': readobj2},
-            'reads': [{
-                'use_for_splinting': 1,
-                'use_for_gap_closing': 1,
-                'has_innie_artifact': 0,
-                'use_for_contigging': 1,
-                'prefix': 'small',
-                'ono_set_id': 1,
-                'tp_wiggle_room': 0,
-                'fp_wiggle_room': 0,
-                'read_library_name': 'bogus',
-                'ref': '1/2/3'
-            }, {
-                'use_for_splinting': 1,
-                'use_for_gap_closing': 1,
-                'has_innie_artifact': 0,
-                'use_for_contigging': 1,
-                'prefix': 'small',
-                'ono_set_id': 1,
-                'tp_wiggle_room': 0,
-                'fp_wiggle_room': 0,
-                'read_library_name': 'bogus2',
-                'ref': '1/2/4'
-            }]
-        }
-
-        #reads_obj = params['readsfiles'][r['ref']]
-        result = self.getImpl().generate_config(params)
-        self.assertTrue(result)
-        self.assertTrue(os.path.exists(configf))
-        configs = dict()
-        libs = dict()
-        # Read in config file and parse contents
-        with open(configf) as conf:
-            for line in conf:
-                line = line.rstrip().replace('  ', ' ').replace('  ', ' ')
-                print(line)
-                tl = line.split(' ')
-                if len(tl) == 2:
-                    configs[tl[0]] = tl[1]
-                if len(tl) > 2:
-                    lib = tl[1]
-                    libs[lib] = {'ins': tl[3], 'ct': tl[13]}
-        #lib_seq ./517bf2c4-2e3d-4341-a196-12d0a5f20bbf.inter.fastq small 250
-        #    10   100 0 1   1 1 1  0 0 1 1
-
-        # Confirm metagenome options are set as expected
-        for k in ['alpha', 'beta', 'tau', 'error_rate']:
-            self.assertIn(k, configs)
-        self.assertEqual(configs['is_metagenome'], '1')
-        self.assertEqual(libs['unmerged.q']['ins'], '1000')
-        self.assertEqual(libs['unmerged.q']['ct'], '1')
-        self.assertEqual(libs['merged.q']['ct'], '0')
-
-    def test_post(self):
-        pe_lib_info = self.getPairedEndLibInfo()
-        #pprint(pe_lib_info)
-
-        # run hipmer
-        params = {
-            'assm_scaff_len_cutoff': 1000,
-            'mer_sizes': '21',
-            'workspace_name': pe_lib_info[7],
-            'output_contigset_name': 'hipmer.contigs',
-            'min_depth_cutoff': 7,
-            'type': 'uniploid',
-            'dynamic_min_depth': 1,
-            'gap_close_rpt_depth_ratio': 2,
-            'reads': [{
-                'use_for_splinting': 1,
-                'use_for_gap_closing': 1,
-                'has_innie_artifact': 0,
-                'use_for_contigging': 1,
-                'prefix': 'small',
-                'ono_set_id': 1,
-                'tp_wiggle_room': 0,
-                'fp_wiggle_room': 0,
-                'read_library_name': pe_lib_info[1]
-            }]
-        }
         self.createBogus('final_assembly.fa')
         os.environ['POST'] = '1'
 
-        result = self.getImpl().run_hipmer_hpc(self.getContext(), params)
+        result = self.serviceImpl.run_hipmer_hpc(self.ctx, params)
 
         print('RESULT:')
         pprint(result)
 
         # check the output
-        info_list = self.ws.get_object_info([{'ref': pe_lib_info[7] + '/hipmer.contigs'}], 1)
+        info_list = self.ws.get_object_info([{'ref': wsn + '/hipmer.contigs'}], 1)
         self.assertEqual(len(info_list), 1)
         contigset_info = info_list[0]
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
         self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
         #self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
-
-    def test_fixup(self):
-        params = {
-            'reads': [{'ref': '1/2/3'}],
-            'readsfiles': {
-                '1/2/3': {'files': {'fwd': '/kb/module/work/t.fq'}}
-            }
-        }
-        shutil.copyfile('/kb/module/test/data/sra.fq', '/kb/module/work/t.fq')
-        self.getImpl().fixup_reads(params)
-        self.assertTrue(os.path.exists('/kb/module/work/t.fq.orig'))
-
-        os.remove('/kb/module/work/t.fq.orig')
-        shutil.copyfile('/kb/module/test/data/nosra.fq', '/kb/module/work/t.fq')
-        self.getImpl().fixup_reads(params)
-        self.assertFalse(os.path.exists('/kb/module/work/t.fq.orig'))
 
     def test_run_hipmer(self):
 
@@ -386,7 +239,7 @@ class hipmerTest(unittest.TestCase):
             }]
         }
 
-        result = self.getImpl().run_hipmer_hpc(self.getContext(), params)
+        result = self.serviceImpl.run_hipmer_hpc(self.ctx, params)
         self.createBogus('final_assembly.fa')
 
         print('RESULT:')
