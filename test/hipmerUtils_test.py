@@ -72,72 +72,10 @@ class hipmerTest(unittest.TestCase):
         result = HU.check_reads('24799/3/1', [], params)
         self.assertFalse(result)
 
-#    def test_config(self):
-#       configf = os.path.join(self.scratch, 'hipmer.config')
-#       if os.path.exists(configf):
-#           os.remove(configf)
-#       readobj1 = {
-#           'files': {'fwd': 'unmerged.q', 'otype': 'paired'},
-#           'insert_size_mean': '1000',
-#           'insert_size_std_dev': '100',
-#           'read_length_mean': '100',
-#           'total_bases': 10000
-#       }
-#       readobj2 = {
-#           'files': {'fwd': 'merged.q', 'otype': 'single'},
-#           'insert_size_mean': '1000',
-#           'insert_size_std_dev': '100',
-#           'read_length_mean': '100',
-#           'total_bases': 10000
-#       }
-#       params = {
-#           'mer_sizes': '21,41,127',
-#           'workspace_name': 'bogus',
-#           'output_contigset_name': 'hipmer.contigs',
-#           'is_meta': {
-#               'aggressive': 1,
-#               'min_depth_cutoff': 7,
-#           },
-#           'usedebug': 1,
-#           'interleaved': 1,
-#           'reads': [{
-#               'read_type': 'paired',
-#               'ins_avg': 100,
-#               'ins_dev': 10,
-#               'is_rev_comped': 0,
-#               'read_library_name': 'bogus'
-#           }]
-#       }
-#
-#
-#        #reads_obj = params['readsfiles'][r['ref']]
+#    def test_generate_command(self):
 #        HU = kbase_hipmerUtils(self.cfg, self.token)
-##        result = HU.generate_config(params)
-##        self.assertTrue(result)
-#        self.assertTrue(os.path.exists(configf))
-#        configs = dict()
-#        libs = dict()
-#        # Read in config file and parse contents
-#        with open(configf) as conf:
-#            for line in conf:
-#                line = line.rstrip().replace('  ', ' ').replace('  ', ' ')
-#                print(line)
-#                tl = line.split(' ')
-#                if len(tl) == 2:
-#                    configs[tl[0]] = tl[1]
-#                if len(tl) > 2:
-#                    lib = tl[1]
-#                    libs[lib] = {'ins': tl[3], 'ct': tl[13]}
-#        #lib_seq ./517bf2c4-2e3d-4341-a196-12d0a5f20bbf.inter.fastq small 250
-#        #    10   100 0 1   1 1 1  0 0 1 1
-#
-#        # Confirm metagenome options are set as expected
-#        for k in ['alpha', 'beta', 'tau', 'error_rate']:
-#            self.assertIn(k, configs)
-#        self.assertEqual(configs['is_metagenome'], '1')
-#        self.assertEqual(libs['unmerged.q']['ins'], '1000')
-#        self.assertEqual(libs['unmerged.q']['ct'], '1')
-#        self.assertEqual(libs['merged.q']['ct'], '0')
+#        result = HU.generate_config(params)
+#        self.assertTrue(result)
 
     def test_fixup(self):
         tfile = self.scratch + '/t.fq'
