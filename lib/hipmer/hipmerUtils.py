@@ -4,6 +4,8 @@ import sys
 import uuid
 import numpy as np
 from pprint import pformat
+from pprint import pprint
+import subprocess
 
 from Bio import SeqIO
 
@@ -32,55 +34,89 @@ class hipmerUtils:
 
     def _validate_inputs(self, params):
         # do some basic checks
+        print("PARAMS \n{}".format(params))
+
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
         if 'reads' not in params:
             raise ValueError('reads parameter is required')
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
+        if 'read_type' not in params['reads'][0]:
+            raise ValueError('read_type parameter is required')
+        if 'is_rev_comped' not in params['reads'][0]:
+            raise ValueError('is_rev_comped parameter is required')
+        if params['is_meta'] is not None:
+            if not params['is_meta']['min_depth_cutoff']:
+                raise ValueError('If this is a metagenome, there needs to be a cutoff value set for min_depth_cutoff')
+
         # Check mer_sizes
         if 'mer_sizes' not in params:
             raise ValueError('mer_sizes is a required parameter')
-        # Remove white spaces
+
+        # Parse the kmer string into a list.  This step verifies that there
+        # were integers separated by commas. I don't actually use the created list (mer_sizes_int).
         mer_sizes = params['mer_sizes'].replace(' ', '').replace('\t', '')
         mer_sizes_int = []
-        mer_max = 0
         for mer in mer_sizes.split(','):
             try:
                 meri = int(mer)
                 mer_sizes_int.append(meri)
-                if meri > mer_max:
-                    mer_max = meri
             except:
                 raise ValueError('mer sizes should be an integer')
-            if meri < 10 or meri > 100:
-                raise ValueError('mer sizes should be between 10 and 100')
 
+            if meri < 10 or meri > 127:
+                raise ValueError('mer sizes should be between 10 and 127.')
+
+        # just in case I need the list someday.
         params['mer_sizes_int'] = mer_sizes_int
-        params['mer_max'] = mer_max
-        params['la_mer_max'] = mer_max + 2
+
+        # I check that the user input insert sizes and insert size standard deviation
+        # if they are using paired-end reads.
+        # However, this is checked in the "check_reads" function.
+
+
         return True
 
-    def check_reads(self, refs, console):
+    def check_reads(self, refs, console, params):
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
-        rapi = ReadsAPI(self.callbackURL, token=self.token,
-                        service_ver='dev')
-        err_msg = '%s does not specify a mean insert size\n'
-        err_msg += 'Please re-upload the reads and used the advanced parameters'
-        err_msg += 'options to specify the insert size parameters.\n'
-        err_msg += 'This is required to run HipMer.'
-        for ref in refs:
-            p = {'workspace_obj_ref': ref}
-            info = rapi.get_reads_info_all_formatted(p)
-            if info['Type'] != 'Paired End':
-                continue
-            if info['Insert_Size_Mean'] == 'Not Specified' or \
-               info['Insert_Size_Std_Dev'] == 'Not Specified':
-                sys.stderr.write(err_msg % (info['Name']))
-                return False
+        # TODO: Shane gets read info from read object.  Jeff will check
+        #  that there were insert sizes input by the user by checking params
+        # rapi = ReadsAPI(self.callbackURL, token=self.token,
+        #                 service_ver='dev')
+        # err_msg = '%s does not specify a mean insert size\n'
+        # err_msg += 'Please re-upload the reads and use the advanced parameters'
+        # err_msg += 'options to specify the insert size parameters.\n'
+        # err_msg += 'This is required to run HipMer.'
+        # for ref in refs:
+        #     p = {'workspace_obj_ref': ref}
+        #     info = rapi.get_reads_info_all_formatted(p)
+        #     if info['Type'] != 'Paired End':
+        #         continue
+        #     if info['Insert_Size_Mean'] == 'Not Specified' or \
+        #        info['Insert_Size_Std_Dev'] == 'Not Specified':
+        #         sys.stderr.write(err_msg % (info['Name']))
+        #         return False
+        # TODO: Jeffs section using params to check for insert sizes if paired-end reads.
+        for r in params['reads']:
+            if r['read_type'] == 'paired':
+                # TODO: try and get read name from read ref
+                # # get read names in case we need to write error msg
+                # read_ref = r['read_library_name']
+                # rapi = ReadsAPI(self.callbackURL, token=self.token, service_ver='dev')
+                # p = {'workspace_obj_ref': r}
+                # info = rapi.get_reads_info_all_formatted(p)
+                # read_name = info['Name']
 
-        return True
+                if r['ins_avg'] is not None and r['ins_dev'] is not None:
+                    return True
+                else:
+                    err_msg = 'It looks like the user did not specify an average read insert size and/or the insert size stdev '
+                    err_msg += 'which is required for paired-end reads.'
+                    err_msg += 'The offending reads are: %s'
+                    sys.stderr.write(err_msg % (r['read_library_name']))
+                    return False
 
     def fix_pe_fq(self, fn):
         inf = open(fn, 'r')
@@ -147,98 +183,87 @@ class hipmerUtils:
         self.log(console, 'Got reads data from converter:\n' + pformat(reads))
         return reads
 
-    def generate_config(self, params):
+
+
+    def get_total_bases(self, params):
         """
-        Generate the HipMer config
+        The total number of bases for all sequence files will be used to estimate the number of
+        nodes required to run hipmer.
         """
-        self.config_file = '%s/%s' % (self.scratch, 'hipmer.config')
-        with open(self.config_file, 'w') as f:
-            # Describe the libraries ( one line per library )
-            # lib_seq [ wildcard ][ prefix ][ insAvg ][ insSdev ][ avgReadLen ]
-            #         [ hasInnieArtifact ][ isRevComped ][ useForContigging ]
-            #         [ onoSetId ][ useForGapClosing ][ 5pWiggleRoom ]
-            #         [3pWiggleRoom] [FilesPerPair] [ useForSplinting ]
-            #
-            # TODO: make these params
-            #
-            # FilesPerPair = 2
-            fmt = 'lib_seq %s %s %d %d   %d %d %d   %d %d %d  %d %d %d %d\n'
-            wd = '/kb/module/work/tmp'
-            total_bases = 0
-            for r in params['reads']:
-                # TODO: check read type and set count
-                files_obj = params['readsfiles'][r['ref']]['files']
-                filelist = [files_obj['fwd'].replace(wd, '.')]
-                if 'rev' in files_obj and files_obj['rev'] is not None:
-                    rfile = files_obj['rev'].replace(wd, '.')
-                    filelist.append(rfile)
-                reads_obj = params['readsfiles'][r['ref']]
-                print(files_obj)
-                if files_obj['otype'] == 'single':
-                    r['ins_avg'] = 0
-                    r['ins_dev'] = 0
-                    count = 0
-                else:
-                    r['ins_avg'] = int(reads_obj['insert_size_mean'])
-                    r['ins_dev'] = int(reads_obj['insert_size_std_dev'])
-                    count = len(filelist)
-                r['avg_read_len'] = int(reads_obj['read_length_mean'])
-                r['is_rev_comped'] = 0
-                if 'read_orientation_outward' in reads_obj and \
-                        reads_obj['read_orientation_outward'] is not None and \
-                        reads_obj['read_orientation_outward'][0].lower() == 't':
-                    r['is_rev_comped'] = 1
-
-                files = ','.join(filelist)
-                # lib_seq small.forward.fq,small.reverse.fq   small  215  10   \
-                #    101 0 0      1 1 1  0 0 2 1
-                f.write(fmt % (
-                    files, r['prefix'], r['ins_avg'], r['ins_dev'],
-                    0, r['has_innie_artifact'],
-                    r['is_rev_comped'], r['use_for_contigging'],
-                    r['ono_set_id'], r['use_for_gap_closing'],
-                    r['fp_wiggle_room'], r['tp_wiggle_room'],
-                    count, r['use_for_splinting']))
-                total_bases += reads_obj['total_bases']
-            f.write('\n')
-            paramf = {
-                'dynamic_min_depth': 'dynamic_min_depth %f\n',
-                'mer_sizes': 'mer_sizes %s\n',
-                'min_depth_cutoff': 'min_depth_cutoff %d\n',
-                'gap_close_rpt_depth_ratio': 'gap_close_rpt_depth_ratio %f\n',
-                'assm_scaff_len_cutoff': 'assm_scaff_len_cutoff %d\n',
-                'mer_max': 'scaff_mer_size %d\n',
-                'la_mer_max': 'la_mer_size_max %d\n'
-            }
-            if params['type'] == 'diploid':
-                paramf['bubble'] = 'bubble_min_depth_cutoff %d\n'
-                params['bubble'] = params['bubble_min_depth_cutoff']
-                paramf['diploid'] = 'is_diploid %d\n'
-                params['diploid'] = 1
-            elif params['type'] == 'metagenome':
-                for p in ['alpha', 'beta', 'tau', 'error_rate']:
-                    paramf[p] = '%s %%f\n' % (p)
-                    params[p] = params[p]
-                paramf['bubble'] = 'bubble_min_depth_cutoff %d\n'
-                params['bubble'] = params['bubble_min_depth_cutoff']
-                paramf['metagenome'] = 'is_metagenome %d\n'
-                params['metagenome'] = 1
-            else:
-                params['diploid'] = 0
-                params['metagenome'] = 0
-
-            for param in paramf:
-                f.write(paramf[param] % (params[param]))
-            f.close()
-
+        total_bases=0
+        for r in params['reads']:
+            # TODO: check read type and set count
+            reads_obj = params['readsfiles'][r['ref']]
+            total_bases += reads_obj['total_bases']
         return total_bases
 
-    def generate_submit(self, tsize, debug=False):
+
+    def generate_command(self, params):
+        """
+        SBATCH will run this command in the "generate_submit" function
+        An example command:
+
+        hipmer --threads=$((4 * 32)) \
+               -k 21 \
+               --interleaved frags.25K.fastq: i180:s10 \
+               --interleaved jumps.25K.fastq: rc:i3000:s500 \
+               --min-depth 7
+        """
+        iterator=0
+        final_read_args=''
+        hipmer_command=''
+
+        for r in params['reads']:
+            pformat(r)
+
+            kmer_str = params['mer_sizes']
+            read_ref = r['ref']
+            file_name = params['readsfiles'][read_ref]['files']['fwd']
+            min_depth=None
+            if params['is_meta'] is not None:
+                # if metagenome
+                min_depth = params['is_meta']['min_depth_cutoff']
+                if params['is_meta']['aggressive']:
+                    # if metagenome and aggressive algorithm should be used
+                    hipmer_command = "hipmer --threads=$((2 * 32)) --aggressive --meta --min-depth {} -k {}".format(min_depth, params['mer_sizes'])
+                else:
+                    hipmer_command = "hipmer --threads=$((2 * 32)) --meta --min-depth {} -k {}".format(min_depth, params['mer_sizes'])
+            else:
+                # if not metagenome
+                hipmer_command = "hipmer --threads=$((4 * 32)) -k {}".format(params['mer_sizes'])
+
+            # format argument for reads
+            if r['read_type'] == "paired":
+                # if paired end reads
+                # test if reverse compliment ("outtie") or "innie" library
+                if r['is_rev_comped'] == 'outtie':
+                    read_args = " --interleaved {}:rc:i{}:s{}".format(file_name, r['ins_avg'], r['ins_dev'])
+                else:
+                    read_args = " --interleaved {}:i{}:s{}".format(file_name, r['ins_avg'], r['ins_dev'])
+            else:
+                if r['is_rev_comped'] == 'outtie':
+                    read_args = " --single jumps.{}.fastq rc".format(iterator)
+                else:
+                    read_args = " --single single.{}.fastq".format(iterator)
+
+            final_read_args += read_args
+
+        hipmer_command += final_read_args
+
+
+        print("HIPMER COMMAND : {}".format(hipmer_command))
+
+        return hipmer_command
+
+
+    def generate_submit(self, total_bases, hipmer_command, debug=False ):
         """
         Generate SLURM submit script
         """
         bpn = 500000000
-        nodes = int((tsize + bpn - 1) / bpn)
+        nodes = int((total_bases + bpn - 1) / bpn)
+
+        # TODO: Shane's original code
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
         if nodes % 2:
@@ -253,19 +278,38 @@ class hipmerUtils:
                 f.write('#SBATCH -q regular\n')
                 f.write('#SBATCH --time=02:00:00\n')
 
+            # f.write('#SBATCH --nodes=%d\n' % nodes)
+            # f.write('#SBATCH --ntasks-per-node=32\n')
+            # f.write('#SBATCH --job-name=HipMer\n')
+            # f.write('#SBATCH -o slurm.out\n')
+            # f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
+            # f.write('N=${N:=${SLURM_NTASKS}}\n')
+            # f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=$(pwd)/hipmer-v0.9.6}\n')
+            # f.write('INST=${HIPMER_INSTALL:=$1}\n')
+            # f.write('. $INST/env.sh\n')
+            # f.write('\n')
+            # f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
+            # f.write('${INST}/bin/run_hipmer.sh ' + hipmer_command + "\n")
+            # f.close()
+
+
+            # TODO: sbatch_cori.sh (Robs script he gave me)
             f.write('#SBATCH --nodes=%d\n' % nodes)
+            f.write('#SBATCH -C haswell\n')
             f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --job-name=HipMer\n')
-            f.write('#SBATCH -o slurm.out\n')
+            f.write('#SBATCH --license=SCRATCH\n')
+            f.write('set -e\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
-            f.write('N=${N:=${SLURM_NTASKS}}\n')
-            f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=$(pwd)/hipmer-v0.9.6}\n')
-            f.write('INST=${HIPMER_INSTALL:=$1}\n')
-            f.write('. $INST/env.sh\n')
-            f.write('\n')
-            f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
-            f.write('${INST}/bin/run_hipmer.sh ${RUNDIR}/hipmer.config\n')
+            f.write('export THREADS=${THREADS:=${SLURM_NTASKS}}\n')
+            f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
+            f.write('echo Executing ' + hipmer_command + '\n')
+            f.write('echo "at $(date) on $(uname -n)"\n')
+            f.write('HIPMER_INSTALL=$(pwd)/hipmer_binaries/bin\n')
+            f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
+
+            return self.submit
 
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
@@ -276,13 +320,38 @@ class hipmerUtils:
                                                'assembly_name': name
                                                })
 
+    def run_command(self, submit_file):
+        """
+        run_command: run command
+        """
+        command = 'sbatch ' + submit_file
+
+        console = []
+        os.chdir(self.scratch)
+        self.log(console, 'Start executing command:\n{}'.format(command))
+        self.log(console, 'Command is running from:\n{}'.format(self.scratch))
+        pipe = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        output,stderr = pipe.communicate()
+        exitCode = pipe.returncode
+
+        if (exitCode == 0):
+            self.log(console, 'Executed command:\n{}\n'.format(command) +
+                'Exit Code: {}\n'.format(exitCode))
+        else:
+            error_msg = 'Error running command:\n{}\n'.format(command)
+            error_msg += 'Exit Code: {}\nOutput:\n{}\nStderr:\n{}'.format(exitCode, output, stderr)
+            raise ValueError(error_msg)
+            sys.exit(1)
+        return (output,stderr)
+
+
     def prepare_run(self, params):
         """
         run HPC enabled hipmer
         Returns: report object
         """
         console = []
-        self.log(console, 'Running run_hipmer_hpc with params=')
+        self.log(console, 'Running run_kbase_hipmer with params=')
         self.log(console, pformat(params))
 
         # Validate parameters.  This will raise an error if there
@@ -301,18 +370,24 @@ class hipmerUtils:
                 ref = ws_name + '/' + read_name
             refs.append(ref)
             read['ref'] = ref
-        if not self.check_reads(refs, console):
+        if not self.check_reads(refs, console, params):
             raise ValueError('The reads failed validation\n')
 
         params['readsfiles'] = self.get_reads_RU(refs, console)
         self.fixup_reads(params)
 
         # Generate submit script
-        ts = self.generate_config(params)
+        (total_bases) = self.get_total_bases(params)
+
+        hipmer_command = self.generate_command(params)
+
         debug = False
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
-        self.generate_submit(ts, debug=debug)
+        submit_file = self.generate_submit(total_bases, hipmer_command, debug=debug)
+
+        # self.run_command(submit_file)
+
 
     def finish_run(self, params):
         """

@@ -77,8 +77,8 @@ class hipmerTest(unittest.TestCase):
             shock_service_url=self.shockURL,
             filePath='data/small.reverse.fq',
             token=token)
-        #pprint(forward_shock_file)
-        #pprint(reverse_shock_file)
+        pprint(forward_shock_file)
+        pprint(reverse_shock_file)
 
         # 2) create handle
         hs = HandleService(url=self.handleURL, token=token)
@@ -172,26 +172,24 @@ class hipmerTest(unittest.TestCase):
         # run hipmer
         wsn = self.getWsName()
         params = {
-            'assm_scaff_len_cutoff': 1000,
-            'mer_sizes': '21',
+            'mer_sizes': '21,41,127',
             'workspace_name': wsn,
             'output_contigset_name': 'hipmer.contigs',
-            'min_depth_cutoff': 7,
-            'type': 'uniploid',
-            'dynamic_min_depth': 1,
-            'gap_close_rpt_depth_ratio': 2,
+            'is_meta': {
+                'aggressive': 1,
+                'min_depth_cutoff': 7,
+            },
+            'usedebug': 1,
+            'interleaved': 1,
             'reads': [{
-                'use_for_splinting': 1,
-                'use_for_gap_closing': 1,
-                'has_innie_artifact': 0,
-                'use_for_contigging': 1,
-                'prefix': 'small',
-                'ono_set_id': 1,
-                'tp_wiggle_room': 0,
-                'fp_wiggle_room': 0,
+                'read_type': 'paired',
+                'ins_avg': 100,
+                'ins_dev': 10,
+                'is_rev_comped': 0,
                 'read_library_name': 'bogus'
             }]
         }
+
         self.createBogus('final_assembly.fa')
         os.environ['POST'] = '1'
 
@@ -206,7 +204,7 @@ class hipmerTest(unittest.TestCase):
         contigset_info = info_list[0]
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
         self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
-        #self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
+        # self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
 
     def test_run_hipmer(self):
 
@@ -218,23 +216,20 @@ class hipmerTest(unittest.TestCase):
 
         # run hipmer
         params = {
-            'assm_scaff_len_cutoff': 1000,
-            'mer_sizes': '21',
+            'mer_sizes': '21,41,127',
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
-            'min_depth_cutoff': 7,
-            'type': 'uniploid',
-            'dynamic_min_depth': 1,
-            'gap_close_rpt_depth_ratio': 2,
+            'is_meta': {
+                'aggressive': 1,
+                'min_depth_cutoff': 7,
+            },
+            'usedebug': 1,
+            'interleaved': 1,
             'reads': [{
-                'use_for_splinting': 1,
-                'use_for_gap_closing': 1,
-                'has_innie_artifact': 0,
-                'use_for_contigging': 1,
-                'prefix': 'small',
-                'ono_set_id': 1,
-                'tp_wiggle_room': 0,
-                'fp_wiggle_room': 0,
+                'read_type': 'paired',
+                'ins_avg': 100,
+                'ins_dev': 10,
+                'is_rev_comped': 0,
                 'read_library_name': pe_lib_info[1]
             }]
         }
@@ -244,14 +239,14 @@ class hipmerTest(unittest.TestCase):
 
         print('RESULT:')
         pprint(result)
-        self.assertEqual(os.path.exists(self.scratch + '/hipmer.config'), True)
         self.assertEqual(os.path.exists(self.scratch + '/slurm.submit'), True)
-        # check the output
-        ##info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
-        #self.assertEqual(len(info_list),1)
-        ##contigset_info = info_list[0]
-        #self.assertEqual(contigset_info[1],'output.contigset')
-        #self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
+
+#        # check the output
+#        ##info_list = self.ws.get_object_info([{'ref':pe_lib_info[7] + '/output.contigset'}], 1)
+#        #self.assertEqual(len(info_list),1)
+#        ##contigset_info = info_list[0]
+#        #self.assertEqual(contigset_info[1],'output.contigset')
+#        #self.assertEqual(contigset_info[2].split('-')[0],'KBaseGenomes.ContigSet')
 
     # Helper script borrowed from the transform service, logger removed
     def upload_file_to_shock(self,

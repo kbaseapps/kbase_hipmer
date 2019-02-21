@@ -27,13 +27,6 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    type :
-        ui-name : Type
-        short-hint : Type (uniploid, diploid, metagenome)
-    usedebug :
-        ui-name : Debug
-        short-hint : Use Debug queue (not recommended)
-
     read_library_name :
         ui-name : Read Library
         short-hint : Read library (only PairedEnd Libs supported now)
@@ -46,166 +39,51 @@ parameters :
             k-mer sizes to use in the assembly process.  This is a
             comma seperated list of integers to use as mer sizes.  For
             metagenomes you may want to use 21,31,51,77,95.
-
     min_depth_cutoff:
         ui-name : Min Depth Cutoff
         short-hint : |
             K-mers present at frequencies less than this cutoff get culled from the assembly
-            early on.  To auto-detect, set to 0
-
-    dynamic_min_depth:
-        ui-name : Dynamic Min Depth
-        short-hint : TBD
-
-    error_rate:
-        ui-name : Error Rate
+            early on thus giving faster and cleaner assemblies.  Single-end reads will auto-detect this value.
+    ins_avg:
+        ui-name : Insert Average (required if paired-end) (int)
+        short-hint :  Estimated average Insert Length for Parid-End Reads in bp
+    ins_dev:
+        ui-name : Insert Deviation (required if paired-end) (int)
+        short-hint :  Estimated std. Deviation of insert size in bp
+    is_rev_comped:
+        ui-name : Is Library Reversed Compliment ("outtie") (T/F)
         short-hint : |
-            Estimated error rate (default 0.9).
-
-    gap_close_rpt_depth_ratio:
-        ui-name : Gap Close Repeat Depth Ratio
+            Whether or not the read pairs are in the "outtie" orientation,
+            i.e <-- -->. (T/F)
+    read_type:
+        ui-name : type of read library
         short-hint : |
-            Scaffolds with depth of coverage this many times higher than the
-            average across all scaffolds are considered repeats
-            and won't participate in gap closure (default 2.0)
-
-    assm_scaff_len_cutoff:
-        ui-name : Assembly Scaffold Lenth cutoff
-        short-hint : TBD
-
-    bubble_min_depth_cutoff:
-        ui-name : Bubble Min Depth Cutoff
+            Reads must be interleaved or single-end reads.  Paired-end reads consisting of a left and right file are not accepted.
+    aggressive:
+        ui-name : assembly aggressiveness (more sensitive, less specific)
         short-hint : |
-            For diploid organisms, this is the depth cutoff to exclude
-            unresolved haplotypes. To auto-detect, set to 0.  To keep both
-            haplotypes in cases where they couldn't be merged, set it to 1
-            (Note, this will hinder gap closing and scaffolding)
-
-    alpha:
-        ui-name : Alpha Parameter
+            This only applies to metagenomes. It will give a more sensitive, less specific assembly.
+    usedebug:
+        ui-name : debug queue
         short-hint : |
-            This along with beta and tau are advanced parameters for metagenome
-            assembly.  Use the default (0.1) unless you are an expert.
-            Contigs which are forks in the graph are pruned when
-            there is a fork that is of much lower depth than the other
-            surrounding contigs. This happens in a loop where Tau is the
-            minimum (and grows by 1+alpha at the end of the loop),
-            and beta is the fraction of the "neighborhood depth" that a
-            contig must exceed to be kept.  The loop stops when no
-            contigs have been dropped.
-
-
-    beta:
-        ui-name : Beta Parameter
-        short-hint : |
-            This is an advanced parameter for metagenome assembly.  Use the
-            default (0.2) unless you are an expert.  See the alpha parameter
-            for more detail.
-
-    tau:
-        ui-name : Tau Parameter
-        short-hint : |
-            This is an advanced parameter for metagenome assembly.  Use the
-            default (2.0) unless your are an expert.  See the alpha parameter
-            for more detail.
-
-    prefix:
-        ui-name : prefix
-        short-hint : Name of the library
-
-    #ins_avg:
-    #    ui-name : Insert Average (int)
-    #    short-hint :  Estimated average Insert Length for Parid-End Reads in bp
-
-    #ins_dev:
-    #    ui-name : Insert Deviation (int)
-    #    short-hint :  Estimated std. Deviation of insert size in bp
-
-    #avg_read_len:
-    #    ui-name : Average Read Len (int)
-    #    short-hint :  Estimated average read Length
-
-    has_innie_artifact:
-        ui-name : Has Innie Artifact (T/F)
-        short-hint : |
-            Whether or not a significant fraction of read pairs is in
-            nondominant orientation, e.g. "innies" in an "outie" library or
-            vice versa. (T/F)
-
-    #is_rev_comped:
-    #    ui-name : Is Reversed Comped (T/F)
-    #    short-hint : |
-    #        Whether or not the read pairs are in the "outie" orientation,
-    #        i.e <-- -->. (T/F)
-
-    use_for_contigging:
-        ui-name : Use for Contigging (T/F)
-        short-hint :  |
-            Whether or not to use this libray for initial contig generation.
-            The recommendation is to use only paired-end libraries for this
-            purpose. (T/F)
-
-    ono_set_id:
-        ui-name : Scaffoling round (pos. int)
-        short-hint : |
-            Assigns the library to a scaffolding round. Libraries of the same
-            type and similar insert size should be grouped into the same round
-            for the sake of performance. To completely exclude a library from
-            being used in scaffolding, set this to 0. (positive integers,
-            can be non-consecutive)
-
-    use_for_gap_closing:
-        ui-name : Use for Gap Closing (T/F)
-        short-hint : |
-            Whether or not to use this library for gap closing. It's best to
-            use the same libraries that were used for contig generation for
-            this purpose. (T/F)
-
-    fp_wiggle_room:
-        ui-name : 5' Wiggle Room (int)
-        short-hint : |
-            During linkage analysis and gap closure, allow reads from this
-            library to have an unaligned 5' end up to this many bp. This
-            option is for cases when a library is known to contain untrimmed
-            adapter sequence. (positive integer, 0 for default behavior)
-
-    tp_wiggle_room:
-        ui-name : 3' Wiggle Room (int)
-        short-hint : |
-            During linkage analysis and gap closure, allow reads from this
-            library to have an unaligned 3' end up to this many bp. This
-            option can be used when the library is of poor sequence quality
-            at the 3' end. Beware that allowing reads to map with large
-            unaligned segments can potentially lead to erroneus linkage and
-            other problems in the assembly. Use at your own risk! (positive
-            integer, 0 for default behavior)
-
-
-    use_for_splinting:
-        ui-name : Use for Splinting (T/F)
-        short-hint : |
-            Whether or not to use reads from this library to "splint" small
-            gaps during scaffolding.  Splints are single reads aligning across
-            two contigs, which can be used to determine the gap size more
-            precisely and to confirm/reject a less precise but wider reaching
-            pairwise linkage (aka "spans"). We recommend using only fragment
-            libraries for splinting.
+            use debug queue (not recomended)
 
 parameter-groups :
     reads :
         ui-name : Reads
         short-hint : |
             Reads objects and options to use in the assembly.
+    is_meta:
+        ui-name : Is Metagenome data (T/F)
+        short-hint : |
+            The assembly will use different heuristics to assembly metagenome data.
 
+#parameter-groups :
+#    is_meta :
+#        ui-name : Metagenome
+#        short-hint : |
+#            If you are using metagenome reads, this option will improve your assembly.
 
-
-# Close gaps more aggressively accepting closures that might violate the estimated gap size
-#
-#gap_close_aggressive 1
-#
-# estimated genome size in Gb
-#
-#genome_size 	   1.0
 
 description : |
     <p>KBase wrapper for the HipMer Assembler (v0.9.5).</p>

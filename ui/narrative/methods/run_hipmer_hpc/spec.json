@@ -10,10 +10,6 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "type",
-                    "target_property": "type"
-                },
-                {
                     "input_parameter": "usedebug",
                     "target_property": "usedebug"
                 },
@@ -30,40 +26,28 @@
                     "target_property": "min_depth_cutoff"
                 },
                 {
-                    "input_parameter": "bubble_min_depth_cutoff",
-                    "target_property": "bubble_min_depth_cutoff"
-                },
-                {
-                    "input_parameter": "dynamic_min_depth",
-                    "target_property": "dynamic_min_depth"
-                },
-                {
-                    "input_parameter": "gap_close_rpt_depth_ratio",
-                    "target_property": "gap_close_rpt_depth_ratio"
-                },
-                {
-                    "input_parameter": "assm_scaff_len_cutoff",
-                    "target_property": "assm_scaff_len_cutoff"
-                },
-                {
                     "input_parameter": "reads",
                     "target_property": "reads"
                 },
                 {
-                    "input_parameter": "error_rate",
-                    "target_property": "error_rate"
+                    "input_parameter": "ins_avg",
+                    "target_property": "ins_avg"
                 },
                 {
-                    "input_parameter": "alpha",
-                    "target_property": "alpha"
+                    "input_parameter": "ins_dev",
+                    "target_property": "ins_dev"
                 },
                 {
-                    "input_parameter": "beta",
-                    "target_property": "beta"
+                    "input_parameter": "is_rev_comped",
+                    "target_property": "is_rev_comped"
                 },
                 {
-                    "input_parameter": "tau",
-                    "target_property": "tau"
+                    "input_parameter": "read_type",
+                    "target_property": "read_type"
+                },
+                {
+                    "input_parameter": "is_meta",
+                    "target_property": "is_meta"
                 }
             ],
             "method": "run_hipmer_hpc",
@@ -103,27 +87,33 @@
     "job_id_output_field": "docker",
     "parameter-groups": [
         {
-            "allow_multiple": true,
             "id": "reads",
+            "allow_multiple": true,
             "optional": true,
             "parameters": [
                 "read_library_name",
-                "prefix",
-                "has_innie_artifact",
-                "use_for_contigging",
-                "ono_set_id",
-                "use_for_gap_closing",
-                "fp_wiggle_room",
-                "tp_wiggle_room",
-                "use_for_splinting"
+                "ins_avg",
+                "ins_dev",
+                "is_rev_comped",
+                "read_type"
+            ],
+            "with_border": true
+        },
+        {
+            "id": "is_meta",
+            "allow_multiple": false,
+            "optional": true,
+            "parameters": [
+                "aggressive",
+                "min_depth_cutoff"
             ],
             "with_border": true
         }
     ],
     "parameters": [
-      {
-            "id" : "type",
-            "optional" : true,
+        {
+            "id" : "read_type",
+            "optional" : false,
             "advanced" : false,
             "allow_multiple" : false,
             "default_values" : [ "" ],
@@ -131,28 +121,24 @@
             "dropdown_options":{
               "options": [
                 {
-                  "value": "uniploid",
-                  "display": "Uniploid"
+                  "value": "single",
+                  "display": "single-end"
                 },
                 {
-                  "value": "diploid",
-                  "display": "diploid"
-                },
-                {
-                  "value": "metagenome",
-                  "display": "metagenome"
+                  "value": "paired",
+                  "display": "paired-end"
                 }
               ]
             }
         },
         {
+            "id": "output_contigset_name",
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
                 "hipmer.contigs"
             ],
             "field_type": "text",
-            "id": "output_contigset_name",
             "optional": false,
             "text_options": {
                 "is_output_name": true,
@@ -162,149 +148,88 @@
             }
         },
         {
-            "advanced": true,
+            "id": "mer_sizes",
+            "advanced": false,
             "allow_multiple": false,
             "default_values": [
                 "21,41,63,95,127"
             ],
             "field_type": "text",
-            "id": "mer_sizes",
             "optional": false,
             "text_options": {
                 "validate_as": "text"
             }
         },
         {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "7"
-            ],
-            "field_type": "text",
-            "id": "min_depth_cutoff",
-            "optional": false,
-            "text_options": {
-                "min_int": 1,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "1"
-            ],
-            "field_type": "text",
-            "id": "bubble_min_depth_cutoff",
-            "optional": true,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "1.0"
-            ],
-            "field_type": "text",
-            "id": "dynamic_min_depth",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "float"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "0.9"
-            ],
-            "field_type": "text",
-            "id": "error_rate",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "float"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "2.0"
-            ],
-            "field_type": "text",
-            "id": "gap_close_rpt_depth_ratio",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "float"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "1000"
-            ],
-            "field_type": "text",
-            "id": "assm_scaff_len_cutoff",
-            "optional": false,
-            "text_options": {
-                "min_integer": 1,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "0.1"
-            ],
-            "field_type": "text",
-            "id": "alpha",
-            "optional": true,
-            "text_options": {
-                "validate_as": "float"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "0.2"
-            ],
-            "field_type": "text",
-            "id": "beta",
-            "optional": true,
-            "text_options": {
-                "validate_as": "float"
-            }
-        },
-        {
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [
-                "2.0"
-            ],
-            "field_type": "text",
-            "id": "tau",
-            "optional": true,
-            "text_options": {
-                "validate_as": "float"
-            }
-        },
-        {
+            "id": "ins_avg",
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
                 ""
             ],
             "field_type": "text",
+            "optional": true,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
+            "id": "ins_dev",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                ""
+            ],
+            "field_type": "text",
+            "optional": true,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
+            "id" : "is_rev_comped",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "" ],
+            "field_type" : "dropdown",
+            "dropdown_options":{
+              "options": [
+                {
+                  "value": "innie",
+                  "display": "innie library"
+                },
+                {
+                  "value": "outtie",
+                  "display": "outtie library (reverse complement)"
+                }
+              ]
+            }
+        },
+        {
+            "id": "min_depth_cutoff",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "2"
+            ],
+            "field_type": "text",
+            "optional": true,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
             "id": "read_library_name",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                ""
+            ],
+            "field_type": "text",
             "optional": false,
             "text_options": {
                 "valid_ws_types": [
@@ -316,19 +241,7 @@
             }
         },
         {
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                ""
-            ],
-            "field_type": "text",
-            "id": "prefix",
-            "optional": false,
-            "text_options": {
-                "validate_as": "text"
-            }
-        },
-        {
+            "id": "aggressive",
             "advanced": false,
             "allow_multiple": false,
             "checkbox_options": {
@@ -339,94 +252,10 @@
                 "0"
             ],
             "field_type": "checkbox",
-            "id": "has_innie_artifact",
-            "optional": false
+            "optional": true
         },
         {
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "1"
-            ],
-            "field_type": "checkbox",
-            "id": "use_for_contigging",
-            "optional": false
-        },
-        {
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                "1"
-            ],
-            "field_type": "text",
-            "id": "ono_set_id",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "1"
-            ],
-            "field_type": "checkbox",
-            "id": "use_for_gap_closing",
-            "optional": false
-        },
-        {
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                "0"
-            ],
-            "field_type": "text",
-            "id": "fp_wiggle_room",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                "0"
-            ],
-            "field_type": "text",
-            "id": "tp_wiggle_room",
-            "optional": false,
-            "text_options": {
-                "min_integer": 0,
-                "validate_as": "int"
-            }
-        },
-        {
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "1"
-            ],
-            "field_type": "checkbox",
-            "id": "use_for_splinting",
-            "optional": false
-        },
-        {
+            "id": "usedebug",
             "advanced": true,
             "allow_multiple": false,
             "checkbox_options": {
@@ -437,7 +266,6 @@
                 "0"
             ],
             "field_type": "checkbox",
-            "id": "usedebug",
             "optional": false
         }
     ],
