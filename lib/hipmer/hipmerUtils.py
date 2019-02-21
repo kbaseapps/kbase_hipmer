@@ -306,7 +306,7 @@ class hipmerUtils:
             f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
             f.write('echo Executing ' + hipmer_command + '\n')
             f.write('echo "at $(date) on $(uname -n)"\n')
-            f.write('HIPMER_INSTALL=$(pwd)/hipmer_binaries*/bin\n')
+            f.write('HIPMER_INSTALL=$(pwd)/v1.0-378*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 
@@ -403,10 +403,11 @@ class hipmerUtils:
 
         output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_name = params['output_contigset_name']
+        slurm_out = os.path.join(self.scratch, 'slurm.out')
         if not os.path.exists(output_contigs):
             self.log(console, "It looks like HipMER failed for some reason.")
             self.log(console, "Show errors in log file")
-            with open('slurm.out', 'r') as f:
+            with open(slurm_out, 'r') as f:
                 for line in f:
                     if line.lower().find('error') >= 0:
                         self.log(console, line)
