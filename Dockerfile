@@ -6,7 +6,7 @@ LABEL maintainer="scanon@lbl.gov"
 # Insert apt-get instructions here to install
 # any required dependencies for your module.
 
-RUN apt-get update && wget
+#RUN apt-get update && apt-get install -y wget
 
 # -----------------------------------------
 
