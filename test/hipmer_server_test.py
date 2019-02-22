@@ -167,44 +167,44 @@ class hipmerTest(unittest.TestCase):
         print(ret)
 
 
-    def test_post(self):
-
-        # run hipmer
-        wsn = self.getWsName()
-        params = {
-            'mer_sizes': '21,41,127',
-            'workspace_name': wsn,
-            'output_contigset_name': 'hipmer.contigs',
-            'is_meta': {
-                'aggressive': 1,
-                'min_depth_cutoff': 7,
-            },
-            'usedebug': 1,
-            'interleaved': 1,
-            'reads': [{
-                'read_type': 'paired',
-                'ins_avg': 100,
-                'ins_dev': 10,
-                'is_rev_comped': 0,
-                'read_library_name': 'bogus'
-            }]
-        }
-
-        self.createBogus('final_assembly.fa')
-        os.environ['POST'] = '1'
-
-        result = self.serviceImpl.run_hipmer_hpc(self.ctx, params)
-
-        print('RESULT:')
-        pprint(result)
-
-        # check the output
-        info_list = self.ws.get_object_info([{'ref': wsn + '/hipmer.contigs'}], 1)
-        self.assertEqual(len(info_list), 1)
-        contigset_info = info_list[0]
-        self.assertEqual(contigset_info[1], 'hipmer.contigs')
-        self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
-        # self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
+    # def test_post(self):
+    #
+    #     # run hipmer
+    #     wsn = self.getWsName()
+    #     params = {
+    #         'mer_sizes': '21,41,127',
+    #         'workspace_name': wsn,
+    #         'output_contigset_name': 'hipmer.contigs',
+    #         'is_meta': {
+    #             'aggressive': 1,
+    #             'min_depth_cutoff': 7,
+    #         },
+    #         'usedebug': 1,
+    #         'interleaved': 1,
+    #         'reads': [{
+    #             'read_type': 'paired',
+    #             'ins_avg': 100,
+    #             'ins_dev': 10,
+    #             'is_rev_comped': 0,
+    #             'read_library_name': 'bogus'
+    #         }]
+    #     }
+    #
+    #     self.createBogus('final_assembly.fa')
+    #     os.environ['POST'] = '1'
+    #
+    #     result = self.serviceImpl.run_hipmer_hpc(self.ctx, params)
+    #
+    #     print('RESULT:')
+    #     pprint(result)
+    #
+    #     # check the output
+    #     info_list = self.ws.get_object_info([{'ref': wsn + '/hipmer.contigs'}], 1)
+    #     self.assertEqual(len(info_list), 1)
+    #     contigset_info = info_list[0]
+    #     self.assertEqual(contigset_info[1], 'hipmer.contigs')
+    #     self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
+    #     # self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
 
     def test_run_hipmer(self):
 

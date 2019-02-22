@@ -214,11 +214,14 @@ class hipmerUtils:
         hipmer_command=''
 
         for r in params['reads']:
-            pformat(r)
-
             kmer_str = params['mer_sizes']
             read_ref = r['ref']
-            file_name = params['readsfiles'][read_ref]['files']['fwd']
+
+            # we are not running the command in the docker container so the path to the fastq
+            # needs to be pointing to somewhere outside and not /kb/module/work/tmp
+            ori_file_name = params['readsfiles'][read_ref]['files']['fwd']
+            file_name = os.path.basename(ori_file_name)
+
             min_depth=None
             if params['is_meta'] is not None:
                 # if metagenome
@@ -263,7 +266,6 @@ class hipmerUtils:
         bpn = 500000000
         nodes = int((total_bases + bpn - 1) / bpn)
 
-        # TODO: Shane's original code
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
         if nodes % 2:
@@ -278,22 +280,6 @@ class hipmerUtils:
                 f.write('#SBATCH -q regular\n')
                 f.write('#SBATCH --time=02:00:00\n')
 
-            # f.write('#SBATCH --nodes=%d\n' % nodes)
-            # f.write('#SBATCH --ntasks-per-node=32\n')
-            # f.write('#SBATCH --job-name=HipMer\n')
-            # f.write('#SBATCH -o slurm.out\n')
-            # f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
-            # f.write('N=${N:=${SLURM_NTASKS}}\n')
-            # f.write('HIPMER_INSTALL=${HIPMER_INSTALL:=$(pwd)/hipmer-v0.9.6}\n')
-            # f.write('INST=${HIPMER_INSTALL:=$1}\n')
-            # f.write('. $INST/env.sh\n')
-            # f.write('\n')
-            # f.write('export RUNDIR=${RUNDIR:=$(pwd)}\n')
-            # f.write('${INST}/bin/run_hipmer.sh ' + hipmer_command + "\n")
-            # f.close()
-
-
-            # TODO: sbatch_cori.sh (Robs script he gave me)
             f.write('#SBATCH --nodes=%d\n' % nodes)
             f.write('#SBATCH -C haswell\n')
             f.write('#SBATCH --ntasks-per-node=32\n')
@@ -320,31 +306,6 @@ class hipmerUtils:
                                                'workspace_name': wsname,
                                                'assembly_name': name
                                                })
-
-    def run_command(self, submit_file):
-        """
-        run_command: run command
-        """
-        command = 'sbatch ' + submit_file
-
-        console = []
-        os.chdir(self.scratch)
-        self.log(console, 'Start executing command:\n{}'.format(command))
-        self.log(console, 'Command is running from:\n{}'.format(self.scratch))
-        pipe = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        output,stderr = pipe.communicate()
-        exitCode = pipe.returncode
-
-        if (exitCode == 0):
-            self.log(console, 'Executed command:\n{}\n'.format(command) +
-                'Exit Code: {}\n'.format(exitCode))
-        else:
-            error_msg = 'Error running command:\n{}\n'.format(command)
-            error_msg += 'Exit Code: {}\nOutput:\n{}\nStderr:\n{}'.format(exitCode, output, stderr)
-            raise ValueError(error_msg)
-            sys.exit(1)
-        return (output,stderr)
-
 
     def prepare_run(self, params):
         """
@@ -386,8 +347,6 @@ class hipmerUtils:
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
         submit_file = self.generate_submit(total_bases, hipmer_command, debug=debug)
-
-        # self.run_command(submit_file)
 
 
     def finish_run(self, params):

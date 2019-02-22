@@ -51,16 +51,16 @@ parameters :
         ui-name : Insert Deviation (required if paired-end) (int)
         short-hint :  Estimated std. Deviation of insert size in bp
     is_rev_comped:
-        ui-name : Is Library Reversed Compliment ("outtie") (T/F)
+        ui-name : Library Read Orientation ("outtie")
         short-hint : |
-            Whether or not the read pairs are in the "outtie" orientation,
-            i.e <-- -->. (T/F)
+            The read pairs should be either in the "outtie" orientation,
+            i.e <-- --> or the "innie" orientation i.e. --> <--
     read_type:
-        ui-name : type of read library
+        ui-name : If reads are paired-end or not
         short-hint : |
-            Reads must be interleaved or single-end reads.  Paired-end reads consisting of a left and right file are not accepted.
+            Reads must be interleaved or single-end reads.
     aggressive:
-        ui-name : assembly aggressiveness (more sensitive, less specific)
+        ui-name : Assembly aggressiveness (more sensitive, less specific)
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     usedebug:
@@ -77,13 +77,6 @@ parameter-groups :
         ui-name : Is Metagenome data (T/F)
         short-hint : |
             The assembly will use different heuristics to assembly metagenome data.
-
-#parameter-groups :
-#    is_meta :
-#        ui-name : Metagenome
-#        short-hint : |
-#            If you are using metagenome reads, this option will improve your assembly.
-
 
 description : |
     <p>KBase wrapper for the HipMer Assembler (v0.9.5).</p>
