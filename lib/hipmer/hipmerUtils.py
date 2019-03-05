@@ -287,6 +287,7 @@ class hipmerUtils:
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('#SBATCH -o slurm.out\n')
             f.write('set -e\n')
+            f.write('source /etc/profile.d/modules.sh')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('export THREADS=${THREADS:=${SLURM_NTASKS}}\n')
             f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
