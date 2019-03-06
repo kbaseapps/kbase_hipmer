@@ -302,6 +302,7 @@ class hipmerUtils:
             f.write('echo "at $(date) on $(uname -n)"\n')
             f.write('HIPMER_INSTALL=$(pwd)/v1.0-378*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
+            f.write('ls\n')
             f.close()
 
             return self.submit
@@ -369,11 +370,11 @@ class hipmerUtils:
 
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
+        output_contigs=''
         for root, dirs, files in os.walk("."):
             if "final_assembly.fa" in files:
                 output_contigs = os.path.join(root, name)
 
-        print("WE ARE HERE {}\n{}".format(os.getcwd(), os.listdir(".")))
         if output_contigs:
             print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
         else:
