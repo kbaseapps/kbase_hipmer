@@ -299,10 +299,10 @@ class hipmerUtils:
             f.write('export THREADS=${THREADS:=${SLURM_NTASKS}}\n')
             f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
             f.write('echo Executing ' + hipmer_command + '\n')
+            f.write('ls\n')
             f.write('echo "at $(date) on $(uname -n)"\n')
             f.write('HIPMER_INSTALL=$(pwd)/v1.0-378*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
-            f.write('ls\n')
             f.close()
 
             return self.submit
@@ -372,15 +372,17 @@ class hipmerUtils:
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_contigs=''
         name = "final_assembly.fa"
-        for root, dirs, files in os.walk("."):
-            print("FILES={}".format(files))
-            if name in files:
-                output_contigs = os.path.join(root, name)
+        print("RUNDIR {}".format(os.environ['RUNDIR']))
 
-        if output_contigs:
-            print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
-        else:
-            print("output contigs not found")
+#        for root, dirs, files in os.walk("."):
+#            print("FILES={}".format(dirs))
+#            if name in files:
+#                output_contigs = os.path.join(root, name)
+#
+#        if output_contigs:
+#            print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
+#        else:
+#            print("output contigs not found")
 
         sys.exit()
         output_name = params['output_contigset_name']
