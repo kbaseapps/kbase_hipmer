@@ -198,7 +198,7 @@ class hipmerUtils:
         return total_bases
 
 
-    def generate_command(self, params):
+    def generate_command(self, params, nodes):
         """
         SBATCH will run this command in the "generate_submit" function
         An example command:
@@ -228,12 +228,12 @@ class hipmerUtils:
                 min_depth = params['is_meta']['min_depth_cutoff']
                 if params['is_meta']['aggressive']:
                     # if metagenome and aggressive algorithm should be used
-                    hipmer_command = "hipmer --threads=$((2 * 32)) --aggressive --meta --min-depth {} -k {}".format(min_depth, params['mer_sizes'])
+                    hipmer_command = "hipmer --threads=$(({} * 32)) --aggressive --meta --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
                 else:
-                    hipmer_command = "hipmer --threads=$((2 * 32)) --meta --min-depth {} -k {}".format(min_depth, params['mer_sizes'])
+                    hipmer_command = "hipmer --threads=$(({} * 32)) --meta --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
             else:
                 # if not metagenome
-                hipmer_command = "hipmer --threads=$((4 * 32)) -k {}".format(params['mer_sizes'])
+                hipmer_command = "hipmer --threads=$(({} * 32)) -k {}".format(nodes, params['mer_sizes'])
 
             # format argument for reads
             if r['read_type'] == "paired":
@@ -259,17 +259,21 @@ class hipmerUtils:
         return hipmer_command
 
 
-    def generate_submit(self, total_bases, hipmer_command, debug=False ):
+    def generate_submit(self, total_bases, params, debug=False):
         """
         Generate SLURM submit script
         """
         bpn = 500000000
         nodes = int((total_bases + bpn - 1) / bpn)
 
+
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
         if nodes % 2:
             nodes += 1
+
+        hipmer_command = self.generate_command(params,nodes)
+
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
@@ -345,12 +349,11 @@ class hipmerUtils:
         # Generate submit script
         (total_bases) = self.get_total_bases(params)
 
-        hipmer_command = self.generate_command(params)
 
         debug = False
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
-        submit_file = self.generate_submit(total_bases, hipmer_command, debug=debug)
+        submit_file = self.generate_submit(total_bases, params, debug=debug)
 
 
     def finish_run(self, params):
