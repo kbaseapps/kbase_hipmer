@@ -367,17 +367,19 @@ class hipmerUtils:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
+#        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
+#        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
+        print("WE ARE HERE {}\n{}".format(os.getcwd(), os.listdir()))
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-        if not os.path.exists(output_contigs):
-            self.log(console, "It looks like HipMER failed for some reason.")
-            self.log(console, "Show errors in log file")
-            with open(slurm_out, 'r') as f:
-                for line in f:
-                    if line.lower().find('error') >= 0:
-                        self.log(console, line)
-            raise RuntimeError("Error in HipMER execution")
+#        if not os.path.exists(output_contigs):
+#            self.log(console, "It looks like HipMER failed for some reason.")
+#            self.log(console, "Show errors in log file")
+#            with open(slurm_out, 'r') as f:
+#                for line in f:
+#                    if line.lower().find('error') >= 0:
+#                        self.log(console, line)
+#            raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
         self.log(console, 'Uploading FASTA file to Assembly')
