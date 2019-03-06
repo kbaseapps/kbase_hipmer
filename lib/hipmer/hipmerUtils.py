@@ -371,9 +371,9 @@ class hipmerUtils:
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_contigs=''
-		name = "final_assembly.fa"
+        name = "final_assembly.fa"
         for root, dirs, files in os.walk("."):
-			print("FILES={}".format(files))
+            print("FILES={}".format(files))
             if name in files:
                 output_contigs = os.path.join(root, name)
 
@@ -381,9 +381,8 @@ class hipmerUtils:
             print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
         else:
             print("output contigs not found")
-			sys.exit()
 
-		sys.exit()
+        sys.exit()
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
 #        if not os.path.exists(output_contigs):
