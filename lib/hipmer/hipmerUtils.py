@@ -371,9 +371,10 @@ class hipmerUtils:
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
 #        output_contigs = os.path.join(self.scratch, 'results', 'final_assembly.fa')
         output_contigs=''
+		name = "final_assembly.fa"
         for root, dirs, files in os.walk("."):
 			print("FILES={}".format(files))
-            if "final_assembly.fa" in files:
+            if name in files:
                 output_contigs = os.path.join(root, name)
 
         if output_contigs:
