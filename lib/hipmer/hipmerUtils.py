@@ -222,20 +222,40 @@ class hipmerUtils:
             ori_file_name = params['readsfiles'][read_ref]['files']['fwd']
             file_name = os.path.basename(ori_file_name)
 
+            # build base command
+            hipmer_command = "hipmer --threads=$(({} * 32)) -k {}".format(nodes, params['mer_sizes'])
+
+            #
+            # Test if we have a metagenome
+            #
             min_depth=None
+            metagenome_opts=''
+            plant_opts=''
+
             if params['is_meta'] is not None:
+                #
                 # if metagenome
+                #
                 min_depth = params['is_meta']['min_depth_cutoff']
                 if params['is_meta']['aggressive']:
                     # if metagenome and aggressive algorithm should be used
-                    hipmer_command = "hipmer --threads=$(({} * 32)) --aggressive --meta --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
+                    metagenome_opts = "--aggressive --meta --min-depth {} ".format(min_depth)
                 else:
-                    hipmer_command = "hipmer --threads=$(({} * 32)) --meta --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
-            else:
-                # if not metagenome
-                hipmer_command = "hipmer --threads=$(({} * 32)) -k {}".format(nodes, params['mer_sizes'])
+                    metagenome_opts = "--meta --min-depth {} ".format(min_depth)
 
-            # format argument for reads
+            #
+            # Test if we have plant data
+            #
+            if params['is_plant'] is not None:
+                diploid_value = params['is_plant']['diploid']
+                is_high_heterozygosity = params['is_plant']['high_heterozygosity']
+                bubble_min_depth_cutoff = params['is_plant']['bubble_min_depth_cutoff']
+
+                plant_opts = "--bubble-depth-cutoff {} --diploidy {} ".format(bubble_min_depth_cutoff, diploid_value)
+
+            #
+            # format argument for "reads" section
+            #
             if r['read_type'] == "paired":
                 # if paired end reads
                 # test if reverse compliment ("outtie") or "innie" library
@@ -251,7 +271,7 @@ class hipmerUtils:
 
             final_read_args += read_args
 
-        hipmer_command += final_read_args
+        hipmer_command += metagenome_opts + plant_opts + final_read_args
 
 
         print("HIPMER COMMAND : {}".format(hipmer_command))

@@ -284,18 +284,28 @@
             "optional": true
         },
         {
-            "id": "diploid",
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "1"
-            ],
-            "field_type": "checkbox",
-            "optional": true
+            "id" : "diploid",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "none" ],
+            "field_type" : "dropdown",
+            "dropdown_options":{
+              "options": [
+                {
+                  "value": "none",
+                  "display": "none"
+                },
+                {
+                  "value": "low",
+                  "display": "low"
+                },
+                {
+                  "value": "high",
+                  "display": "high"
+                }
+              ]
+            }
         },
         {
             "id": "high_heterozygosity",

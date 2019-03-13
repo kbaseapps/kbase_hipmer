@@ -64,7 +64,7 @@ parameters :
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     diploid:
-        ui-name : is diploid (T/F)
+        ui-name : diploidy
         short-hint : |
             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
     high_heterozygosity:
