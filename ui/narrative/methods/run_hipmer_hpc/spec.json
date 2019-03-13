@@ -238,6 +238,20 @@
             }
         },
         {
+            "id": "bubble_min_depth_cutoff",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "0"
+            ],
+            "field_type": "text",
+            "optional": true,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
             "id": "read_library_name",
             "advanced": false,
             "allow_multiple": false,
@@ -282,6 +296,7 @@
             ],
             "field_type": "checkbox",
             "optional": true
+        },
         {
             "id": "high_heterozygosity",
             "advanced": false,
