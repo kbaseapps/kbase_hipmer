@@ -48,6 +48,10 @@
                 {
                     "input_parameter": "is_meta",
                     "target_property": "is_meta"
+                },
+                {
+                    "input_parameter": "is_plant",
+                    "target_property": "is_plant"
                 }
             ],
             "method": "run_hipmer_hpc",
@@ -106,6 +110,17 @@
             "parameters": [
                 "aggressive",
                 "min_depth_cutoff"
+            ],
+            "with_border": true
+        },
+        {
+            "id": "is_plant",
+            "allow_multiple": false,
+            "optional": true,
+            "parameters": [
+                "diploid",
+                "high_heterozygosity",
+                "bubble_min_depth_cutoff"
             ],
             "with_border": true
         }
@@ -250,6 +265,33 @@
             },
             "default_values": [
                 "0"
+            ],
+            "field_type": "checkbox",
+            "optional": true
+        },
+        {
+            "id": "diploid",
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "1"
+            ],
+            "field_type": "checkbox",
+            "optional": true
+        {
+            "id": "high_heterozygosity",
+            "advanced": false,
+            "allow_multiple": false,
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            },
+            "default_values": [
+                "1"
             ],
             "field_type": "checkbox",
             "optional": true

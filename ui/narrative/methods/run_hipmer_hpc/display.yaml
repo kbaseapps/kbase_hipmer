@@ -63,6 +63,18 @@ parameters :
         ui-name : Assembly aggressiveness (more sensitive, less specific)
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
+    diploid:
+        ui-name : is diploid (T/F)
+        short-hint : |
+            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
+    high_heterozygosity:
+        ui-name : high heterozygosity (T/F)
+        short-hint : |
+            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
+    bubble_min_depth_cutoff:
+        ui-name : bubble min. depth cutoff
+        short-hint : |
+            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
     usedebug:
         ui-name : debug queue
         short-hint : |
@@ -74,9 +86,13 @@ parameter-groups :
         short-hint : |
             Reads objects and options to use in the assembly.
     is_meta:
-        ui-name : Is Metagenome data (T/F)
+        ui-name : Is this metagenome data 
         short-hint : |
             The assembly will use different heuristics to assembly metagenome data.
+    is_plant:
+        ui-name : Is this plant data 
+        short-hint : |
+            The assembly will use different heuristics to assembly plant data.
 
 description : |
     <p>KBase wrapper for the HipMer Assembler (v0.9.5).</p>
