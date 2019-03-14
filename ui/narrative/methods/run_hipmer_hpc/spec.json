@@ -119,7 +119,6 @@
             "optional": true,
             "parameters": [
                 "diploid",
-                "high_heterozygosity",
                 "bubble_min_depth_cutoff"
             ],
             "with_border": true
@@ -306,20 +305,6 @@
                 }
               ]
             }
-        },
-        {
-            "id": "high_heterozygosity",
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "1"
-            ],
-            "field_type": "checkbox",
-            "optional": true
         },
         {
             "id": "usedebug",

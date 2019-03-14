@@ -393,23 +393,23 @@ class hipmerUtils:
         output_contigs= os.environ['RUNDIR'] + '/' + name
         print("OUTPUT CONTIGS: {}".format(output_contigs))
 
-        if os.path.exists(output_contigs):
-            print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
-        else:
-            print("output contigs not found")
+#        if os.path.exists(output_contigs):
+#            print("OUTPUT CONTIGS ARE HERE {}".format(output_contigs))
+#        else:
+#            print("output contigs not found")
 
-        sys.exit()
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-#        if not os.path.exists(output_contigs):
-#            self.log(console, "It looks like HipMER failed for some reason.")
-#            self.log(console, "Show errors in log file")
-#            with open(slurm_out, 'r') as f:
-#                for line in f:
-#                    if line.lower().find('error') >= 0:
-#                        self.log(console, line)
-#            raise RuntimeError("Error in HipMER execution")
+        if not os.path.exists(output_contigs):
+            self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
+            self.log(console, "Show errors in log file")
+            with open(slurm_out, 'r') as f:
+                for line in f:
+                    if line.lower().find('error') >= 0:
+                        self.log(console, line)
+            raise RuntimeError("Error in HipMER execution")
 
+#        sys.exit()
         wsname = params['workspace_name']
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
