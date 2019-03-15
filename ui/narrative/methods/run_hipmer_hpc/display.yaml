@@ -55,7 +55,7 @@ parameters :
         short-hint : |
             Reads must be interleaved or single-end reads.
     aggressive:
-        ui-name : Assembly aggressiveness (more sensitive, less specific)
+        ui-name : Aggressiveness (more sensitive, less specific)
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     diploid:

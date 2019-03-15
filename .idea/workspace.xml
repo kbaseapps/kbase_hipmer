@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/hipmerUtils_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/hipmerUtils_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/hipmer_server_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/hipmer_server_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="43" column="21" selection-start-line="43" selection-start-column="21" selection-end-line="43" selection-end-column="21" />
+            <state relative-caret-position="450">
+              <caret line="57" column="31" selection-start-line="57" selection-start-column="31" selection-end-line="57" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -24,8 +26,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="245" column="29" selection-start-line="245" selection-start-column="29" selection-end-line="245" selection-end-column="29" />
+            <state relative-caret-position="390">
+              <caret line="218" selection-start-line="218" selection-end-line="218" />
             </state>
           </provider>
         </entry>
@@ -33,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/hipmer_server_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="226" column="31" selection-start-line="226" selection-start-column="31" selection-end-line="226" selection-end-column="31" />
+            <state relative-caret-position="75">
+              <caret line="179" column="19" selection-start-line="179" selection-start-column="19" selection-end-line="179" selection-end-column="19" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -45,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/hipmerUtils_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="41" column="31" selection-start-line="41" selection-start-column="31" selection-end-line="41" selection-end-column="31" />
+            <state relative-caret-position="555">
+              <caret line="37" column="30" selection-start-line="37" selection-start-column="30" selection-end-line="37" selection-end-column="30" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -54,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="271" column="39" selection-start-line="271" selection-start-column="39" selection-end-line="271" selection-end-column="39" />
+            <state relative-caret-position="405">
+              <caret line="237" column="48" selection-start-line="237" selection-start-column="48" selection-end-line="237" selection-end-column="48" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
@@ -81,11 +83,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" />
-        <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" />
-        <option value="$PROJECT_DIR$/test/hipmer_server_test.py" />
-        <option value="$PROJECT_DIR$/test/hipmerUtils_test.py" />
         <option value="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" />
+        <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" />
+        <option value="$PROJECT_DIR$/test/hipmerUtils_test.py" />
+        <option value="$PROJECT_DIR$/test/hipmer_server_test.py" />
+        <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" />
       </list>
     </option>
   </component>
@@ -213,47 +215,47 @@
     <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/hipmer-blue.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
+    <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="245" column="29" selection-start-line="245" selection-start-column="29" selection-end-line="245" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/hipmer_server_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="226" column="31" selection-start-line="226" selection-start-column="31" selection-end-line="226" selection-end-column="31" />
+        <state relative-caret-position="405">
+          <caret line="237" column="48" selection-start-line="237" selection-start-column="48" selection-end-line="237" selection-end-column="48" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#24#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/hipmerUtils_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="41" column="31" selection-start-line="41" selection-start-column="31" selection-end-line="41" selection-end-column="31" />
+        <state relative-caret-position="555">
+          <caret line="37" column="30" selection-start-line="37" selection-start-column="30" selection-end-line="37" selection-end-column="30" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
+    <entry file="file://$PROJECT_DIR$/test/hipmer_server_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="43" column="21" selection-start-line="43" selection-start-column="21" selection-end-line="43" selection-end-column="21" />
+        <state relative-caret-position="75">
+          <caret line="179" column="19" selection-start-line="179" selection-start-column="19" selection-end-line="179" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
+    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="271" column="39" selection-start-line="271" selection-start-column="39" selection-end-line="271" selection-end-column="39" />
-          <folding>
-            <element signature="e#24#33#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="390">
+          <caret line="218" selection-start-line="218" selection-end-line="218" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="57" column="31" selection-start-line="57" selection-start-column="31" selection-end-line="57" selection-end-column="31" />
         </state>
       </provider>
     </entry>

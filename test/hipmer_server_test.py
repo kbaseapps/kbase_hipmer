@@ -220,8 +220,7 @@ class hipmerTest(unittest.TestCase):
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'is_meta': {
-                'aggressive': 1,
-                'min_depth_cutoff': 7,
+                'aggressive': 1
             },
 			"is_plant": {
                 "diploid": "low"
