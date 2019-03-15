@@ -118,8 +118,7 @@
             "allow_multiple": false,
             "optional": true,
             "parameters": [
-                "diploid",
-                "bubble_min_depth_cutoff"
+                "diploid"
             ],
             "with_border": true
         }
@@ -233,20 +232,6 @@
             "optional": true,
             "text_options": {
                 "min_int": 1,
-                "validate_as": "int"
-            }
-        },
-        {
-            "id": "bubble_min_depth_cutoff",
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                "0"
-            ],
-            "field_type": "text",
-            "optional": true,
-            "text_options": {
-                "min_int": 0,
                 "validate_as": "int"
             }
         },

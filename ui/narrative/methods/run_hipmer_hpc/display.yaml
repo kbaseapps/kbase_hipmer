@@ -67,10 +67,6 @@ parameters :
         ui-name : diploidy
         short-hint : |
             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
-    bubble_min_depth_cutoff:
-        ui-name : bubble min. depth cutoff
-        short-hint : |
-            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
     usedebug:
         ui-name : debug queue
         short-hint : |
