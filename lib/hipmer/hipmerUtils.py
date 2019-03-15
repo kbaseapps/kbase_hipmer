@@ -246,12 +246,10 @@ class hipmerUtils:
             #
             # Test if we have plant data
             #
-            if params['is_plant'] is not None:
-                diploid_value = params['is_plant']['diploid']
-                is_high_heterozygosity = params['is_plant']['high_heterozygosity']
-                bubble_min_depth_cutoff = params['is_plant']['bubble_min_depth_cutoff']
+#            if params['is_plant']['diploid'] is not None:
+            diploid_value = params['is_plant']['diploid']
 
-                plant_opts = "--bubble-depth-cutoff {} --diploidy {} ".format(bubble_min_depth_cutoff, diploid_value)
+            plant_opts = "--diploidy {} ".format(diploid_value)
 
             #
             # format argument for "reads" section

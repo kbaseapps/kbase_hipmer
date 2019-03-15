@@ -224,9 +224,7 @@ class hipmerTest(unittest.TestCase):
                 'min_depth_cutoff': 7,
             },
 			"is_plant": {
-                "diploid": "low",
-                "high_heterozygosity": 1,
-                "bubble_min_depth_cutoff": 0
+                "diploid": "low"
             },
             'usedebug': 1,
             'interleaved': 1,
