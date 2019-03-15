@@ -388,9 +388,7 @@ class hipmerUtils:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-        name = "final_assembly.fa"
-        print("RUNDIR {}".format(os.environ['RUNDIR']))
-        output_contigs= os.environ['RUNDIR'] + '/' + name
+        output_contigs = os.path.join(os.environ['RUNDIR'], "/hipmer-run-*/results/final_assembly.fa")
         print("OUTPUT CONTIGS: {}".format(output_contigs))
 
 #        if os.path.exists(output_contigs):

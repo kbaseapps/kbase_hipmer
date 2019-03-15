@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/kbase.yml" beforeDir="false" afterPath="$PROJECT_DIR$/kbase.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,8 +56,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="505">
-              <caret line="411" selection-start-line="411" selection-end-line="411" />
+            <state relative-caret-position="190">
+              <caret line="390" selection-start-line="390" selection-end-line="390" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
@@ -248,8 +245,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
-          <caret line="411" selection-start-line="411" selection-end-line="411" />
+        <state relative-caret-position="190">
+          <caret line="390" selection-start-line="390" selection-end-line="390" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
