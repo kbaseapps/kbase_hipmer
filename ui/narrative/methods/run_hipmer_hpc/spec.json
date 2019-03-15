@@ -22,10 +22,6 @@
                     "target_property": "mer_sizes"
                 },
                 {
-                    "input_parameter": "min_depth_cutoff",
-                    "target_property": "min_depth_cutoff"
-                },
-                {
                     "input_parameter": "reads",
                     "target_property": "reads"
                 },
@@ -108,8 +104,7 @@
             "allow_multiple": false,
             "optional": true,
             "parameters": [
-                "aggressive",
-                "min_depth_cutoff"
+                "aggressive"
             ],
             "with_border": true
         },
@@ -219,20 +214,6 @@
                   "display": "outtie library (reverse complement)"
                 }
               ]
-            }
-        },
-        {
-            "id": "min_depth_cutoff",
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                "2"
-            ],
-            "field_type": "text",
-            "optional": true,
-            "text_options": {
-                "min_int": 1,
-                "validate_as": "int"
             }
         },
         {

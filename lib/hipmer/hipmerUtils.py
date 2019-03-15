@@ -46,9 +46,9 @@ class hipmerUtils:
             raise ValueError('read_type parameter is required')
         if 'is_rev_comped' not in params['reads'][0]:
             raise ValueError('is_rev_comped parameter is required')
-        if params['is_meta'] is not None:
-            if not params['is_meta']['min_depth_cutoff']:
-                raise ValueError('If this is a metagenome, there needs to be a cutoff value set for min_depth_cutoff')
+#        if params['is_meta'] is not None:
+#            if not params['is_meta']['min_depth_cutoff']:
+#                raise ValueError('If this is a metagenome, there needs to be a cutoff value set for min_depth_cutoff')
 
         # Check mer_sizes
         if 'mer_sizes' not in params:
@@ -222,13 +222,11 @@ class hipmerUtils:
             ori_file_name = params['readsfiles'][read_ref]['files']['fwd']
             file_name = os.path.basename(ori_file_name)
 
-            # build base command
-            hipmer_command = "hipmer --threads=$(({} * 32)) -k {}".format(nodes, params['mer_sizes'])
 
             #
             # Test if we have a metagenome
             #
-            min_depth=None
+            min_depth=0 # autodetect
             metagenome_opts=''
             plant_opts=''
 
@@ -236,7 +234,8 @@ class hipmerUtils:
                 #
                 # if metagenome
                 #
-                min_depth = params['is_meta']['min_depth_cutoff']
+                min_depth = 2
+#                min_depth = params['is_meta']['min_depth_cutoff']
                 if params['is_meta']['aggressive']:
                     # if metagenome and aggressive algorithm should be used
                     metagenome_opts = "--aggressive --meta --min-depth {} ".format(min_depth)
@@ -246,10 +245,13 @@ class hipmerUtils:
             #
             # Test if we have plant data
             #
-#            if params['is_plant']['diploid'] is not None:
-            diploid_value = params['is_plant']['diploid']
+            if params['is_plant']['diploid'] is not None:
+                diploid_value = params['is_plant']['diploid']
 
-            plant_opts = "--diploidy {} ".format(diploid_value)
+                if params['is_meta'] is not None:
+                    plant_opts = "--bubble-depth-cutoff 1 --diploidy {} ".format(diploid_value)
+                else:
+                    plant_opts = "--bubble-depth-cutoff 0 --diploidy {} ".format(diploid_value)
 
             #
             # format argument for "reads" section
@@ -269,6 +271,8 @@ class hipmerUtils:
 
             final_read_args += read_args
 
+        # build base command
+        hipmer_command = "hipmer --threads=$(({} * 32)) --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
         hipmer_command += metagenome_opts + plant_opts + final_read_args
 
 

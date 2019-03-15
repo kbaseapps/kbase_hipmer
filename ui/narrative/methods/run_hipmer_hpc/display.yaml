@@ -39,11 +39,6 @@ parameters :
             k-mer sizes to use in the assembly process.  This is a
             comma seperated list of integers to use as mer sizes.  For
             metagenomes you may want to use 21,31,51,77,95.
-    min_depth_cutoff:
-        ui-name : Min Depth Cutoff
-        short-hint : |
-            K-mers present at frequencies less than this cutoff get culled from the assembly
-            early on thus giving faster and cleaner assemblies.  Single-end reads will auto-detect this value.
     ins_avg:
         ui-name : Insert Average (required if paired-end) (int)
         short-hint :  Estimated average Insert Length for Parid-End Reads in bp
