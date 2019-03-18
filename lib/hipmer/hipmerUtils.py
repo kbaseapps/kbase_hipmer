@@ -390,17 +390,17 @@ class hipmerUtils:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-        print("RUNDIR {}".format(os.environ['RUNDIR']))
+#        print("RUNDIR {}".format(os.environ['RUNDIR']))
         output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
         print("OUTPUT CONTIGS: {}".format(output_contigs))
 
-        statinfo = os.stat(output_contigs)
-        print("STATINFO: {}".format(statinfo))
+#        statinfo = os.stat(output_contigs)
+#        print("STATINFO: {}".format(statinfo))
 
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-        slurminfo = os.stat(output_contigs)
-        print("SLURMINFO: {}".format(slurminfo))
+#        slurminfo = os.stat(output_contigs)
+#        print("SLURMINFO: {}".format(slurminfo))
 
         # if not os.path.exists(output_contigs):
         #     self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
