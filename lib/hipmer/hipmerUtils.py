@@ -245,7 +245,7 @@ class hipmerUtils:
             #
             # Test if we have plant data
             #
-            if params['is_plant']['diploid'] is not None:
+            if params['is_plant'] is not None and params['is_plant']['diploid'] is not None:
                 diploid_value = params['is_plant']['diploid']
 
                 if params['is_meta'] is not None:
