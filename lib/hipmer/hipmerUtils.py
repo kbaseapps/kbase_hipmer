@@ -391,28 +391,26 @@ class hipmerUtils:
         self.log(console, 'running hipmer:')
 
         print("RUNDIR {}".format(os.environ['RUNDIR']))
-#        test = os.environ['RUNDIR']
-#        testid = test + "/hipmer-run-*/results/final_assembly.fa"
         output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
         print("OUTPUT CONTIGS: {}".format(output_contigs))
 
-#        if os.path.exists(testid):
-#            print("OUTPUT CONTIGS ARE HERE {}".format(testid))
-#        else:
-#            print("testid not found")
+        statinfo = os.stat(output_contigs)
+        print("STATINFO: {}".format(statinfo))
 
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-        if not os.path.exists(output_contigs):
-            self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
-            self.log(console, "Show errors in log file")
-            with open(slurm_out, 'r') as f:
-                for line in f:
-                    if line.lower().find('error') >= 0:
-                        self.log(console, line)
-            raise RuntimeError("Error in HipMER execution")
+        slurminfo = os.stat(output_contigs)
+        print("SLURMINFO: {}".format(slurminfo))
 
-#        sys.exit()
+        # if not os.path.exists(output_contigs):
+        #     self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
+        #     self.log(console, "Show errors in log file")
+        #     with open(slurm_out, 'r') as f:
+        #         for line in f:
+        #             if line.lower().find('error') >= 0:
+        #                 self.log(console, line)
+        #     raise RuntimeError("Error in HipMER execution")
+
         wsname = params['workspace_name']
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)

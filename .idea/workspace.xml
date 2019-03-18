@@ -57,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="401" selection-start-line="401" selection-end-line="401" />
+            <state relative-caret-position="563">
+              <caret line="411" column="18" selection-start-line="404" selection-start-column="10" selection-end-line="411" selection-end-column="19" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
@@ -73,6 +73,7 @@
       <find>PARAMS TWO</find>
       <find>read_type</find>
       <find>bubble_min_depth_cutoff</find>
+      <find>testid</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -185,7 +186,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="15" y="178" width="1502" height="964" extended-state="0" />
+    <frame x="1632" y="209" width="1502" height="964" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25684932" />
@@ -249,8 +250,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="401" selection-start-line="401" selection-end-line="401" />
+        <state relative-caret-position="563">
+          <caret line="411" column="18" selection-start-line="404" selection-start-column="10" selection-end-line="411" selection-end-column="19" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
