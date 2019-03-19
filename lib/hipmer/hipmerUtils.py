@@ -6,7 +6,7 @@ import numpy as np
 from pprint import pformat
 from pprint import pprint
 import subprocess
-
+import shutil
 from Bio import SeqIO
 
 from installed_clients.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
@@ -394,8 +394,15 @@ class hipmerUtils:
         output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
         print("OUTPUT CONTIGS: {}".format(output_contigs))
 
-#        statinfo = os.stat(output_contigs)
-#        print("STATINFO: {}".format(statinfo))
+        # copy output_contigs to scratch which is in the workspace so we
+        # can then upload them to shock
+        contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
+        shutil.copy(output_contigs, contigs_on_scratch)
+
+
+        statinfo = os.stat(contigs_on_scratch)
+        print("STATINFO: {}".format(statinfo))
+        sys.exit()
 
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
