@@ -398,8 +398,8 @@ class hipmerUtils:
         # copy output_contigs to scratch which is in the workspace so we
         # can then upload them to shock
         contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
-        shutil.copy(output_contigs, contigs_on_scratch)
         output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
+        shutil.copy(output_contigs, contigs_on_scratch)
         if os.path.exists(output_contigs):
             print("FOUND")
         else:
