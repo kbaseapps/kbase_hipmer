@@ -2,6 +2,7 @@
 import os
 import sys
 import uuid
+import glob
 import numpy as np
 from pprint import pformat
 from pprint import pprint
@@ -398,10 +399,16 @@ class hipmerUtils:
         # can then upload them to shock
         contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
         shutil.copy(output_contigs, contigs_on_scratch)
-
+        output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
+        if os.path.exists(output_contigs):
+            print("FOUND")
+        else:
+            print("NOT FOUND")
 
         statinfo = os.stat(contigs_on_scratch)
         print("STATINFO: {}".format(statinfo))
+        statinfo2 = os.stat(output_contigs)
+        print("STATINFO2: {}".format(statinfo2))
         sys.exit()
 
         output_name = params['output_contigset_name']
