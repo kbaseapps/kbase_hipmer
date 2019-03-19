@@ -7,7 +7,7 @@ import numpy as np
 from pprint import pformat
 from pprint import pprint
 import subprocess
-import shutil
+#import shutil
 from Bio import SeqIO
 
 from installed_clients.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
@@ -399,31 +399,31 @@ class hipmerUtils:
         # can then upload them to shock
         contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
         output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
-        shutil.copy(output_contigs, contigs_on_scratch)
-        if os.path.exists(output_contigs):
-            print("FOUND")
-        else:
-            print("NOT FOUND")
+#        shutil.copy(output_contigs, contigs_on_scratch)
+#        if os.path.exists(output_contigs):
+#            print("FOUND")
+#        else:
+#            print("NOT FOUND")
 
-        statinfo = os.stat(contigs_on_scratch)
-        print("STATINFO: {}".format(statinfo))
-        statinfo2 = os.stat(output_contigs)
-        print("STATINFO2: {}".format(statinfo2))
-        sys.exit()
+#        statinfo = os.stat(contigs_on_scratch)
+#        print("STATINFO: {}".format(statinfo))
+#        statinfo2 = os.stat(output_contigs)
+#        print("STATINFO2: {}".format(statinfo2))
+#        sys.exit()
 
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
 #        slurminfo = os.stat(output_contigs)
 #        print("SLURMINFO: {}".format(slurminfo))
 
-        # if not os.path.exists(output_contigs):
-        #     self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
-        #     self.log(console, "Show errors in log file")
-        #     with open(slurm_out, 'r') as f:
-        #         for line in f:
-        #             if line.lower().find('error') >= 0:
-        #                 self.log(console, line)
-        #     raise RuntimeError("Error in HipMER execution")
+        if not os.path.exists(output_contigs):
+            self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
+            self.log(console, "Show errors in log file")
+            with open(slurm_out, 'r') as f:
+                for line in f:
+                    if line.lower().find('error') >= 0:
+                        self.log(console, line)
+            raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
         self.log(console, 'Uploading FASTA file to Assembly')
