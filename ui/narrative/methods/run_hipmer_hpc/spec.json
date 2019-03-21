@@ -234,16 +234,15 @@
               "options": [
                 {
                   "value": "none",
-                  "display": "none"
+                  "display": "haploid"
                 },
                 {
                   "value": "low",
-                  "display": "low"
+                  "display": "low heterzygosity"
                 },
                 {
                   "value": "high",
-                  "display": "high"
-                }
+                  "display": "high heterzygosity
               ]
             }
         },

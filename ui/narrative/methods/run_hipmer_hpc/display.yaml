@@ -55,9 +55,9 @@ parameters :
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     diploid:
-        ui-name : diploidy
+        ui-name : level of heterozygosity (ploidy)
         short-hint : |
-            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl give a more sensitive, less specific assembly.
+            For example, Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
     usedebug:
         ui-name : debug queue
         short-hint : |
