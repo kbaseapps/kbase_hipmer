@@ -43,8 +43,6 @@ class hipmerUtils:
             raise ValueError('reads parameter is required')
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
-        if 'read_type' not in params['reads'][0]:
-            raise ValueError('read_type parameter is required')
         if 'is_rev_comped' not in params['reads'][0]:
             raise ValueError('is_rev_comped parameter is required')
 #        if params['is_meta'] is not None:
@@ -82,24 +80,30 @@ class hipmerUtils:
     def check_reads(self, refs, console, params):
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
-        # TODO: Shane gets read info from read object.  Jeff will check
-        #  that there were insert sizes input by the user by checking params
-        # rapi = ReadsAPI(self.callbackURL, token=self.token,
-        #                 service_ver='dev')
-        # err_msg = '%s does not specify a mean insert size\n'
-        # err_msg += 'Please re-upload the reads and use the advanced parameters'
-        # err_msg += 'options to specify the insert size parameters.\n'
-        # err_msg += 'This is required to run HipMer.'
-        # for ref in refs:
-        #     p = {'workspace_obj_ref': ref}
-        #     info = rapi.get_reads_info_all_formatted(p)
-        #     if info['Type'] != 'Paired End':
-        #         continue
-        #     if info['Insert_Size_Mean'] == 'Not Specified' or \
-        #        info['Insert_Size_Std_Dev'] == 'Not Specified':
-        #         sys.stderr.write(err_msg % (info['Name']))
-        #         return False
-        # TODO: Jeffs section using params to check for insert sizes if paired-end reads.
+        # We will check whether the reads are paired end or single end from the read object.
+        rapi = ReadsAPI(self.callbackURL, token=self.token, service_ver='dev')
+        err_msg = '%s does not specify paired or single-end reads.\n'
+        err_msg += 'Please re-upload the reads and specify whether they are paired-end or not.\n'
+        err_msg += 'This is required to run HipMer.'
+        for ref in refs:
+            p = {'workspace_obj_ref': ref}
+            info = rapi.get_reads_info_all_formatted(p)
+            print("INFO \n{}".format(info))
+
+            if info['Type'] == 'Paired End':
+                params['reads']['read_type'] = 'paired'
+            elif info['Type'] == 'Single End':
+                params['reads']['read_type'] = 'single'
+            else:
+                sys.stderr.write(err_msg % (info['Name']))
+                return False
+
+#            if info['Insert_Size_Mean'] == 'Not Specified' or \
+#               info['Insert_Size_Std_Dev'] == 'Not Specified':
+#                sys.stderr.write(err_msg % (info['Name']))
+#                return False
+
+        # TODO: use params to check for insert sizes if paired-end reads.
         for r in params['reads']:
             if r['read_type'] == 'paired':
                 # TODO: try and get read name from read ref

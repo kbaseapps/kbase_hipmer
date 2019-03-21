@@ -50,10 +50,6 @@ parameters :
         short-hint : |
             The read pairs should be either in the "outtie" orientation,
             i.e <-- --> or the "innie" orientation i.e. --> <--
-    read_type:
-        ui-name : If reads are paired-end or not
-        short-hint : |
-            Reads must be interleaved or single-end reads.
     aggressive:
         ui-name : Aggressiveness (more sensitive, less specific)
         short-hint : |
@@ -65,7 +61,7 @@ parameters :
     usedebug:
         ui-name : debug queue
         short-hint : |
-            use debug queue (not recomended)
+            use debug queue for testing or jobs < 30 min (not recomended)
 
 parameter-groups :
     reads :

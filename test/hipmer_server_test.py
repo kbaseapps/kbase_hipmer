@@ -182,7 +182,6 @@ class hipmerTest(unittest.TestCase):
     #         'usedebug': 1,
     #         'interleaved': 1,
     #         'reads': [{
-    #             'read_type': 'paired',
     #             'ins_avg': 100,
     #             'ins_dev': 10,
     #             'is_rev_comped': 0,
@@ -228,7 +227,6 @@ class hipmerTest(unittest.TestCase):
             'usedebug': 1,
             'interleaved': 1,
             'reads': [{
-                'read_type': 'paired',
                 'ins_avg': 100,
                 'ins_dev': 10,
                 'is_rev_comped': 0,

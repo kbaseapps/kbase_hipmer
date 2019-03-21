@@ -38,10 +38,6 @@
                     "target_property": "is_rev_comped"
                 },
                 {
-                    "input_parameter": "read_type",
-                    "target_property": "read_type"
-                },
-                {
                     "input_parameter": "is_meta",
                     "target_property": "is_meta"
                 },
@@ -94,8 +90,7 @@
                 "read_library_name",
                 "ins_avg",
                 "ins_dev",
-                "is_rev_comped",
-                "read_type"
+                "is_rev_comped"
             ],
             "with_border": true
         },
@@ -119,26 +114,6 @@
         }
     ],
     "parameters": [
-        {
-            "id" : "read_type",
-            "optional" : false,
-            "advanced" : false,
-            "allow_multiple" : false,
-            "default_values" : [ "" ],
-            "field_type" : "dropdown",
-            "dropdown_options":{
-              "options": [
-                {
-                  "value": "single",
-                  "display": "single-end"
-                },
-                {
-                  "value": "paired",
-                  "display": "paired-end"
-                }
-              ]
-            }
-        },
         {
             "id": "output_contigset_name",
             "advanced": false,
