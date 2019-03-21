@@ -45,9 +45,6 @@ class hipmerUtils:
             raise ValueError('output_contigset_name parameter is required')
         if 'is_rev_comped' not in params['reads'][0]:
             raise ValueError('is_rev_comped parameter is required')
-#        if params['is_meta'] is not None:
-#            if not params['is_meta']['min_depth_cutoff']:
-#                raise ValueError('If this is a metagenome, there needs to be a cutoff value set for min_depth_cutoff')
 
         # Check mer_sizes
         if 'mer_sizes' not in params:
@@ -403,47 +400,17 @@ class hipmerUtils:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-        files = os.listdir(self.scratch)
+        # grab path of output contigs
         output_contigs = ''
         for root, subdirs, files in os.walk(self.scratch):
-#            print("root {}".format(root))
-#            print("subdirs {}".format(subdirs))
-#            print("files {}".format(files))
             for f in files:
                 if f == 'final_assembly.fa':
                     output_contigs = os.path.join(root,f)
                     print("found OUTPUT CONTIGS {}".format(output_contigs))
                     continue
 
-#        print("RUNDIR {}".format(files))
-#        print("prakdfak {}".format(files))
-#        print("RUNDIR  for your {}".format(output_contigs))
-#        print("OUTPUT CONTIGS {}".format(output_contigs))
-
-#        sys.exit()
-#        output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
-#        print("OUTPUT CONTIGS: {}".format(output_contigs))
-
-        # copy output_contigs to scratch which is in the workspace so we
-        # can then upload them to shock
-#        contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
-#        output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
-#        shutil.copy(output_contigs, contigs_on_scratch)
-#        if os.path.exists(output_contigs):
-#            print("FOUND")
-#        else:
-#            print("NOT FOUND")
-
-#        statinfo = os.stat(contigs_on_scratch)
-#        print("STATINFO: {}".format(statinfo))
-#        statinfo2 = os.stat(output_contigs)
-#        print("STATINFO2: {}".format(statinfo2))
-#        sys.exit()
-
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-        slurminfo = os.stat(output_contigs)
-        print("SLURMINFO: {}".format(slurminfo))
 
         if not os.path.exists(output_contigs):
             self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
@@ -462,6 +429,7 @@ class hipmerUtils:
                       'assembly_name': output_name
                       }
         output_data_ref = assemblyUtil.save_assembly_from_fasta(save_input)
+
         # create a Report
         # compute a simple contig length distribution for the report
         lengths = []
