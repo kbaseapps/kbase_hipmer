@@ -41,7 +41,7 @@ parameters :
             metagenomes you may want to use 21,31,51,77,95.
     ins_avg:
         ui-name : Insert Average (required if paired-end) (int)
-        short-hint :  Estimated average Insert Length for Parid-End Reads in bp
+        short-hint :  Estimated average Insert Length for Paired-End Reads in bp.
     ins_dev:
         ui-name : Insert Deviation (required if paired-end) (int)
         short-hint :  Estimated std. Deviation of insert size in bp
