@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Assemble with HipMer
+name: Assemble with HipMer - v1.0-378
 tooltip: |
     Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
 screenshots: []
