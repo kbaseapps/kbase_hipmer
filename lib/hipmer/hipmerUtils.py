@@ -82,21 +82,29 @@ class hipmerUtils:
         # Let's check those first before wasting time with downloads.
         # We will check whether the reads are paired end or single end from the read object.
         rapi = ReadsAPI(self.callbackURL, token=self.token, service_ver='dev')
-        err_msg = '%s does not specify paired or single-end reads.\n'
-        err_msg += 'Please re-upload the reads and specify whether they are paired-end or not.\n'
+        err_msg = '%s must be a paired-end read library.\n'
         err_msg += 'This is required to run HipMer.'
+        index = 0
+
+        print("REFS \n{}".format(refs))
+
         for ref in refs:
             p = {'workspace_obj_ref': ref}
+#            print("PPPPP \n{}".format(p))
             info = rapi.get_reads_info_all_formatted(p)
             print("INFO \n{}".format(info))
 
             if info['Type'] == 'Paired End':
-                params['reads']['read_type'] = 'paired'
-            elif info['Type'] == 'Single End':
-                params['reads']['read_type'] = 'single'
+                # TODO: someday we should be able to handle single end reads
+                params['reads'][index]['read_type'] = 'paired'
+#            elif info['Type'] == 'Single End':
+#                params['reads']['read_type'] = 'single'
+                continue
             else:
                 sys.stderr.write(err_msg % (info['Name']))
                 return False
+
+            index+=1
 
 #            if info['Insert_Size_Mean'] == 'Not Specified' or \
 #               info['Insert_Size_Std_Dev'] == 'Not Specified':
@@ -277,7 +285,7 @@ class hipmerUtils:
             final_read_args += read_args
 
         # build base command
-        hipmer_command = "hipmer --threads=$(({} * 32)) --min-depth {} -k {}".format(nodes, min_depth, params['mer_sizes'])
+        hipmer_command = "hipmer --threads=$(({} * 32)) --min-depth {} -k {} ".format(nodes, min_depth, params['mer_sizes'])
         hipmer_command += metagenome_opts + plant_opts + final_read_args
 
 
@@ -395,14 +403,31 @@ class hipmerUtils:
         # run hipmer, capture output as it happens
         self.log(console, 'running hipmer:')
 
-#        print("RUNDIR {}".format(os.environ['RUNDIR']))
-        output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
-        print("OUTPUT CONTIGS: {}".format(output_contigs))
+        files = os.listdir(self.scratch)
+        output_contigs = ''
+        for root, subdirs, files in os.walk(self.scratch):
+#            print("root {}".format(root))
+#            print("subdirs {}".format(subdirs))
+#            print("files {}".format(files))
+            for f in files:
+                if f == 'final_assembly.fa':
+                    output_contigs = os.path.join(root,f)
+                    print("found OUTPUT CONTIGS {}".format(output_contigs))
+                    continue
+
+#        print("RUNDIR {}".format(files))
+#        print("prakdfak {}".format(files))
+#        print("RUNDIR  for your {}".format(output_contigs))
+#        print("OUTPUT CONTIGS {}".format(output_contigs))
+
+#        sys.exit()
+#        output_contigs = os.path.join(os.environ['RUNDIR'], "hipmer-run-*/results/final_assembly.fa")
+#        print("OUTPUT CONTIGS: {}".format(output_contigs))
 
         # copy output_contigs to scratch which is in the workspace so we
         # can then upload them to shock
-        contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
-        output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
+#        contigs_on_scratch = os.path.join(self.scratch, "final_assembly.fa")
+#        output_contigs = glob.glob(output_contigs)[0]   # gets rid of "*" in path so that os.path.exists works.
 #        shutil.copy(output_contigs, contigs_on_scratch)
 #        if os.path.exists(output_contigs):
 #            print("FOUND")
@@ -417,8 +442,8 @@ class hipmerUtils:
 
         output_name = params['output_contigset_name']
         slurm_out = os.path.join(self.scratch, 'slurm.out')
-#        slurminfo = os.stat(output_contigs)
-#        print("SLURMINFO: {}".format(slurminfo))
+        slurminfo = os.stat(output_contigs)
+        print("SLURMINFO: {}".format(slurminfo))
 
         if not os.path.exists(output_contigs):
             self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
