@@ -151,7 +151,7 @@
                 ""
             ],
             "field_type": "text",
-            "optional": true,
+            "optional": false,
             "text_options": {
                 "min_int": 1,
                 "validate_as": "int"
@@ -165,7 +165,7 @@
                 ""
             ],
             "field_type": "text",
-            "optional": true,
+            "optional": false,
             "text_options": {
                 "min_int": 1,
                 "validate_as": "int"

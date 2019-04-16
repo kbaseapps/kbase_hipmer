@@ -59,7 +59,7 @@ parameters :
         short-hint : |
             For example, Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
     usedebug:
-        ui-name : debug queue
+        ui-name : debug queue for small jobs (30min limit)
         short-hint : |
             use debug queue for testing or jobs < 30 min (not recomended)
 
