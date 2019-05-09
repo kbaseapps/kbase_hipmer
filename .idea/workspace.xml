@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,32 +13,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="121" column="29" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="29" />
-              <folding>
-                <element signature="e#24#33#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="165">
+              <caret line="11" column="41" lean-forward="true" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
+            <state relative-caret-position="2820">
               <caret line="188" column="54" selection-start-line="188" selection-start-column="54" selection-end-line="188" selection-end-column="54" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
+        <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="915">
-              <caret line="61" column="57" selection-start-line="61" selection-start-column="57" selection-end-line="61" selection-end-column="57" />
+            <state relative-caret-position="315">
+              <caret line="303" selection-start-line="303" selection-end-line="303" />
+              <folding>
+                <element signature="e#24#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -58,6 +57,7 @@
       <find>diploidjjjjjk</find>
       <find>diploid</find>
       <find>diploidjjjj</find>
+      <find>ins_avg</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -68,17 +68,17 @@
       <list>
         <option value="$PROJECT_DIR$/test/hipmerUtils_test.py" />
         <option value="$PROJECT_DIR$/test/hipmer_server_test.py" />
-        <option value="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" />
         <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" />
         <option value="$USER_HOME$/denovo_scratch/TorbensDepthCoverageWDLs/mapthem.sh" />
         <option value="$USER_HOME$/denovo_scratch/TorbensDepthCoverageWDLs/v1.1.0.wdl" />
         <option value="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json" />
+        <option value="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="1612" />
-    <option name="y" value="207" />
+    <option name="y" value="169" />
     <option name="width" value="1502" />
     <option name="height" value="964" />
   </component>
@@ -105,11 +105,6 @@
               <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
               <item name="hipmer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
@@ -173,10 +168,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1648" y="205" width="1502" height="964" extended-state="0" />
+    <frame x="1612" y="169" width="1502" height="964" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28082192" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28424656" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -232,25 +227,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="121" column="29" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="29" />
+        <state relative-caret-position="315">
+          <caret line="303" selection-start-line="303" selection-end-line="303" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
+    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="915">
-          <caret line="61" column="57" selection-start-line="61" selection-start-column="57" selection-end-line="61" selection-end-column="57" />
+        <state relative-caret-position="2820">
+          <caret line="188" column="54" selection-start-line="188" selection-start-column="54" selection-end-line="188" selection-end-column="54" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
+    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="188" column="54" selection-start-line="188" selection-start-column="54" selection-end-line="188" selection-end-column="54" />
+        <state relative-caret-position="165">
+          <caret line="11" column="41" lean-forward="true" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
         </state>
       </provider>
     </entry>

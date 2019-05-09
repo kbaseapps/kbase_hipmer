@@ -295,9 +295,12 @@ class hipmerUtils:
         """
         Generate SLURM submit script
         """
-        bpn = 500000000
-        nodes = int((total_bases + bpn - 1) / bpn)
+        #bpn = 500000000
+        #nodes = int((total_bases + bpn - 1) / bpn)
 
+        # the formula for estimating number of nodes required
+        # nodes = 20*Gb-reads/80G
+        nodes = round(((total_bases / 1000000000) * 20) / 80)
 
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
