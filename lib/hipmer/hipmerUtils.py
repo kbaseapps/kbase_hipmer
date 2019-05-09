@@ -219,7 +219,7 @@ class hipmerUtils:
 
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
-            fastq = params['readsfiles'][read_ref]['files']['fwd']
+            fastq_path = params['readsfiles'][read_ref]['files']['fwd']
 
             cmd="du {} | cut -f1".format(fastq_path)
 
@@ -228,15 +228,16 @@ class hipmerUtils:
             exitCode = pipe.returncode
 
             if (exitCode == 0):
-                log('Executed command:\n{}\n'.format(command) +
+                print('Executed command:\n{}\n'.format(cmd) +
                     'Exit Code: {}\n'.format(exitCode))
             else:
-                error_msg = 'Error running command:\n{}\n'.format(command)
+                error_msg = 'Error running command:\n{}\n'.format(cmd)
                 error_msg += 'Exit Code: {}\nOutput:\n{}\nStderr:\n{}'.format(exitCode, output, stderr)
                 raise ValueError(error_msg)
                 sys.exit(1)
 
-            size_gigs = output/1024/1024
+            size_gigs = int(output)/1024/1024
+            print("file size: {} {}".format(fastq_path, size_gigs))
 
             total_size_gigs += size_gigs
 
@@ -321,9 +322,6 @@ class hipmerUtils:
         hipmer_command = "hipmer --threads=$(({} * 32)) --min-depth {} -k {} ".format(nodes, min_depth, params['mer_sizes'])
         hipmer_command += metagenome_opts + plant_opts + final_read_args
 
-
-        print("HIPMER COMMAND : {}".format(hipmer_command))
-
         return hipmer_command
 
 
@@ -331,18 +329,11 @@ class hipmerUtils:
         """
         Generate SLURM submit script
         """
-        #bpn = 500000000
-        #nodes = int((total_bases + bpn - 1) / bpn)
-
         # the formula for estimating number of nodes required
         # nodes = 20*Gb-reads/80G
-
-        # this number times total_bases should give size of fastq, more or less, in Gigs.
-        # this number was derived from empirical calculations
-        #conversion_factor=442125860
-        #nodes = round(((total_bases/conversion_factor) * 20) / 80)
         nodes = round((total_size_gigs * 20) / 80)
-
+        if nodes < 1:
+            nodes = 2 # can't be an odd number
 
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
