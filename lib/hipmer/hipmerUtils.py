@@ -208,6 +208,42 @@ class hipmerUtils:
         return total_bases
 
 
+    def get_total_gigs(self, params):
+        """
+        The total number of bases for all sequence files will be used to estimate the number of
+        nodes required to run hipmer.
+        """
+        total_size_gigs=0
+        for r in params['reads']:
+            read_ref = r['ref']
+
+            # we are not running the command in the docker container so the path to the fastq
+            # needs to be pointing to somewhere outside and not /kb/module/work/tmp
+            fastq = params['readsfiles'][read_ref]['files']['fwd']
+
+            cmd="du {} | cut -f1".format(fastq_path)
+
+            pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+            output, stderr = pipe.communicate()
+            exitCode = pipe.returncode
+
+            if (exitCode == 0):
+                log('Executed command:\n{}\n'.format(command) +
+                    'Exit Code: {}\n'.format(exitCode))
+            else:
+                error_msg = 'Error running command:\n{}\n'.format(command)
+                error_msg += 'Exit Code: {}\nOutput:\n{}\nStderr:\n{}'.format(exitCode, output, stderr)
+                raise ValueError(error_msg)
+                sys.exit(1)
+
+            size_gigs = output/1024/1024
+
+            total_size_gigs += size_gigs
+
+
+
+        return total_size_gigs
+
     def generate_command(self, params, nodes):
         """
         SBATCH will run this command in the "generate_submit" function
@@ -291,7 +327,7 @@ class hipmerUtils:
         return hipmer_command
 
 
-    def generate_submit(self, total_bases, params, debug=False):
+    def generate_submit(self, total_size_gigs, params, debug=False):
         """
         Generate SLURM submit script
         """
@@ -300,7 +336,13 @@ class hipmerUtils:
 
         # the formula for estimating number of nodes required
         # nodes = 20*Gb-reads/80G
-        nodes = round(((total_bases / 1000000000) * 20) / 80)
+
+        # this number times total_bases should give size of fastq, more or less, in Gigs.
+        # this number was derived from empirical calculations
+        #conversion_factor=442125860
+        #nodes = round(((total_bases/conversion_factor) * 20) / 80)
+        nodes = round((total_size_gigs * 20) / 80)
+
 
         # It seems like hipmer fails with odd numbers of nodes
         # So let's add one if it is odd.
@@ -308,6 +350,7 @@ class hipmerUtils:
             nodes += 1
 
         hipmer_command = self.generate_command(params,nodes)
+        print("HIPMER CMD: {}".format(hipmer_command))
 
         self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
         with open(self.submit, 'w') as f:
@@ -383,13 +426,13 @@ class hipmerUtils:
         self.fixup_reads(params)
 
         # Generate submit script
-        (total_bases) = self.get_total_bases(params)
+        (total_size_gigs) = self.get_total_gigs(params)
 
 
         debug = False
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
-        submit_file = self.generate_submit(total_bases, params, debug=debug)
+        submit_file = self.generate_submit(total_size_gigs, params, debug=debug)
 
 
     def finish_run(self, params):
