@@ -331,7 +331,7 @@ class hipmerUtils:
         """
         # the formula for estimating number of nodes required
         # nodes = 20*Gb-reads/80G
-        nodes = round(((total_size_gigs * 20) + 1) / 80)
+        nodes = round( ((total_size_gigs * 20) / 80) + 1 )
         if nodes < 1:
             nodes = 2 # can't be an odd number
 
