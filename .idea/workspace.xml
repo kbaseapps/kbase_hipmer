@@ -9,7 +9,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
           <provider selected="true" editor-type-id="text-editor">
@@ -31,7 +31,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
+            <state relative-caret-position="4005">
               <caret line="267" column="12" selection-start-line="267" selection-start-column="12" selection-end-line="267" selection-end-column="12" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
@@ -86,54 +86,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="hipmer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="narrative" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="narrative" type="462c0819:PsiDirectoryNode" />
-              <item name="methods" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="narrative" type="462c0819:PsiDirectoryNode" />
-              <item name="methods" type="462c0819:PsiDirectoryNode" />
-              <item name="run_hipmer_hpc" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -167,9 +120,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1642" y="829" width="1502" height="964" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28424656" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28767124" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -223,13 +175,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2820">
-          <caret line="188" column="54" selection-start-line="188" selection-start-column="54" selection-end-line="188" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -237,9 +182,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/spec.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2820">
+          <caret line="188" column="54" selection-start-line="188" selection-start-column="54" selection-end-line="188" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
+        <state relative-caret-position="4005">
           <caret line="267" column="12" selection-start-line="267" selection-start-column="12" selection-end-line="267" selection-end-column="12" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
