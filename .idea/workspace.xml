@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="" />
+    <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +34,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4005">
-              <caret line="267" column="12" selection-start-line="267" selection-start-column="12" selection-end-line="267" selection-end-column="12" />
+            <state relative-caret-position="656">
+              <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
@@ -75,8 +78,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1642" />
-    <option name="y" value="829" />
+    <option name="x" value="1625" />
+    <option name="y" value="207" />
     <option name="width" value="1502" />
     <option name="height" value="964" />
   </component>
@@ -85,8 +88,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -119,9 +122,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1642" y="829" width="1502" height="964" extended-state="0" />
+    <frame x="1625" y="207" width="1502" height="964" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28767124" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29589042" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -191,8 +195,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4005">
-          <caret line="267" column="12" selection-start-line="267" selection-start-column="12" selection-end-line="267" selection-end-column="12" />
+        <state relative-caret-position="656">
+          <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
