@@ -329,8 +329,8 @@ class hipmerUtils:
         Generate SLURM submit script
         """
         # the formula for estimating number of nodes required
-        # nodes = 25*Gb-reads/80G
-        nodes = round( ((total_size_gigs * 25) / 80) + 1 )
+        # nodes = 40*Gb-reads/80G
+        nodes = round( ((total_size_gigs * 40) / 80) + 1 )
         if nodes < 1:
             nodes = 2 # can't be an odd number
 

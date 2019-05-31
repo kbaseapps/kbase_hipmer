@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c02c326-0f5e-4069-8eb2-cb6a3f21f18e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/hipmer/hipmerUtils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,11 +34,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="656">
-              <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
+            <state relative-caret-position="558">
+              <caret line="331" column="19" selection-start-line="331" selection-start-column="19" selection-end-line="331" selection-end-column="19" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerImpl.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="337">
+              <caret line="49" column="34" selection-start-line="49" selection-start-column="34" selection-end-line="49" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -78,8 +87,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1625" />
-    <option name="y" value="207" />
+    <option name="x" value="70" />
+    <option name="y" value="115" />
     <option name="width" value="1502" />
     <option name="height" value="964" />
   </component>
@@ -88,7 +97,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kbase_hipmer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kbase_hipmer" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="hipmer" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope" />
     </panes>
   </component>
@@ -122,10 +152,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1625" y="207" width="1502" height="964" extended-state="0" />
+    <frame x="70" y="115" width="1502" height="964" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29589042" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.30821916" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -172,13 +202,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerImpl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="55" column="31" selection-start-line="55" selection-start-column="31" selection-end-line="55" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ui/narrative/methods/run_hipmer_hpc/display.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -193,10 +216,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerImpl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="49" column="34" selection-start-line="49" selection-start-column="34" selection-end-line="49" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/hipmer/hipmerUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="656">
-          <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
+        <state relative-caret-position="558">
+          <caret line="331" column="19" selection-start-line="331" selection-start-column="19" selection-end-line="331" selection-end-column="19" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
