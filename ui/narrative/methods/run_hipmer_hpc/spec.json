@@ -262,7 +262,7 @@
             "optional": false
         }
     ],
-    "ver": "0.9.9",
+    "ver": "1.0-829",
     "visible": true,
     "widgets": {
         "input": null,

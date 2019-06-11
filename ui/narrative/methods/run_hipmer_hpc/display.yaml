@@ -51,13 +51,13 @@ parameters :
             The read pairs should be either in the "outtie" orientation,
             i.e <-- --> or the "innie" orientation i.e. --> <--
     aggressive:
-        ui-name : Aggressiveness (more sensitive, less specific)
+        ui-name : Aggressiveness (more sensitive & less specific)
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     diploid:
         ui-name : level of heterozygosity (ploidy)
         short-hint : |
-            For example, Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
+            Only applise to plants. Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
@@ -78,7 +78,7 @@ parameter-groups :
             The assembly will use different heuristics to assembly plant data.
 
 description : |
-    <p>KBase wrapper for the HipMer Assembler (v0.9.5).</p>
+    <p>KBase wrapper for the HipMer Assembler (v1.0-829).</p>
     <p>HipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
        It is largely written in UPC, with the exception of the UFX generation, which is written in C++/MPI.</p>
     <p>For more details see: https://sourceforge.net/p/hipmer/wiki/Home/</p>
@@ -88,8 +88,6 @@ description : |
     <p>Primary authors are: Evangelos Georganas, Aydin Buluc, Steven Hofmeyr, Leonid Oliker and
     Rob Egan, with direction and advice from Kathy Yelick. The original Meraculous was developed by
     Jarrod Chapman, Isaac Ho, Eugene Goltsman, and Daniel Rokhsar.</p>
-    <p><b>Known limitations</b>: HipMer is still under active development.
-    The wrapping of HipMer in KBase does not currently support multiple read libraries and many of the options are hard-coded.</p>
 
 publications :
     -
