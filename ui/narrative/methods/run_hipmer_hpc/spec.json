@@ -204,8 +204,6 @@
             "optional": false,
             "text_options": {
                 "valid_ws_types": [
-                    "KBaseAssembly.SingleEndLibrary",
-                    "KBaseFile.SingleEndLibrary",
                     "KBaseAssembly.PairedEndLibrary",
                     "KBaseFile.PairedEndLibrary"
                 ]
