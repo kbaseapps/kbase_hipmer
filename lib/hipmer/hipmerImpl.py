@@ -51,12 +51,9 @@ class hipmer:
         # return variables are: output
         #BEGIN run_hipmer_hpc
         HU = hipmerUtils(self.config, ctx['token'])
-        if 'POST' not in os.environ:
-            # Pre-Stage
-            HU.prepare_run(params)
-            return
-        else:
-            output = HU.finish_run(params)
+        HU.prepare_run(params)
+        HU.submit()
+        output = HU.finish_run(params)
         #END run_hipmer_hpc
 
         # At some point might do deeper type checking...

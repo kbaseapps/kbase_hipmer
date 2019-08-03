@@ -15,13 +15,15 @@ from installed_clients.ReadsAPIClient import ReadsAPI  # @IgnorePep8
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.kb_quastClient import kb_quast
-
+from installed_clients.specialClient import special
 
 class hipmerUtils:
     def __init__(self, config, token):
         #BEGIN_CONSTRUCTOR
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        self.sr = special(self.callbackURL, token=token)
+        self.submit_script = 'slurm2.sl'
         self.token = token
 
     # target is a list for collecting log messages
@@ -342,7 +344,7 @@ class hipmerUtils:
         hipmer_command = self.generate_command(params,nodes)
         print("HIPMER CMD: {}".format(hipmer_command))
 
-        self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
+        self.submit = '%s/%s' % (self.scratch, self.submit_script)
         with open(self.submit, 'w') as f:
             f.write('#!/bin/bash\n')
             if debug:
@@ -423,6 +425,10 @@ class hipmerUtils:
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
         submit_file = self.generate_submit(total_size_gigs, params, debug=debug)
+
+    def submit(self):
+        res = self.sr.slurm(self.submit_script)
+        print('slurm'+str(res))
 
 
     def finish_run(self, params):
