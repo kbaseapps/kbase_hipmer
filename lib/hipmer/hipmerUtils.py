@@ -427,9 +427,9 @@ class hipmerUtils:
         submit_file = self.generate_submit(total_size_gigs, params, debug=debug)
 
     def submit(self):
-        res = self.sr.slurm(self.submit_script)
+        p = {'submit_script': self.submit_script}
+        res = self.sr.slurm(p)
         print('slurm'+str(res))
-
 
     def finish_run(self, params):
         """
