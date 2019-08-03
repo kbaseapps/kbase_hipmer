@@ -344,8 +344,8 @@ class hipmerUtils:
         hipmer_command = self.generate_command(params,nodes)
         print("HIPMER CMD: {}".format(hipmer_command))
 
-        self.submit = '%s/%s' % (self.scratch, self.submit_script)
-        with open(self.submit, 'w') as f:
+        submit = '%s/%s' % (self.scratch, self.submit_script)
+        with open(submit, 'w') as f:
             f.write('#!/bin/bash\n')
             if debug:
                 f.write('#SBATCH -q debug\n')
@@ -375,7 +375,7 @@ class hipmerUtils:
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 
-            return self.submit
+            return submit
 
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
