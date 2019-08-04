@@ -359,12 +359,11 @@ class hipmerUtils:
             f.write('#SBATCH --ntasks-per-node=32\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('#SBATCH --license=SCRATCH\n')
-            f.write('#SBATCH -o slurm.out\n')
             f.write('set -e\n')
             f.write('source /etc/profile.d/modules.sh\n')
             f.write('export CRAY_CPU_TARGET=haswell\n')
             f.write('printenv\n')
-            f.write('module switch bupc-narrow bupc-narrow')
+            f.write('module switch bupc-narrow bupc-narrow\n')
             f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
             f.write('export THREADS=${THREADS:=${SLURM_NTASKS}}\n')
             f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
@@ -431,7 +430,7 @@ class hipmerUtils:
         res = self.sr.slurm(p)
         print('slurm'+str(res))
 
-    def finish_run(self, params):
+    def finish_run(self, params, output_file):
         """
         Finish up the run by uploading output and
         creating the report
@@ -452,15 +451,10 @@ class hipmerUtils:
                     continue
 
         output_name = params['output_contigset_name']
-        slurm_out = os.path.join(self.scratch, 'slurm.out')
 
         if not os.path.exists(output_contigs):
             self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
-            self.log(console, "Show errors in log file")
-            with open(slurm_out, 'r') as f:
-                for line in f:
-                    if line.lower().find('error') >= 0:
-                        self.log(console, line)
+            self.log(console, "Check the log for errors")
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
