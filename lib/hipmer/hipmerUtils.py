@@ -428,9 +428,9 @@ class hipmerUtils:
     def submit(self):
         p = {'submit_script': self.submit_script}
         res = self.sr.slurm(p)
-        print('slurm'+str(res))
+        print('slurm:'+str(res))
 
-    def finish_run(self, params, output_file):
+    def finish_run(self, params):
         """
         Finish up the run by uploading output and
         creating the report
