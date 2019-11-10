@@ -16,11 +16,6 @@ RUN chmod 777 /kb/module
 
 WORKDIR /kb/module
 
-#RUN wget https://portal.nersc.gov/project/kbase/binaries/hipmer-v1.0-378.tgz && \
-#	tar zxf hipmer-v1.0-378.tgz
-#
-#ENV PATH "/kb/module/hipmer-v1.0-378/bin:$PATH"
-
 RUN make all
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]

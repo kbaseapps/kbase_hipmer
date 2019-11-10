@@ -370,7 +370,7 @@ class hipmerUtils:
             f.write('echo Executing ' + hipmer_command + '\n')
             f.write('ls\n')
             f.write('echo "at $(date) on $(uname -n)"\n')
-            f.write('HIPMER_INSTALL=$(pwd)/v1.0-829*/bin\n')
+            f.write('HIPMER_INSTALL=$(pwd)/v1.*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 
@@ -437,9 +437,6 @@ class hipmerUtils:
         """
         console = []
         self.log(console, 'Running post')
-
-        # run hipmer, capture output as it happens
-        self.log(console, 'running hipmer:')
 
         # grab path of output contigs
         output_contigs = ''
