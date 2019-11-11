@@ -2,6 +2,8 @@
 
 . /kb/deployment/user-env.sh
 
+HIPMER_FILE=hipmer-v1.2.1.48.tgz
+
 python ./scripts/prepare_deploy_cfg.py ./deploy.cfg ./work/config.properties
 
 if [ -f ./work/token ] ; then
@@ -14,8 +16,8 @@ elif [ "${1}" = "test" ] ; then
   echo "Run Tests"
   make test
 elif [ "${1}" = "async" ] ; then
-  pwd
-  (cd work/tmp && tar xzf $SCRATCH/hipmer-v1.0-829.tgz )
+  # TODO: Move this into the module
+  (cd work/tmp && tar xzf $SCRATCH/$HIPMER_FILE )
   sh ./scripts/run_async.sh
 elif [ "${1}" = "init" ] ; then
   echo "Initialize module"
