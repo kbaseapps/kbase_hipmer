@@ -330,7 +330,7 @@ class hipmerUtils:
         """
         # the formula for estimating number of nodes required
         # nodes = 40*Gb-reads/80G
-        nodes = round( ((total_size_gigs * 40) / 80) + 1 )
+        nodes = round( ((total_size_gigs * 40) / 30) + 1 )
         if nodes < 1:
             nodes = 2 # can't be an odd number
 
@@ -353,23 +353,13 @@ class hipmerUtils:
                 f.write('#SBATCH --time=02:00:00\n')
 
             f.write('#SBATCH --nodes=%d\n' % nodes)
-            f.write('#SBATCH -C haswell\n')
-            f.write('#SBATCH --ntasks-per-node=32\n')
+            f.write('#SBATCH -C knl,quad,cache\n')
+            f.write('#SBATCH --ntasks-per-node=68\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('#SBATCH -o slurm.out\n')
-            f.write('set -e\n')
-            f.write('source /etc/profile.d/modules.sh\n')
-            f.write('export CRAY_CPU_TARGET=haswell\n')
-            f.write('printenv\n')
-            f.write('module switch bupc-narrow bupc-narrow')
-            f.write('export CORES_PER_NODE=${CORES_PER_NODE:=${SLURM_TASKS_PER_NODE%%\(*}}\n')
-            f.write('export THREADS=${THREADS:=${SLURM_NTASKS}}\n')
-            f.write('echo "Detected CORES_PER_NODE=${CORES_PER_NODE} and THREADS=${THREADS}"\n')
-            f.write('echo Executing ' + hipmer_command + '\n')
-            f.write('ls\n')
-            f.write('echo "at $(date) on $(uname -n)"\n')
-            f.write('HIPMER_INSTALL=$(pwd)/v1.*/bin\n')
+            f.write('set -e\n\n')
+            f.write('HIPMER_INSTALL=$(pwd)/v1.2.1*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 

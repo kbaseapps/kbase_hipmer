@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Assemble with HipMer - v1.0-829
+name: Assemble with HipMer - v1.2.1.48
 tooltip: |
     Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
 screenshots: []
@@ -78,7 +78,7 @@ parameter-groups :
             The assembly will use different heuristics to assembly plant data.
 
 description : |
-    <p>KBase wrapper for the HipMer Assembler (v1.0-829).</p>
+    <p>KBase wrapper for the HipMer Assembler (v1.2.1.48).</p>
     <p>HipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
        It is largely written in UPC, with the exception of the UFX generation, which is written in C++/MPI.</p>
     <p>For more details see: https://sourceforge.net/p/hipmer/wiki/Home/</p>
