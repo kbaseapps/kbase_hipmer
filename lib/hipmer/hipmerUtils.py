@@ -318,7 +318,7 @@ class hipmerUtils:
             final_read_args += read_args
 
         # build base command
-        hipmer_command = "hipmer --threads=$(({} * 32)) --min-depth {} -k {} ".format(nodes, min_depth, params['mer_sizes'])
+        hipmer_command = "hipmer --threads=$(({} * 68)) --min-depth {} -k {} ".format(nodes, min_depth, params['mer_sizes'])
         hipmer_command += metagenome_opts + plant_opts + final_read_args
 
         return hipmer_command
