@@ -169,7 +169,9 @@ class AssemblyUtil(object):
 
     def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
         """ removes all contigs less than the min_contig_length provided """
-        filtered_fasta_file_path = fasta_file_path + '.filtered.fa'
+        #filtered_fasta_file_path = fasta_file_path + '.filtered.fa' # not using default file name
+        filtered_fasta_file_path = os.path.abspath(fasta_file_path).split('.fa')[0] + "_filtered.fa"
+
 
         fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
         print("fasta_record_iter:" + str(fasta_record_iter))
