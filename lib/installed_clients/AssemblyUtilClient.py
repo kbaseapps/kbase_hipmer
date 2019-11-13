@@ -155,7 +155,7 @@ class AssemblyUtil(object):
             if job_state['finished']:
                 return job_state['result'][0]
 
-    def fasta_filter_contigs_generator(fasta_record_iter, min_contig_length):
+    def fasta_filter_contigs_generator(self, fasta_record_iter, min_contig_length):
         """ generates SeqRecords iterator for writing from a legacy contigset object """
         rows = 0
         rows_added = 0
