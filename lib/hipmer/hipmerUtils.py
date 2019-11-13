@@ -365,16 +365,6 @@ class hipmerUtils:
 
             return self.submit
 
-    def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
-        """ removes all contigs less than the min_contig_length provided """
-        filtered_fasta_file_path = fasta_file_path + '.filtered.fa'
-
-        fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
-        SeqIO.write(self.fasta_filter_contigs_generator(fasta_record_iter, min_contig_length),
-                    filtered_fasta_file_path, 'fasta')
-
-        return filtered_fasta_file_path
-
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=token,
@@ -461,15 +451,16 @@ class hipmerUtils:
 
         self.log(console, 'Filtering short length contigs from HipMer assembly')
 
+        assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
 
         assembly_size_filter = params['assembly_size_filter']
 
-        filtered_fasta_file_path = self.filter_contigs_by_length(output_contigs, assembly_size_filter)
+        filtered_fasta_file_path = assemblyUtil.filter_contigs_by_length(output_contigs, assembly_size_filter)
 
         output_contigs = filtered_fasta_file_path
 
         self.log(console, 'Uploading FASTA file to Assembly')
-        assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
+
         save_input = {'file': {'path': output_contigs},
                       'workspace_name': wsname,
                       'assembly_name': output_name

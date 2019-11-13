@@ -26,7 +26,7 @@ class AssemblyUtil(object):
             trust_all_ssl_certificates=False,
             auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login',
             service_ver='release',
-            async_job_check_time_ms=100, async_job_check_time_scale_percent=150, 
+            async_job_check_time_ms=100, async_job_check_time_scale_percent=150,
             async_job_check_max_time_ms=300000):
         if url is None:
             raise ValueError('A url is required')
@@ -118,7 +118,7 @@ class AssemblyUtil(object):
            min_contig_length - if set and value is greater than 1, this will
            only include sequences with length greater or equal to the
            min_contig_length specified, discarding all other sequences
-           taxon_ref         - sets the taxon_ref if present contig_info     
+           taxon_ref         - sets the taxon_ref if present contig_info
            - map from contig_id to a small structure that can be used to set
            the is_circular and description fields for Assemblies (optional)
            Uploader options not yet supported taxon_reference: The ws
@@ -153,8 +153,18 @@ class AssemblyUtil(object):
             if job_state['finished']:
                 return job_state['result'][0]
 
+    def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
+        """ removes all contigs less than the min_contig_length provided """
+        filtered_fasta_file_path = fasta_file_path + '.filtered.fa'
+
+        fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
+        SeqIO.write(self.fasta_filter_contigs_generator(fasta_record_iter, min_contig_length),
+                    filtered_fasta_file_path, 'fasta')
+
+        return filtered_fasta_file_path
+
     def status(self, context=None):
-        job_id = self._client._submit_job('AssemblyUtil.status', 
+        job_id = self._client._submit_job('AssemblyUtil.status',
             [], self._service_ver, context)
         async_job_check_time = self._client.async_job_check_time
         while True:
