@@ -451,7 +451,7 @@ class hipmerUtils:
 
         self.log(console, 'Filtering short length contigs from HipMer assembly')
 
-        assemblyUtil = AssemblyUtil(self.callbackURL, token=token)
+        assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
 
         assembly_size_filter = params['assembly_size_filter']
 
