@@ -1,8 +1,9 @@
 {
     "authors": [
         "scanon",
-	    "Dylan Chivian",
-		"jfroula"
+	      "dylan",
+		    "jfroula",
+        "seanjungbluth"
     ],
     "behavior": {
         "service-mapping": {

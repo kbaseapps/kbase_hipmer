@@ -1,5 +1,10 @@
 # Hipmer release notes
 =========================================
+
+1.1.0
+-----
+* Added parameter to filter short length contigs from assembly
+
 1.0.6
 -----
 * Removed single-end from allowed types
