@@ -173,7 +173,7 @@ class AssemblyUtil(object):
 
         fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
         SeqIO.write(self.fasta_filter_contigs_generator(fasta_record_iter, min_contig_length),
-                    filtered_fasta_file_path)
+                    filtered_fasta_file_path, 'fasta')
 
         return filtered_fasta_file_path
 
