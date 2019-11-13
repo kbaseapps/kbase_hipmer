@@ -464,7 +464,7 @@ class hipmerUtils:
 
         assembly_size_filter = params['assembly_size_filter']
 
-        filtered_fasta_file_path = filter_contigs_by_length(output_contigs, assembly_size_filter)
+        filtered_fasta_file_path = self.filter_contigs_by_length(output_contigs, assembly_size_filter)
 
         output_contigs = filtered_fasta_file_path
 
@@ -474,7 +474,7 @@ class hipmerUtils:
                       'workspace_name': wsname,
                       'assembly_name': output_name
                       }
-                      
+
         output_data_ref = assemblyUtil.save_assembly_from_fasta(save_input)
 
         # create a Report
