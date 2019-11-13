@@ -181,7 +181,7 @@ class hipmerTest(unittest.TestCase):
             "is_plant": {
                 "diploid": "low"
             },
-            'assembly_size_filter': 2000,
+            'assembly_size_filter': 0,
             'usedebug': 0,
             'reads': [{
                 'ins_avg': 100,
