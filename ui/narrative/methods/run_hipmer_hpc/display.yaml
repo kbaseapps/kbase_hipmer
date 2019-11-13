@@ -58,6 +58,10 @@ parameters :
         ui-name : level of heterozygosity (ploidy)
         short-hint : |
             Only applise to plants. Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
+    assembly_size_filter:
+        ui-name : filter small contigs from HipMer assembly
+        short-hint : |
+            In cases where HipMer is assembling a large-sized input read set with a relatively high level of complexity, HipMer produces many very small size contigs. This parameter allows a user to filter short length contigs from their assembly. (default 2000bp)
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
@@ -69,11 +73,11 @@ parameter-groups :
         short-hint : |
             Reads objects and options to use in the assembly.
     is_meta:
-        ui-name : Is this metagenome data 
+        ui-name : Is this metagenome data
         short-hint : |
             The assembly will use different heuristics to assembly metagenome data.
     is_plant:
-        ui-name : Is this plant data 
+        ui-name : Is this plant data
         short-hint : |
             The assembly will use different heuristics to assembly plant data.
 

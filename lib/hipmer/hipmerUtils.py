@@ -448,8 +448,19 @@ class hipmerUtils:
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
+
+        self.log(console, 'Filtering short length contigs from HipMer assembly')
+
+        assemblyUtil = AssemblyUtil(self.callbackURL, token=token)
+
+        assembly_size_filter = params['assembly_size_filter']
+
+        filtered_fasta_file_path = assemblyUtil.filter_contigs_by_length(output_contigs, assembly_size_filter)
+
+        output_contigs = filtered_fasta_file_path
+
         self.log(console, 'Uploading FASTA file to Assembly')
-        assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
+
         save_input = {'file': {'path': output_contigs},
                       'workspace_name': wsname,
                       'assembly_name': output_name

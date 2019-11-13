@@ -46,6 +46,10 @@
                 {
                     "input_parameter": "is_plant",
                     "target_property": "is_plant"
+                },
+                {
+                    "input_parameter": "assembly_size_filter",
+                    "target_property": "assembly_size_filter"
                 }
             ],
             "method": "run_hipmer_hpc",
@@ -245,6 +249,20 @@
                   "display": "high heterzygosity"
                 }
               ]
+            }
+        },
+        {
+            "id": "assembly_size_filter",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "2000"
+            ],
+            "field_type": "text",
+            "optional": false,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
             }
         },
         {
