@@ -57,13 +57,15 @@ parameters :
     diploid:
         ui-name : level of heterozygosity (ploidy)
         short-hint : |
-            Only applise to plants. Low heterzygosity is when there are less than 1 SNP per largest kmer length. So if you have 21,41,71 kmer |
-            sizes set for hipmer and 1 SNP per 71 bases, then you have high heterzygosity.
+            Only applise to plants. Low heterzygosity is when there are less than 1 SNP per largest |
+            kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, |
+            then you have high heterzygosity.
     assembly_size_filter:
         ui-name : filter small contigs from HipMer assembly
         short-hint : |
-            In cases where HipMer is assembling a large-sized input read set with a relatively high level of complexity, HipMer produces many |
-            very small size contigs. This parameter allows a user to filter short length contigs from their assembly. (default 2000bp)
+            In cases where HipMer is assembling a large-sized input read set with a relatively high |
+            level of complexity, HipMer produces many very small size contigs. This parameter allows |
+            a user to filter short length contigs from their assembly. (default 2000bp)
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
@@ -98,9 +100,9 @@ description : |
 publications :
     -
         display-text : |
-            Georganas, Evangelos, et al. "HipMer: an extreme-scale de novo genome assembler." Proceedings of the International Conference for High |
-            Performance Computing, Networking, Storage and Analysis. ACM, 2015.
+            Georganas, Evangelos, et al. "HipMer: an extreme-scale de novo genome assembler." Proceedings of |
+            the International Conference for High Performance Computing, Networking, Storage and Analysis. ACM, 2015.
     -
         display-text : |
-            J. A. Chapman, I. Ho, S. Sunkara, S. Luo, G. P. Schroth, and D. S. Rokhsar, "Meraculous: De novo genome assembly with short paired-end |
-            reads," PLoS ONE, vol. 6, no. 8, p. e23501, 08 2011.
+            J. A. Chapman, I. Ho, S. Sunkara, S. Luo, G. P. Schroth, and D. S. Rokhsar, "Meraculous: De novo |
+            genome assembly with short paired-end reads," PLoS ONE, vol. 6, no. 8, p. e23501, 08 2011.
