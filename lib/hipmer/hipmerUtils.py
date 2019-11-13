@@ -457,7 +457,10 @@ class hipmerUtils:
 
         filtered_fasta_file_path = assemblyUtil.filter_contigs_by_length(output_contigs, assembly_size_filter)
 
-        output_contigs = filtered_fasta_file_path
+        if os.stat(filtered_fasta_file_path).st_size == 0:
+            print("Warning: you've filtered all contigs from the output assembly. Returning all contigs from assembly.")
+        else:
+            output_contigs = filtered_fasta_file_path
 
         self.log(console, 'Uploading FASTA file to Assembly')
 

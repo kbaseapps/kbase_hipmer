@@ -41,7 +41,7 @@ class hipmerTest(unittest.TestCase):
                 "diploid": "low"
             },
             'usedebug': 1,
-            'assembly_size_filter': 1200,
+            'assembly_size_filter': 2000,
             'interleaved': 1,
             'reads': [{
                 'ins_avg': 100,
