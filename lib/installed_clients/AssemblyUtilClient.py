@@ -172,6 +172,9 @@ class AssemblyUtil(object):
         filtered_fasta_file_path = fasta_file_path + '.filtered.fa'
 
         fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
+        print("fasta_record_iter:" + str(fasta_record_iter))
+        print("min_contig_length:" + str(min_contig_length))
+        print("filtered_fasta_file_path:" + str(filtered_fasta_file_path))
         SeqIO.write(self.fasta_filter_contigs_generator(fasta_record_iter, min_contig_length),
                     filtered_fasta_file_path, 'fasta')
 
