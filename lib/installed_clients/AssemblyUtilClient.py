@@ -8,6 +8,7 @@
 
 from __future__ import print_function
 from Bio import SeqIO
+import os
 
 # the following is a hack to get the baseclient to import whether we're in a
 # package or not. This makes pep8 unhappy hence the annotations.
@@ -171,7 +172,6 @@ class AssemblyUtil(object):
         """ removes all contigs less than the min_contig_length provided """
         #filtered_fasta_file_path = fasta_file_path + '.filtered.fa' # not using default file name
         filtered_fasta_file_path = os.path.abspath(fasta_file_path).split('.fa')[0] + "_filtered.fa"
-
 
         fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
         print("fasta_record_iter:" + str(fasta_record_iter))
