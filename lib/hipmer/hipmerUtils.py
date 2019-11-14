@@ -480,7 +480,8 @@ class hipmerUtils:
         filtered_fasta_file_path = self.filter_contigs_by_length(output_contigs, assembly_size_filter)
 
         if os.stat(filtered_fasta_file_path).st_size == 0:
-            raise ValueError("Error: Using input parameters, you have filtered all contigs from the HipMer assembly. Increase the minimum contig size and try again.")
+            raise ValueError("Error: Using input parameters, you have filtered all contigs from the HipMer \
+                             assembly. Decrease the minimum contig size and try again.")
         else:
             output_contigs = filtered_fasta_file_path
 
