@@ -387,7 +387,6 @@ class hipmerUtils:
 
         return filtered_fasta_file_path
 
-
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=token,
