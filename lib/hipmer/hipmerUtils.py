@@ -480,7 +480,7 @@ class hipmerUtils:
         filtered_fasta_file_path = self.filter_contigs_by_length(output_contigs, assembly_size_filter)
 
         if os.stat(filtered_fasta_file_path).st_size == 0:
-            print("WARNING! Using input parameters, you've filtered all contigs from the HipMer assembly. Returning ALL assembled contigs instead of an empty file.")
+            raise ValueError("Error: Using input parameters, you have filtered all contigs from the HipMer assembly. Increase the minimum contig size and try again.")
         else:
             output_contigs = filtered_fasta_file_path
 
