@@ -86,13 +86,13 @@
         "active",
         "assembly"
     ],
-    "contact": "help@kbase.us",
+    "contact": "http://kbase.us/contact-us/",
     "job_id_output_field": "docker",
     "parameter-groups": [
         {
             "id": "reads",
             "allow_multiple": true,
-            "optional": true,
+            "optional": false,
             "parameters": [
                 "read_library_name",
                 "ins_avg",
