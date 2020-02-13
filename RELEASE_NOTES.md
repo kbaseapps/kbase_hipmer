@@ -1,6 +1,10 @@
 # Hipmer release notes
 =========================================
 
+1.1.1
+-----
+* Made input mandatory
+
 1.1.0
 -----
 * Added parameter to filter short length contigs from assembly
