@@ -360,7 +360,7 @@ class hipmerUtils:
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('set -e\n\n')
-            f.write('HIPMER_INSTALL=$(pwd)/v1.2.1*/bin\n')
+            f.write('HIPMER_INSTALL=$(pwd)/v1.2.2*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 

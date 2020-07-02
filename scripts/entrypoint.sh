@@ -2,7 +2,7 @@
 
 . /kb/deployment/user-env.sh
 
-HIPMER_FILE=hipmer-v1.2.1.48.tgz
+HIPMER_FILE=hipmer-v1.2.2-7.tgz
 
 python ./scripts/prepare_deploy_cfg.py ./deploy.cfg ./work/config.properties
 
