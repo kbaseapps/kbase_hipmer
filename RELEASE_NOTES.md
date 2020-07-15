@@ -1,5 +1,9 @@
 # Hipmer release notes
 =========================================
+1.2.0
+-----
+* Switch to new HPC model for execution
+
 1.0.8
 -----
 * Update to 1.2.2-7
