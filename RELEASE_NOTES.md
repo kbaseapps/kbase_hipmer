@@ -3,10 +3,15 @@
 1.2.0
 -----
 * Switch to new HPC model for execution
-
-1.0.8
------
 * Update to 1.2.2-7
+
+1.1.1
+-----
+* Made input mandatory
+
+1.1.0
+-----
+* Added parameter to filter short length contigs from assembly
 
 1.0.7
 -----

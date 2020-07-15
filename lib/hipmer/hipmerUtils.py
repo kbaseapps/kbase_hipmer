@@ -366,6 +366,28 @@ class hipmerUtils:
 
             return submit
 
+    def fasta_filter_contigs_generator(self, fasta_record_iter, min_contig_length):
+        """ generates SeqRecords iterator for writing from a legacy contigset object """
+        rows = 0
+        rows_added = 0
+        for record in fasta_record_iter:
+            rows += 1
+            if len(record.seq) >= min_contig_length:
+                rows_added += 1
+                yield record
+        print(f' - filtered out {rows - rows_added} of {rows} contigs that were shorter '
+              f'than {(min_contig_length)} bp.')
+
+    def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
+        """ removes all contigs less than the min_contig_length provided """
+        filtered_fasta_file_path = os.path.abspath(fasta_file_path).split('.fa')[0] + "_filtered.fa"
+
+        fasta_record_iter = SeqIO.parse(fasta_file_path, 'fasta')
+        SeqIO.write(self.fasta_filter_contigs_generator(fasta_record_iter, min_contig_length),
+                    filtered_fasta_file_path, 'fasta')
+
+        return filtered_fasta_file_path
+
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=token,
@@ -448,12 +470,28 @@ class hipmerUtils:
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
-        self.log(console, 'Uploading FASTA file to Assembly')
+
+        self.log(console, 'Filtering short length contigs from HipMer assembly')
+
         assemblyUtil = AssemblyUtil(self.callbackURL, token=self.token)
+
+        assembly_size_filter = params['assembly_size_filter']
+
+        filtered_fasta_file_path = self.filter_contigs_by_length(output_contigs, assembly_size_filter)
+
+        if os.stat(filtered_fasta_file_path).st_size == 0:
+            raise ValueError("Error: Using input parameters, you have filtered all contigs from the HipMer \
+                             assembly. Decrease the minimum contig size and try again.")
+        else:
+            output_contigs = filtered_fasta_file_path
+
+        self.log(console, 'Uploading FASTA file to Assembly')
+
         save_input = {'file': {'path': output_contigs},
                       'workspace_name': wsname,
                       'assembly_name': output_name
                       }
+
         output_data_ref = assemblyUtil.save_assembly_from_fasta(save_input)
 
         # create a Report
