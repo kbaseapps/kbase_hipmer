@@ -45,11 +45,6 @@ parameters :
     ins_dev:
         ui-name : Insert Deviation (required if paired-end) (int)
         short-hint :  Estimated std. Deviation of insert size in bp
-    is_rev_comped:
-        ui-name : Library Read Orientation
-        short-hint : |
-            The read pairs should be either in the "outtie" orientation,
-            i.e <-- --> or the "innie" orientation i.e. --> <--
     aggressive:
         ui-name : Aggressiveness (more sensitive & less specific)
         short-hint : |

@@ -1,8 +1,8 @@
 {
     "authors": [
         "scanon",
-	      "dylan",
-		    "jfroula",
+	    "dylan",
+		"jfroula",
         "seanjungbluth"
     ],
     "behavior": {
@@ -35,10 +35,6 @@
                 {
                     "input_parameter": "ins_dev",
                     "target_property": "ins_dev"
-                },
-                {
-                    "input_parameter": "is_rev_comped",
-                    "target_property": "is_rev_comped"
                 },
                 {
                     "input_parameter": "is_meta",
@@ -96,9 +92,7 @@
             "parameters": [
                 "read_library_name",
                 "ins_avg",
-                "ins_dev",
-                "is_rev_comped"
-            ],
+                "ins_dev"            ],
             "with_border": true
         },
         {
@@ -158,7 +152,7 @@
                 ""
             ],
             "field_type": "text",
-            "optional": false,
+            "optional": true,
             "text_options": {
                 "min_int": 1,
                 "validate_as": "int"
@@ -172,30 +166,10 @@
                 ""
             ],
             "field_type": "text",
-            "optional": false,
+            "optional": true,
             "text_options": {
                 "min_int": 1,
                 "validate_as": "int"
-            }
-        },
-        {
-            "id" : "is_rev_comped",
-            "optional" : false,
-            "advanced" : false,
-            "allow_multiple" : false,
-            "default_values" : [ "" ],
-            "field_type" : "dropdown",
-            "dropdown_options":{
-              "options": [
-                {
-                  "value": "innie",
-                  "display": "innie library"
-                },
-                {
-                  "value": "outtie",
-                  "display": "outtie library (reverse complement)"
-                }
-              ]
             }
         },
         {
