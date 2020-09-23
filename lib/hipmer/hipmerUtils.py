@@ -254,13 +254,13 @@ class hipmerUtils:
         min_depth=0 # autodetect
         metagenome_opts=''
         plant_opts=''
-        if params['is_meta'] is not None:
+        if 'is_meta' in params and params['is_meta'] is not None:
             #
             # if metagenome
             #
             min_depth = 2
 #                min_depth = params['is_meta']['min_depth_cutoff']
-            if params['is_meta']['aggressive']:
+            if 'aggressive' in params and params['aggressive']:
                 # if metagenome and aggressive algorithm should be used
                 metagenome_opts = "--aggressive --meta --min-depth {} ".format(min_depth)
             else:
@@ -269,13 +269,18 @@ class hipmerUtils:
         #
         # Test if we have plant data
         #
-        if params['is_plant'] is not None and params['is_plant']['diploid'] is not None:
+        elif 'is_plant' in params and params['is_plant'] is not None and params['is_plant']['diploid'] is not None:
             diploid_value = params['is_plant']['diploid']
 
-            if params['is_meta'] is not None:
-                plant_opts = "--bubble-depth-cutoff 1 --diploidy {} ".format(diploid_value)
-            else:
-                plant_opts = "--bubble-depth-cutoff 0 --diploidy {} ".format(diploid_value)
+            # Not sure how this could happen
+            # if params['is_meta'] is not None:
+            #    plant_opts = "--bubble-depth-cutoff 1 --diploidy {} ".format(diploid_value)
+            #else:
+            plant_opts = "--bubble-depth-cutoff 0 --diploidy {} ".format(diploid_value)
+
+        else:
+            raise ValueError('Need to specify is_meta or is_plant')
+            
 
 
         for r in params['reads']:

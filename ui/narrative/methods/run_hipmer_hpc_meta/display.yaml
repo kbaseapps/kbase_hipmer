@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Assemble with HipMer - v1.2.2-7
+name: Assemble Metagenomic Reads with HipMer - v1.2.2-7
 tooltip: |
-    Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
+    Assemble metagenomic reads using the HipMer assembly pipeline.
 screenshots: []
 
 icon: hipmer-blue.png
@@ -49,12 +49,6 @@ parameters :
         ui-name : Aggressiveness (more sensitive & less specific)
         short-hint : |
             This only applies to metagenomes. It will give a more sensitive, less specific assembly.
-    diploid:
-        ui-name : level of heterozygosity (ploidy)
-        short-hint : |
-            Only applise to plants. Low heterzygosity is when there are less than 1 SNP per largest |
-            kmer length. So if you have 21,41,71 kmer sizes set for hipmer and 1 SNP per 71 bases, |
-            then you have high heterzygosity.
     assembly_size_filter:
         ui-name : filter small contigs from HipMer assembly
         short-hint : |
@@ -71,14 +65,6 @@ parameter-groups :
         ui-name : Reads
         short-hint : |
             Reads objects and options to use in the assembly.
-    is_meta:
-        ui-name : Is this metagenome data
-        short-hint : |
-            The assembly will use different heuristics to assembly metagenome data.
-    is_plant:
-        ui-name : Is this plant data
-        short-hint : |
-            The assembly will use different heuristics to assembly plant data.
 
 description : |
     <p>KBase wrapper for the HipMer Assembler (v1.2.2-7).</p>

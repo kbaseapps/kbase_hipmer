@@ -75,19 +75,18 @@ MOCK_GET_INFO = {
     'id': 2,
     'Outward_Read_Orientation': 'No'
 }
+#    'is_meta': {
+#        'aggressive': 1
+#    },
+#    "is_plant": {
+#        "diploid": "low"
+#    },
 
 PARAMS = {
     'mer_sizes': '21,41,127',
     'workspace_name': 'bogus',
     'output_contigset_name': 'hipmer.contigs',
-    'is_meta': {
-        'aggressive': 1
-    },
-    "is_plant": {
-        "diploid": "low"
-    },
     'usedebug': 1,
-    'interleaved': 1,
     'reads': [{
         'ins_avg': 100,
         'ins_dev': 10,
@@ -122,6 +121,8 @@ class hipmerTest(unittest.TestCase):
 
     def test_validate(self):
         params = deepcopy(PARAMS)
+        params['is_meta'] = 1
+        params['agressive'] = 1
         # run hipmer
         HU = hipmerUtils(self.cfg, self.token)
         result = HU._validate_inputs(params)
@@ -146,6 +147,8 @@ class hipmerTest(unittest.TestCase):
     def test_reads(self):
         hu = hipmerUtils(self.cfg, self.token)
         params = deepcopy(PARAMS)
+        params['is_meta'] = 1
+        params['agressive'] = 1
         mock_get_reads = deepcopy(MOCK_GET_READS)
         fn = os.path.join(self.data_dir, 'small.inter.fq')
         mock_get_reads['files']['52407/2/1']['files']['fwd'] = fn

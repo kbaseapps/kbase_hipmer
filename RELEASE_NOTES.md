@@ -1,5 +1,9 @@
 # Hipmer release notes
 =========================================
+1.2.1
+-----
+* Split out metagenome and plant assembly into separate apps
+
 1.2.0
 -----
 * Switch to new HPC model for execution
