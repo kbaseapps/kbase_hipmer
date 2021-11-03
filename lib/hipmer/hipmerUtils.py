@@ -269,8 +269,8 @@ class hipmerUtils:
         #
         # Test if we have plant data
         #
-        elif 'is_plant' in params and params['is_plant'] is not None and params['is_plant']['diploid'] is not None:
-            diploid_value = params['is_plant']['diploid']
+        elif 'is_plant' in params and params['is_plant']:
+            diploid_value = params['diploid']
 
             # Not sure how this could happen
             # if params['is_meta'] is not None:
@@ -543,9 +543,8 @@ class hipmerUtils:
             # not really any way to test this, all inputs have been checked earlier and should be
             # ok
             print('Logging exception from creating report object')
-            print((str(e)))
             # TODO delete shock node
-            raise
+            raise e
 
         # STEP 6: contruct the output to send back
         output = {'report_name': report_info['name'],
