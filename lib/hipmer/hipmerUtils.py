@@ -385,7 +385,7 @@ class hipmerUtils:
         output_contigs = ''
         for root, subdirs, files in os.walk(self.scratch):
             for f in files:
-                if f == 'final_assembly.fa':
+                if f == 'final_assembly.fasta':
                     output_contigs = os.path.join(root,f)
                     print("found OUTPUT CONTIGS {}".format(output_contigs))
                     continue
