@@ -285,6 +285,7 @@ class hipmerUtils:
             f.write('if [ -z "$MODULEPATH" ] ; then\n')
             f.write('    . /etc/profile.d/modules.sh\n')
             f.write('fi\n')
+            f.write('module load PrgEnv-cray/6.0.9\n')
             f.write('module load upcxx/2021.9.0\n')
             f.write('HIPMER_INSTALL=$(pwd)/v2*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
