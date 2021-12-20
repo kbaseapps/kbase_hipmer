@@ -1,9 +1,9 @@
 {
     "authors": [
-        "scanon",
-	    "dylan",
-		"jfroula",
-        "seanjungbluth"
+       "scanon",
+       "dylan",
+       "jfroula",
+       "seanjungbluth"
     ],
     "behavior": {
         "service-mapping": {
@@ -79,8 +79,7 @@
         }
     },
     "categories": [
-        "active",
-        "assembly"
+        "inactive"
     ],
     "contact": "http://kbase.us/contact-us/",
     "job_id_output_field": "docker",
@@ -256,7 +255,7 @@
         }
     ],
     "ver": "1.2.2-7",
-    "visible": true,
+    "visible": false,
     "widgets": {
         "input": null,
         "output": "no-display"

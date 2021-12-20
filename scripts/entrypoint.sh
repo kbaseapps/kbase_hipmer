@@ -2,7 +2,7 @@
 
 . /kb/deployment/user-env.sh
 
-HIPMER_FILE=hipmer-v1.2.2-7.tgz
+HIPMER_FILE=/kb/module/mhm2.tgz
 
 python ./scripts/prepare_deploy_cfg.py ./deploy.cfg ./work/config.properties
 
@@ -17,7 +17,7 @@ elif [ "${1}" = "test" ] ; then
   make test
 elif [ "${1}" = "async" ] ; then
   # TODO: Move this into the module
-  (cd work/tmp && tar xzf $SCRATCH/$HIPMER_FILE )
+  (cd work/tmp && tar xzf $HIPMER_FILE )
   sh ./scripts/run_async.sh
 elif [ "${1}" = "init" ] ; then
   echo "Initialize module"

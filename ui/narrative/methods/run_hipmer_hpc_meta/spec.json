@@ -1,9 +1,9 @@
 {
     "authors": [
-        "scanon",
-	    "dylan",
-		"jfroula",
-        "seanjungbluth"
+       "scanon",
+       "dylan",
+       "jfroula",
+       "seanjungbluth"
     ],
     "behavior": {
         "service-mapping": {
@@ -29,20 +29,8 @@
                     "target_property": "reads"
                 },
                 {
-                    "input_parameter": "ins_avg",
-                    "target_property": "ins_avg"
-                },
-                {
-                    "input_parameter": "ins_dev",
-                    "target_property": "ins_dev"
-                },
-                {
                     "constant_value": 1,
                     "target_property": "is_meta"
-                },
-                {
-                    "input_parameter": "aggressive",
-                    "target_property": "aggressive"
                 },
                 {
                     "input_parameter": "assembly_size_filter",
@@ -84,18 +72,6 @@
     ],
     "contact": "http://kbase.us/contact-us/",
     "job_id_output_field": "docker",
-    "parameter-groups": [
-        {
-            "id": "reads",
-            "allow_multiple": true,
-            "optional": false,
-            "parameters": [
-                "read_library_name",
-                "ins_avg",
-                "ins_dev"            ],
-            "with_border": true
-        }
-    ],
     "parameters": [
         {
             "id": "output_contigset_name",
@@ -127,37 +103,9 @@
             }
         },
         {
-            "id": "ins_avg",
+            "id": "reads",
             "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                ""
-            ],
-            "field_type": "text",
-            "optional": true,
-            "text_options": {
-                "min_int": 1,
-                "validate_as": "int"
-            }
-        },
-        {
-            "id": "ins_dev",
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [
-                ""
-            ],
-            "field_type": "text",
-            "optional": true,
-            "text_options": {
-                "min_int": 1,
-                "validate_as": "int"
-            }
-        },
-        {
-            "id": "read_library_name",
-            "advanced": false,
-            "allow_multiple": false,
+            "allow_multiple": true,
             "default_values": [
                 ""
             ],
@@ -169,20 +117,6 @@
                     "KBaseFile.PairedEndLibrary"
                 ]
             }
-        },
-        {
-            "id": "aggressive",
-            "advanced": false,
-            "allow_multiple": false,
-            "checkbox_options": {
-                "checked_value": 1,
-                "unchecked_value": 0
-            },
-            "default_values": [
-                "0"
-            ],
-            "field_type": "checkbox",
-            "optional": true
         },
         {
             "id": "assembly_size_filter",

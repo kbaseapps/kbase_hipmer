@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Assemble Metagenomic Reads with HipMer - v1.2.2-7
+name: Assemble Metagenomic Reads with MetaHipMer - v2.0.2a-148
 tooltip: |
-    Assemble metagenomic reads using the HipMer assembly pipeline.
+    Assemble metagenomic reads using the MetaHipMer assembly pipeline.
 screenshots: []
 
 icon: hipmer-blue.png
@@ -27,7 +27,7 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    read_library_name :
+    reads :
         ui-name : Read Library
         short-hint : Read library (only PairedEnd Libs supported now)
     output_contigset_name:
@@ -39,36 +39,20 @@ parameters :
             k-mer sizes to use in the assembly process.  This is a
             comma seperated list of integers to use as mer sizes.  For
             metagenomes you may want to use 21,31,51,77,95.
-    ins_avg:
-        ui-name : Insert Average (optional) (int)
-        short-hint :  Estimated average Insert Length for Paired-End Reads in bp.  If no value is provied, hipmer will auto-detect it.
-    ins_dev:
-        ui-name : Insert Deviation (optional) (int)
-        short-hint :  Estimated std. Deviation of insert size in bp.  If no value is provied, hipmer will auto-detect it.
-    aggressive:
-        ui-name : Aggressiveness (more sensitive & less specific)
-        short-hint : |
-            This only applies to metagenomes. It will give a more sensitive, less specific assembly.
     assembly_size_filter:
-        ui-name : filter small contigs from HipMer assembly
+        ui-name : filter small contigs from MetaHipMer assembly
         short-hint : |
-            In cases where HipMer is assembling a large-sized input read set with a relatively high |
-            level of complexity, HipMer produces many very small size contigs. This parameter allows |
+            In cases where MetaHipMer is assembling a large-sized input read set with a relatively high |
+            level of complexity, MetaHipMer produces many very small size contigs. This parameter allows |
             a user to filter short length contigs from their assembly. (default 2000bp)
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
             use debug queue for testing or jobs < 30 min (not recomended)
 
-parameter-groups :
-    reads :
-        ui-name : Reads
-        short-hint : |
-            Reads objects and options to use in the assembly.
-
 description : |
-    <p>KBase wrapper for the HipMer Assembler (v1.2.2-7).</p>
-    <p>HipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
+    <p>KBase wrapper for the MetaHipMer Assembler (v1.2.2-7).</p>
+    <p>MetaHipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
        It is largely written in UPC, with the exception of the UFX generation, which is written in C++/MPI.</p>
     <p>For more details see: https://sourceforge.net/p/hipmer/wiki/Home/</p>
     <p>This project is a joint collaboration between UC Berkeley ( http://www.eecs.berkeley.edu ),

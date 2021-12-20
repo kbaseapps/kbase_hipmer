@@ -1,5 +1,9 @@
 # Hipmer release notes
 =========================================
+2.0.0
+-----
+* Update to MetaHipMer v2.0.2a
+
 1.2.1
 -----
 * Split out metagenome and plant assembly into separate apps
