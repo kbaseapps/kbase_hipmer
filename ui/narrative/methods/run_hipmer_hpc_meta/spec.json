@@ -94,7 +94,7 @@
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
-                "21,41,63,95,127"
+                "21,41,63,95"
             ],
             "field_type": "text",
             "optional": false,
@@ -147,7 +147,7 @@
             "optional": false
         }
     ],
-    "ver": "1.2.2-7",
+    "ver": "2.1.0-1",
     "visible": true,
     "widgets": {
         "input": null,

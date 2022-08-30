@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Assemble Metagenomic Reads with MetaHipMer - v2.0.2a-148
+name: Assemble Metagenomic Reads with MetaHipMer - v2.1.0.1-357
 tooltip: |
     Assemble metagenomic reads using the MetaHipMer assembly pipeline.
 screenshots: []
