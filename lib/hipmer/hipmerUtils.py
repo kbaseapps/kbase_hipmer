@@ -230,7 +230,7 @@ class hipmerUtils:
             #
             # format argument for "reads" section
             #
-            read_args = "-r {}".format(file_name)
+            read_args = " -r {}".format(file_name)
             #if r['read_type'] == "paired":
             #    # if paired end reads
             #    # test if reverse compliment ("outtie") or "innie" library

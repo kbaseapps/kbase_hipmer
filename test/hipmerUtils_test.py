@@ -181,27 +181,23 @@ class hipmerTest(unittest.TestCase):
         line = self._get_cmd()
 
 
+    def test_reads2(self):
+        hu = hipmerUtils(self.cfg, self.token)
+        params = deepcopy(PARAMS)
+        params['is_meta'] = 1
+        params['agressive'] = 1
+        params['reads'] = ['52407/2/1', '52407/2/2']
 
-##    def test_generate_command(self):
-##        HU = kbase_hipmerUtils(self.cfg, self.token)
-##        result = HU.generate_config(params)
-##        self.assertTrue(result)
+        mock_get_reads = deepcopy(MOCK_GET_READS)
+        mock_get_reads['files']['52407/2/2'] = mock_get_reads['files']['52407/2/1']
+        fn = os.path.join(self.data_dir, 'small.inter.fq')
+        mock_get_reads['files']['52407/2/1']['files']['fwd'] = fn
+        mock_get_reads['files']['52407/2/2']['files']['fwd'] = fn
 
-#    def test_fixup(self):
-#        tfile = self.scratch + '/t.fq'
-#        params = {
-#            'reads': [{'ref': '1/2/3'}],
-#            'readsfiles': {
-#                '1/2/3': {'files': {'fwd': tfile}}
-#            }
-#        }
-#        shutil.copyfile(self.data_dir + 'sra.fq', tfile)
-#        HU = hipmerUtils(self.cfg, self.token)
-#        HU.fixup_reads(params)
-#        self.assertTrue(os.path.exists(tfile+'.orig'))
-#
-#        os.remove(tfile + '.orig')
-#        shutil.copyfile(self.data_dir + 'nosra.fq', tfile)
-#        HU.fixup_reads(params)
-#        self.assertFalse(os.path.exists(tfile + '.orig'))
-#
+        hu.rapi.get_reads_info_all_formatted = MagicMock(return_value = MOCK_GET_INFO)
+        hu.readcli.download_reads = MagicMock(return_value = mock_get_reads)
+
+        # Test with specified settings
+        hu.prepare_run(params)
+        line = self._get_cmd()
+
