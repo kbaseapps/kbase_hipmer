@@ -39,12 +39,6 @@ parameters :
             k-mer sizes to use in the assembly process.  This is a
             comma separated list of integers to use as mer sizes.  For
             metagenomes you may want to use 21,33,55,77,99.
-    scaff_mer_lens:
-        ui-name : scaff k-mer sizes
-        short-hint : |
-            scaffold k-mer sizes to use in the assembly process.  This is a
-            comma separated list of integers to use as mer sizes.  For
-            metagenomes you may want to use 99,33.
     assembly_size_filter:
         ui-name : filter small contigs from MetaHipMer assembly
         short-hint : |

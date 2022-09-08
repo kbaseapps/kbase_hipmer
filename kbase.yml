@@ -2,7 +2,7 @@ module-name:
     hipmer
 
 module-description:
-    The HipMer assembler (version v2.0.2a-148)
+    The HipMer assembler
 
 service-language:
     python
