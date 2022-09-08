@@ -25,6 +25,10 @@
                     "target_property": "mer_sizes"
                 },
                 {
+                    "input_parameter": "scaff_mer_lens",
+                    "target_property": "scaff_mer_lens"
+                },
+                {
                     "input_parameter": "reads",
                     "target_property": "reads"
                 },
@@ -95,6 +99,19 @@
             "allow_multiple": false,
             "default_values": [
                 "21,33,55,77,99"
+            ],
+            "field_type": "text",
+            "optional": false,
+            "text_options": {
+                "validate_as": "text"
+            }
+        },
+        {
+            "id": "scaff_mer_lens",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "99,33"
             ],
             "field_type": "text",
             "optional": false,
