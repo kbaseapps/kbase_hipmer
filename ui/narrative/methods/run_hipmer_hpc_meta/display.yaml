@@ -37,8 +37,14 @@ parameters :
         ui-name : k-mer sizes
         short-hint : |
             k-mer sizes to use in the assembly process.  This is a
-            comma seperated list of integers to use as mer sizes.  For
-            metagenomes you may want to use 21,31,51,77,95.
+            comma separated list of integers to use as mer sizes.  For
+            metagenomes you may want to use 21,33,55,77,99.
+    scaff_mer_sizes:
+        ui-name : scaff k-mer sizes
+        short-hint : |
+            scaffold k-mer sizes to use in the assembly process.  This is a
+            comma separated list of integers to use as mer sizes.  For
+            metagenomes you may want to use 99,33.
     assembly_size_filter:
         ui-name : filter small contigs from MetaHipMer assembly
         short-hint : |
@@ -51,10 +57,10 @@ parameters :
             use debug queue for testing or jobs < 30 min (not recomended)
 
 description : |
-    <p>KBase wrapper for the MetaHipMer Assembler (v1.2.2-7).</p>
+    <p>KBase wrapper for the MetaHipMer Assembler (v2.1.0.1-357).</p>
     <p>MetaHipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
-       It is largely written in UPC, with the exception of the UFX generation, which is written in C++/MPI.</p>
-    <p>For more details see: https://sourceforge.net/p/hipmer/wiki/Home/</p>
+       Version 2 (MHM2) is written entirely in UPC++ and CUDA, and runs efficiently on both single servers and on multinode supercomputers, where it can scale up to coassemble terabase-sized metagenomes.</p>
+    <p>For more details see: https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md</p>
     <p>This project is a joint collaboration between UC Berkeley ( http://www.eecs.berkeley.edu ),
     JGI ( http://jgi.doe.gov ), and CRD ( http://crd.lbl.gov/ )</p>
 
