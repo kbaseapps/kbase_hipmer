@@ -84,7 +84,7 @@ MOCK_GET_INFO = {
 
 PARAMS = {
     'mer_sizes': '21,41,127',
-    'scaff_mer_sizes': '99,33',
+    'scaff_mer_lens': '99,33',
     'workspace_name': 'bogus',
     'output_contigset_name': 'hipmer.contigs',
     'usedebug': 1,
@@ -132,7 +132,7 @@ class hipmerTest(unittest.TestCase):
             result = HU._validate_inputs(params)
 
         # must be ints
-        params['scaff_mer_sizes'] = 'asdf,asdfa,asdf'
+        params['scaff_mer_lens'] = 'asdf,asdfa,asdf'
         with self.assertRaises(ValueError):
             result = HU._validate_inputs(params)
 
@@ -147,7 +147,7 @@ class hipmerTest(unittest.TestCase):
             result = HU._validate_inputs(params)
 
         # can't go under 10 for scaff kmers
-        params['scaff_mer_sizes'] = '99,8'
+        params['scaff_mer_lens'] = '99,8'
         with self.assertRaises(ValueError):
             result = HU._validate_inputs(params)
 

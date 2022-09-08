@@ -25,8 +25,8 @@
                     "target_property": "mer_sizes"
                 },
                 {
-                    "input_parameter": "scaff_mer_sizes",
-                    "target_property": "scaff_mer_sizes"
+                    "input_parameter": "scaff_mer_lens",
+                    "target_property": "scaff_mer_lens"
                 },
                 {
                     "input_parameter": "reads",
@@ -82,14 +82,14 @@
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
-                "hipmer.contigs"
+                "MHM2.contigs"
             ],
             "field_type": "text",
             "optional": false,
             "text_options": {
                 "is_output_name": true,
                 "valid_ws_types": [
-                    "KBaseGenomes.ContigSet"
+                    "KBaseGenomes.ContigSet", "KBaseGenomeAnnotations.Assembly"
                 ]
             }
         },
@@ -107,7 +107,7 @@
             }
         },
         {
-            "id": "scaff_mer_sizes",
+            "id": "scaff_mer_lens",
             "advanced": false,
             "allow_multiple": false,
             "default_values": [

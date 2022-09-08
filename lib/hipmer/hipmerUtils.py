@@ -72,13 +72,13 @@ class hipmerUtils:
 
         # Parse the scaff kmer string into a list.  This step verifies that there
         # were integers separated by commas. I don't actually use the created list (scaff_mer_sizes_int).
-        if params.get('scaff_mer_sizes'):
-            scaff_mer_sizes = params['scaff_mer_sizes'].replace(' ', '').replace('\t', '')
-            scaff_mer_sizes_int = []
-            for mer in scaff_mer_sizes.split(','):
+        if params.get('scaff_mer_lens'):
+            scaff_mer_lens = params['scaff_mer_lens'].replace(' ', '').replace('\t', '')
+            scaff_mer_lens_int = []
+            for mer in scaff_mer_lens.split(','):
                 try:
                     meri = int(mer)
-                    scaff_mer_sizes_int.append(meri)
+                    scaff_mer_lens_int.append(meri)
                 except:
                     raise ValueError('scaff mer sizes should be an integer')
 
@@ -86,7 +86,7 @@ class hipmerUtils:
                     raise ValueError('scaff mer sizes should be above 10.')
 
             # just in case I need the list someday.
-            params['scaff_mer_sizes_int'] = scaff_mer_sizes_int
+            params['scaff_mer_lens_int'] = scaff_mer_lens_int
 
         
         # I check that the user input insert sizes and insert size standard deviation
@@ -236,8 +236,8 @@ class hipmerUtils:
 
         kmer_str = params['mer_sizes']
         scaff_kmer_str = None
-        if params.get('scaff_mer_sizes'):
-            scaff_kmer_str = params['scaff_mer_sizes']
+        if params.get('scaff_mer_lens'):
+            scaff_kmer_str = params['scaff_mer_lens']
             
         # Test if we have a metagenome
         #

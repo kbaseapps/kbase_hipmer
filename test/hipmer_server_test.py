@@ -78,7 +78,7 @@ class hipmerTest(unittest.TestCase):
         wsn = self.getWsName()
         params = {
             'mer_sizes': '21,41,127',
-            'scaff_mer_sizes': '99,33',
+            'scaff_mer_lens': '99,33',
             'workspace_name': wsn,
             'output_contigset_name': 'hipmer.contigs',
             'is_meta': 1,
@@ -125,7 +125,7 @@ class hipmerTest(unittest.TestCase):
         # run hipmer
         params = {
             'mer_sizes': '21,41,127',
-            'scaff_mer_sizes': '99,33',
+            'scaff_mer_lens': '99,33',
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
             'is_meta': 1,
