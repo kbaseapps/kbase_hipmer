@@ -265,7 +265,7 @@ class hipmerUtils:
             final_read_args += read_args
 
         # build base command
-        hipmer_command = "mhm2.py --kmer_lens {} ".format(kmer_str)
+        hipmer_command = "mhm2.py --kmer-lens {} ".format(kmer_str)
         if scaff_kmer_str is not None:
             hipmer_command += "--scaff-kmer-lens {} ".format(scaff_kmer_str) 
         hipmer_command += final_read_args
