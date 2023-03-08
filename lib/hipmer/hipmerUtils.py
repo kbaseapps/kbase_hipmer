@@ -51,8 +51,11 @@ class hipmerUtils:
 
         # Check mer_sizes
         if 'mer_sizes' not in params:
-            raise ValueError('mer_sizes is a required parameter')
-
+            raise ValueError('mer_sizes is a required parameter. Recommended vals for metagenome: 21,33,55,77,99')
+        # Check scaff_mer_lens
+        if 'scaff_mer_lens' not in params:
+            raise ValueError('scaff_mer_lens is a required parameter. Recommended vals for metagenome: 99,33')
+            
         # Parse the kmer string into a list.  This step verifies that there
         # were integers separated by commas. I don't actually use the created list (mer_sizes_int).
         mer_sizes = params['mer_sizes'].replace(' ', '').replace('\t', '')
