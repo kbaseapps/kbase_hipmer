@@ -48,8 +48,8 @@ parameters :
     assembly_size_filter:
         ui-name : filter small contigs from MetaHipMer assembly
         short-hint : |
-            In cases where MetaHipMer is assembling a large-sized input read set with a relatively high |
-            level of complexity, MetaHipMer produces many very small size contigs. This parameter allows |
+            In cases where MetaHipMer is assembling a large-sized input read set with a relatively high
+            level of complexity, MetaHipMer produces many very small size contigs. This parameter allows
             a user to filter short length contigs from their assembly. (default 2000bp)
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
@@ -70,10 +70,16 @@ description : |
 
 publications :
     -
+        pmid: 32612216
         display-text : |
-            Georganas, Evangelos, et al. "HipMer: an extreme-scale de novo genome assembler." Proceedings of |
+            Hofmeyr Steven, et al. "Terabase-scale metagenome coassembly with MetaHipMer."
+            Sci Rep. 2020 Jul 1;10(1):10689.
+        link: https://doi.org/10.1038/s41598-020-67416-5
+    -
+        display-text : |
+            Georganas, Evangelos, et al. "HipMer: an extreme-scale de novo genome assembler." Proceedings of 
             the International Conference for High Performance Computing, Networking, Storage and Analysis. ACM, 2015.
     -
         display-text : |
-            J. A. Chapman, I. Ho, S. Sunkara, S. Luo, G. P. Schroth, and D. S. Rokhsar, "Meraculous: De novo |
+            J. A. Chapman, I. Ho, S. Sunkara, S. Luo, G. P. Schroth, and D. S. Rokhsar, "Meraculous: De novo 
             genome assembly with short paired-end reads," PLoS ONE, vol. 6, no. 8, p. e23501, 08 2011.
