@@ -1,6 +1,11 @@
 # Hipmer release notes
 =========================================
 
+2.2.0
+-----
+* added mer size defaults of 21,33,55,77,99
+* added scaff mer sizes with default of 99,33
+
 2.1.0
 -----
 * Update to MetaHipMer v2.1.0.1-357

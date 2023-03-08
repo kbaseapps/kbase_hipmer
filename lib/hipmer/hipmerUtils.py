@@ -51,8 +51,11 @@ class hipmerUtils:
 
         # Check mer_sizes
         if 'mer_sizes' not in params:
-            raise ValueError('mer_sizes is a required parameter')
-
+            raise ValueError('mer_sizes is a required parameter. Recommended vals for metagenome: 21,33,55,77,99')
+        # Check scaff_mer_lens
+        if 'scaff_mer_lens' not in params:
+            raise ValueError('scaff_mer_lens is a required parameter. Recommended vals for metagenome: 99,33')
+            
         # Parse the kmer string into a list.  This step verifies that there
         # were integers separated by commas. I don't actually use the created list (mer_sizes_int).
         mer_sizes = params['mer_sizes'].replace(' ', '').replace('\t', '')
@@ -70,6 +73,25 @@ class hipmerUtils:
         # just in case I need the list someday.
         params['mer_sizes_int'] = mer_sizes_int
 
+        # Parse the scaff kmer string into a list.  This step verifies that there
+        # were integers separated by commas. I don't actually use the created list (scaff_mer_sizes_int).
+        if params.get('scaff_mer_lens'):
+            scaff_mer_lens = params['scaff_mer_lens'].replace(' ', '').replace('\t', '')
+            scaff_mer_lens_int = []
+            for mer in scaff_mer_lens.split(','):
+                try:
+                    meri = int(mer)
+                    scaff_mer_lens_int.append(meri)
+                except:
+                    raise ValueError('scaff mer sizes should be an integer')
+
+                if meri <= 10:
+                    raise ValueError('scaff mer sizes should be above 10.')
+
+            # just in case I need the list someday.
+            params['scaff_mer_lens_int'] = scaff_mer_lens_int
+
+        
         # I check that the user input insert sizes and insert size standard deviation
         # if they are using paired-end reads.
         # However, this is checked in the "check_reads" function.
@@ -216,6 +238,10 @@ class hipmerUtils:
         hipmer_command=''
 
         kmer_str = params['mer_sizes']
+        scaff_kmer_str = None
+        if params.get('scaff_mer_lens'):
+            scaff_kmer_str = params['scaff_mer_lens']
+            
         # Test if we have a metagenome
         #
 
@@ -242,7 +268,9 @@ class hipmerUtils:
             final_read_args += read_args
 
         # build base command
-        hipmer_command = "mhm2.py -k {} ".format(kmer_str)
+        hipmer_command = "mhm2.py --kmer-lens {} ".format(kmer_str)
+        if scaff_kmer_str is not None:
+            hipmer_command += "--scaff-kmer-lens {} ".format(scaff_kmer_str) 
         hipmer_command += final_read_args
 
         return hipmer_command

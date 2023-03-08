@@ -25,6 +25,10 @@
                     "target_property": "mer_sizes"
                 },
                 {
+                    "input_parameter": "scaff_mer_lens",
+                    "target_property": "scaff_mer_lens"
+                },
+                {
                     "input_parameter": "reads",
                     "target_property": "reads"
                 },
@@ -68,9 +72,10 @@
     },
     "categories": [
         "active",
-        "assembly"
+        "assembly",
+        "communities"
     ],
-    "contact": "http://kbase.us/contact-us/",
+    "contact": "http://www.kbase.us/support/",
     "job_id_output_field": "docker",
     "parameters": [
         {
@@ -78,14 +83,14 @@
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
-                "hipmer.contigs"
+                "MHM2.contigs"
             ],
             "field_type": "text",
             "optional": false,
             "text_options": {
                 "is_output_name": true,
                 "valid_ws_types": [
-                    "KBaseGenomes.ContigSet"
+                    "KBaseGenomes.ContigSet", "KBaseGenomeAnnotations.Assembly"
                 ]
             }
         },
@@ -94,7 +99,20 @@
             "advanced": false,
             "allow_multiple": false,
             "default_values": [
-                "21,41,63,95"
+                "21,33,55,77,99"
+            ],
+            "field_type": "text",
+            "optional": false,
+            "text_options": {
+                "validate_as": "text"
+            }
+        },
+        {
+            "id": "scaff_mer_lens",
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [
+                "99,33"
             ],
             "field_type": "text",
             "optional": false,
