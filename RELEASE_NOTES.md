@@ -1,5 +1,13 @@
 # Hipmer release notes
 =========================================
+
+2.1.0
+-----
+* Update to MetaHipMer v2.1.0.1-357
+* dropping the 127 kmer arg
+* use PrgEnv-cray/6.0.10
+* use upcxx/2022.3.0
+
 2.0.0
 -----
 * Update to MetaHipMer v2.0.2a
