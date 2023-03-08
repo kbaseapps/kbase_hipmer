@@ -23,6 +23,11 @@
   "type" : "sdk",
   "version_tag" : "release"
 }, {
+  "module_name" : "special",
+  "type" : "sdk",
+  "version_tag" : "release",
+  "file_path" : "../JobRunner/special.spec"
+}, {
   "module_name" : "Workspace",
   "type" : "core",
   "file_path" : "https://raw.githubusercontent.com/kbase/workspace_deluxe/master/workspace.spec"

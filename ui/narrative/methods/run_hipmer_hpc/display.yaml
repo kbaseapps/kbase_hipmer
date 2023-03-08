@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Assemble with HipMer - v1.2.1.48
+name: Assemble with HipMer - v1.2.2-7
 tooltip: |
     Assemble prokaryotic and eukaryotic reads using the HipMer assembly pipeline.
 screenshots: []
@@ -40,16 +40,11 @@ parameters :
             comma seperated list of integers to use as mer sizes.  For
             metagenomes you may want to use 21,31,51,77,95.
     ins_avg:
-        ui-name : Insert Average (required if paired-end) (int)
-        short-hint :  Estimated average Insert Length for Paired-End Reads in bp.
+        ui-name : Insert Average (optional) (int)
+        short-hint :  Estimated average Insert Length for Paired-End Reads in bp.  If no value is provied, hipmer will auto-detect it.
     ins_dev:
-        ui-name : Insert Deviation (required if paired-end) (int)
-        short-hint :  Estimated std. Deviation of insert size in bp
-    is_rev_comped:
-        ui-name : Library Read Orientation
-        short-hint : |
-            The read pairs should be either in the "outtie" orientation,
-            i.e <-- --> or the "innie" orientation i.e. --> <--
+        ui-name : Insert Deviation (optional) (int)
+        short-hint :  Estimated std. Deviation of insert size in bp.  If no value is provied, hipmer will auto-detect it.
     aggressive:
         ui-name : Aggressiveness (more sensitive & less specific)
         short-hint : |
@@ -86,7 +81,7 @@ parameter-groups :
             The assembly will use different heuristics to assembly plant data.
 
 description : |
-    <p>KBase wrapper for the HipMer Assembler (v1.2.1.48).</p>
+    <p>KBase wrapper for the HipMer Assembler (v1.2.2-7).</p>
     <p>HipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
        It is largely written in UPC, with the exception of the UFX generation, which is written in C++/MPI.</p>
     <p>For more details see: https://sourceforge.net/p/hipmer/wiki/Home/</p>

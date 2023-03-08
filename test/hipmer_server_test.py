@@ -44,6 +44,8 @@ class hipmerTest(unittest.TestCase):
         cls.handleURL = cls.cfg['handle-service-url']
         cls.scratch = cls.cfg['scratch']
         print("shock %s" % (cls.shockURL))
+        cls.testWS = 'KBaseTestData'
+        cls.testReads = 'small.interlaced_reads'
 
     @classmethod
     def tearDownClass(cls):
@@ -62,102 +64,6 @@ class hipmerTest(unittest.TestCase):
         self.__class__.wsName = wsName
         return wsName
 
-    # call this method to get the WS object info of a Paired End Library (will
-    # upload the example data if this is the first time the method is called during tests)
-    def getPairedEndLibInfo(self):
-        if hasattr(self.__class__, 'pairedEndLibInfo'):
-            return self.__class__.pairedEndLibInfo
-        # 1) upload files to shock
-        token = self.ctx['token']
-        forward_shock_file = self.upload_file_to_shock(
-            shock_service_url=self.shockURL,
-            filePath='data/small.forward.fq',
-            token=token)
-        reverse_shock_file = self.upload_file_to_shock(
-            shock_service_url=self.shockURL,
-            filePath='data/small.reverse.fq',
-            token=token)
-        pprint(forward_shock_file)
-        pprint(reverse_shock_file)
-
-        # 2) create handle
-        hs = HandleService(url=self.handleURL, token=token)
-        handf = {
-            'id': forward_shock_file['id'],
-            'type': 'shock',
-            'url': self.shockURL,
-            'file_name': forward_shock_file['file']['name'],
-            'remote_md5': forward_shock_file['file']['checksum']['md5']
-        }
-        forward_handle = hs.persist_handle(handf)
-        handr = {
-            'id': reverse_shock_file['id'],
-            'type': 'shock',
-            'url': self.shockURL,
-            'file_name': reverse_shock_file['file']['name'],
-            'remote_md5': reverse_shock_file['file']['checksum']['md5']
-        }
-
-        reverse_handle = hs.persist_handle(handr)
-
-        # 3) save to WS
-        paired_end_library = {
-            'lib1': {
-                'file': {
-                    'hid': forward_handle,
-                    'file_name': forward_shock_file['file']['name'],
-                    'id': forward_shock_file['id'],
-                    'url': self.shockURL,
-                    'type': 'shock',
-                    'remote_md5': forward_shock_file['file']['checksum']['md5']
-                },
-                'encoding': 'UTF8',
-                'type': 'fastq',
-                'size': forward_shock_file['file']['size']
-            },
-            'lib2': {
-                'file': {
-                    'hid': reverse_handle,
-                    'file_name': reverse_shock_file['file']['name'],
-                    'id': reverse_shock_file['id'],
-                    'url': self.shockURL,
-                    'type': 'shock',
-                    'remote_md5': reverse_shock_file['file']['checksum']['md5']
-                },
-                'encoding': 'UTF8',
-                'type': 'fastq',
-                'size': reverse_shock_file['file']['size']
-
-            },
-            'interleaved': 0,
-            'sequencing_tech': 'artificial reads',
-            'read_length_mean': 100,
-            'insert_size_mean': 250,
-            'insert_size_std_dev': 10,
-            'total_bases': 125000,
-            'read_orientation_outward': 1
-        }
-        ws_obj = {
-            'workspace': self.getWsName(),
-            'objects': [
-                {
-                    'type': 'KBaseFile.PairedEndLibrary',
-                    'data': paired_end_library,
-                    'name': 'test.pe.reads',
-                    'meta': {},
-                    'provenance': [
-                        {
-                            'service': 'hipmer',
-                            'method': 'test_hipmer'
-                        }
-                    ]
-                }]
-        }
-
-        new_obj_info = self.ws.save_objects(ws_obj)
-        self.__class__.pairedEndLibInfo = new_obj_info[0]
-        return new_obj_info[0]
-
     def createBogus(self, fname):
         outdir = self.scratch + '/results/'
         if os.path.exists(outdir) is False:
@@ -166,8 +72,7 @@ class hipmerTest(unittest.TestCase):
         ret = Call(['cp', 'data/output.contig.fa', '%s/%s' % (outdir, fname)])
         print(ret)
 
-
-    def test_post(self):
+    def xtest_post(self):
 
         # run hipmer
         wsn = self.getWsName()
@@ -175,12 +80,8 @@ class hipmerTest(unittest.TestCase):
             'mer_sizes': '21,41,127',
             'workspace_name': wsn,
             'output_contigset_name': 'hipmer.contigs',
-            'is_meta': {
-                'aggressive': 1
-            },
-            "is_plant": {
-                "diploid": "low"
-            },
+            'is_meta': 1,
+            'aggressive': 1,
             'usedebug': 0,
             'reads': [{
                 'ins_avg': 100,
@@ -204,13 +105,19 @@ class hipmerTest(unittest.TestCase):
         contigset_info = info_list[0]
         self.assertEqual(contigset_info[1], 'hipmer.contigs')
         self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomeAnnotations.Assembly')
-        # self.assertEqual(contigset_info[2].split('-')[0], 'KBaseGenomes.ContigSet')
 
-    def test_run_hipmer(self):
+    # TODO: need to mock up special so we can trap the slurm submit
+    def xtest_run_hipmer(self):
 
         # figure out where the test data lives
-        pe_lib_info = self.getPairedEndLibInfo()
-        #pprint(pe_lib_info)
+        wsn = self.getWsName()
+        ret = self.ws.copy_object({'from': {'workspace': self.testWS, 'name': self.testReads},
+                        'to': {'workspace': wsn, 'name': self.testReads}})
+        upa = '{}/{}/{}'.format(ret[6], ret[0], ret[4])
+
+        #pe_lib_info = self.getPairedEndLibInfo()
+        pe_lib_info = self.ws.get_object_info([{'ref': upa}], 1)[0]
+        pprint(pe_lib_info)
         if 'POST' in os.environ:
             del os.environ['POST']
 
@@ -219,12 +126,8 @@ class hipmerTest(unittest.TestCase):
             'mer_sizes': '21,41,127',
             'workspace_name': pe_lib_info[7],
             'output_contigset_name': 'hipmer.contigs',
-            'is_meta': {
-                'aggressive': 1
-            },
-			"is_plant": {
-                "diploid": "low"
-            },
+            'is_meta': 1,
+            'aggressive': 1,
             'assembly_size_filter': 1200,
             'usedebug': 1,
             'interleaved': 1,

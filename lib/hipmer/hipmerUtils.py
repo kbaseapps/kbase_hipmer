@@ -11,17 +11,23 @@ from Bio import SeqIO
 
 from installed_clients.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from installed_clients.baseclient import ServerError
-from installed_clients.ReadsAPIClient import ReadsAPI  # @IgnorePep8
+from installed_clients.ReadsAPIServiceClient import ReadsAPI  # @IgnorePep8
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.kb_quastClient import kb_quast
-
+from installed_clients.specialClient import special
 
 class hipmerUtils:
     def __init__(self, config, token):
         #BEGIN_CONSTRUCTOR
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        print(config['service-wizard'])
+        self.rapi = ReadsAPI(config['service-wizard'], token=token)
+        self.readcli = ReadsUtils(self.callbackURL, token=token)
+        # rapi = ReadsAPI(self.srv_wizard, token=self.token, service_ver='dev')
+        self.sr = special(self.callbackURL, token=token)
+        self.submit_script = 'slurm2.sl'
         self.token = token
 
     # target is a list for collecting log messages
@@ -42,8 +48,6 @@ class hipmerUtils:
             raise ValueError('reads parameter is required')
         if 'output_contigset_name' not in params:
             raise ValueError('output_contigset_name parameter is required')
-        if 'is_rev_comped' not in params['reads'][0]:
-            raise ValueError('is_rev_comped parameter is required')
 
         # Check mer_sizes
         if 'mer_sizes' not in params:
@@ -77,7 +81,6 @@ class hipmerUtils:
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
         # We will check whether the reads are paired end or single end from the read object.
-        rapi = ReadsAPI(self.callbackURL, token=self.token, service_ver='dev')
         err_msg = '%s must be a paired-end read library.\n'
         err_msg += 'This is required to run HipMer.'
         index = 0
@@ -86,15 +89,13 @@ class hipmerUtils:
 
         for ref in refs:
             p = {'workspace_obj_ref': ref}
-#            print("PPPPP \n{}".format(p))
-            info = rapi.get_reads_info_all_formatted(p)
-            print("INFO \n{}".format(info))
 
             if info['Type'] == 'Paired End':
                 # TODO: someday we should be able to handle single end reads
                 params['reads'][index]['read_type'] = 'paired'
-#            elif info['Type'] == 'Single End':
-#                params['reads']['read_type'] = 'single'
+                params['reads'][index]['info'] = info
+            elif info['Type'] == 'Single End':
+                params['reads']['read_type'] = 'single'
                 continue
             else:
                 sys.stderr.write(err_msg % (info['Name']))
@@ -102,30 +103,8 @@ class hipmerUtils:
 
             index+=1
 
-#            if info['Insert_Size_Mean'] == 'Not Specified' or \
-#               info['Insert_Size_Std_Dev'] == 'Not Specified':
-#                sys.stderr.write(err_msg % (info['Name']))
-#                return False
+        return True
 
-        # TODO: use params to check for insert sizes if paired-end reads.
-        for r in params['reads']:
-            if r['read_type'] == 'paired':
-                # TODO: try and get read name from read ref
-                # # get read names in case we need to write error msg
-                # read_ref = r['read_library_name']
-                # rapi = ReadsAPI(self.callbackURL, token=self.token, service_ver='dev')
-                # p = {'workspace_obj_ref': r}
-                # info = rapi.get_reads_info_all_formatted(p)
-                # read_name = info['Name']
-
-                if r['ins_avg'] is not None and r['ins_dev'] is not None:
-                    return True
-                else:
-                    err_msg = 'It looks like the user did not specify an average read insert size and/or the insert size stdev '
-                    err_msg += 'which is required for paired-end reads.'
-                    err_msg += 'The offending reads are: %s'
-                    sys.stderr.write(err_msg % (r['read_library_name']))
-                    return False
 
     def fix_pe_fq(self, fn):
         inf = open(fn, 'r')
@@ -161,19 +140,18 @@ class hipmerUtils:
 
     def fixup_reads(self, params):
         for r in params['reads']:
-            files_obj = params['readsfiles'][r['ref']]['files']
+            files_obj = params['readsfiles'][r]['files']
             if 'rev' not in files_obj or files_obj['rev'] is None:
                 self.fix_pe_fq(files_obj['fwd'])
 
     def get_reads_RU(self, refs, console):
-        readcli = ReadsUtils(self.callbackURL, token=self.token)
 
         typeerr = ('Supported types: KBaseFile.SingleEndLibrary ' +
                    'KBaseFile.PairedEndLibrary ' +
                    'KBaseAssembly.SingleEndLibrary ' +
                    'KBaseAssembly.PairedEndLibrary')
         try:
-            reads = readcli.download_reads({'read_libraries': refs,
+            reads = self.readcli.download_reads({'read_libraries': refs,
                                             'interleaved': 'true',
                                             'gzipped': None
                                             })['files']
@@ -202,7 +180,7 @@ class hipmerUtils:
         total_bases=0
         for r in params['reads']:
             # TODO: check read type and set count
-            reads_obj = params['readsfiles'][r['ref']]
+            reads_obj = params['readsfiles'][r]
             total_bases += reads_obj['total_bases']
         return total_bases
 
@@ -214,28 +192,13 @@ class hipmerUtils:
         """
         total_size_gigs=0
         for r in params['reads']:
-            read_ref = r['ref']
-
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
-            fastq_path = params['readsfiles'][read_ref]['files']['fwd']
+            fastq_path = params['readsfiles'][r]['files']['fwd']
 
-            cmd="du {} | cut -f1".format(fastq_path)
+            fsize = os.stat(fastq_path).st_size
 
-            pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-            output, stderr = pipe.communicate()
-            exitCode = pipe.returncode
-
-            if (exitCode == 0):
-                print('Executed command:\n{}\n'.format(cmd) +
-                    'Exit Code: {}\n'.format(exitCode))
-            else:
-                error_msg = 'Error running command:\n{}\n'.format(cmd)
-                error_msg += 'Exit Code: {}\nOutput:\n{}\nStderr:\n{}'.format(exitCode, output, stderr)
-                raise ValueError(error_msg)
-                sys.exit(1)
-
-            size_gigs = int(output)/1024/1024
+            size_gigs = int(fsize)/1024/1024/1024
             print("file size: {} {}".format(fastq_path, size_gigs))
 
             total_size_gigs += size_gigs
@@ -247,79 +210,40 @@ class hipmerUtils:
     def generate_command(self, params, nodes):
         """
         SBATCH will run this command in the "generate_submit" function
-        An example command:
-
-        hipmer --threads=$((4 * 32)) \
-               -k 21 \
-               --interleaved frags.25K.fastq: i180:s10 \
-               --interleaved jumps.25K.fastq: rc:i3000:s500 \
-               --min-depth 7
         """
         iterator=0
         final_read_args=''
         hipmer_command=''
 
-        for r in params['reads']:
-            kmer_str = params['mer_sizes']
-            read_ref = r['ref']
+        kmer_str = params['mer_sizes']
+        # Test if we have a metagenome
+        #
+
+        for read_ref in params['reads']:
 
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
-            ori_file_name = params['readsfiles'][read_ref]['files']['fwd']
+            read_file = params['readsfiles'][read_ref]
+            ori_file_name = read_file['files']['fwd']
             file_name = os.path.basename(ori_file_name)
-
-
-            #
-            # Test if we have a metagenome
-            #
-            min_depth=0 # autodetect
-            metagenome_opts=''
-            plant_opts=''
-
-            if params['is_meta'] is not None:
-                #
-                # if metagenome
-                #
-                min_depth = 2
-#                min_depth = params['is_meta']['min_depth_cutoff']
-                if params['is_meta']['aggressive']:
-                    # if metagenome and aggressive algorithm should be used
-                    metagenome_opts = "--aggressive --meta --min-depth {} ".format(min_depth)
-                else:
-                    metagenome_opts = "--meta --min-depth {} ".format(min_depth)
-
-            #
-            # Test if we have plant data
-            #
-            if params['is_plant'] is not None and params['is_plant']['diploid'] is not None:
-                diploid_value = params['is_plant']['diploid']
-
-                if params['is_meta'] is not None:
-                    plant_opts = "--bubble-depth-cutoff 1 --diploidy {} ".format(diploid_value)
-                else:
-                    plant_opts = "--bubble-depth-cutoff 0 --diploidy {} ".format(diploid_value)
 
             #
             # format argument for "reads" section
             #
-            if r['read_type'] == "paired":
-                # if paired end reads
-                # test if reverse compliment ("outtie") or "innie" library
-                if r['is_rev_comped'] == 'outtie':
-                    read_args = " --interleaved {}:rc:i{}:s{}".format(file_name, r['ins_avg'], r['ins_dev'])
-                else:
-                    read_args = " --interleaved {}:i{}:s{}".format(file_name, r['ins_avg'], r['ins_dev'])
-            else:
-                if r['is_rev_comped'] == 'outtie':
-                    read_args = " --single jumps.{}.fastq rc".format(iterator)
-                else:
-                    read_args = " --single single.{}.fastq".format(iterator)
+            read_args = " -r {}".format(file_name)
+            #if r['read_type'] == "paired":
+            #    # if paired end reads
+            #    # test if reverse compliment ("outtie") or "innie" library
+            #    read_args = "-r {}".format(file_name)
+            #else:
+            #    print("Ignoring %s" % (file_name))
+                    
 
             final_read_args += read_args
 
         # build base command
-        hipmer_command = "hipmer --threads=$(({} * 68)) --min-depth {} -k {} ".format(nodes, min_depth, params['mer_sizes'])
-        hipmer_command += metagenome_opts + plant_opts + final_read_args
+        hipmer_command = "mhm2.py -k {} ".format(kmer_str)
+        hipmer_command += final_read_args
 
         return hipmer_command
 
@@ -342,8 +266,8 @@ class hipmerUtils:
         hipmer_command = self.generate_command(params,nodes)
         print("HIPMER CMD: {}".format(hipmer_command))
 
-        self.submit = '%s/%s' % (self.scratch, 'slurm.submit')
-        with open(self.submit, 'w') as f:
+        submit = '%s/%s' % (self.scratch, self.submit_script)
+        with open(submit, 'w') as f:
             f.write('#!/bin/bash\n')
             if debug:
                 f.write('#SBATCH -q debug\n')
@@ -357,13 +281,17 @@ class hipmerUtils:
             f.write('#SBATCH --ntasks-per-node=68\n')
             f.write('#SBATCH --job-name=HipMer\n')
             f.write('#SBATCH --license=SCRATCH\n')
-            f.write('#SBATCH -o slurm.out\n')
             f.write('set -e\n\n')
-            f.write('HIPMER_INSTALL=$(pwd)/v1.2.1*/bin\n')
+            f.write('if [ -z "$MODULEPATH" ] ; then\n')
+            f.write('    . /etc/profile.d/modules.sh\n')
+            f.write('fi\n')
+            f.write('module load PrgEnv-cray/6.0.10\n')
+            f.write('module load upcxx/2022.3.0\n')
+            f.write('HIPMER_INSTALL=$(pwd)/v2*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
 
-            return self.submit
+            return submit
 
     def fasta_filter_contigs_generator(self, fasta_record_iter, min_contig_length):
         """ generates SeqRecords iterator for writing from a legacy contigset object """
@@ -413,19 +341,19 @@ class hipmerUtils:
         # Get the read library
         print("Running pre stage")
         refs = []
-        for read in params['reads']:
-            read_name = read['read_library_name']
+        for read_name in params['reads']:
+            # read_name = read['read_library_name']
             if '/' in read_name:
                 ref = read_name
             else:
                 ref = ws_name + '/' + read_name
             refs.append(ref)
-            read['ref'] = ref
-        if not self.check_reads(refs, console, params):
-            raise ValueError('The reads failed validation\n')
+
+        #if not self.check_reads(refs, console, params):
+        #    raise ValueError('The reads failed validation\n')
 
         params['readsfiles'] = self.get_reads_RU(refs, console)
-        self.fixup_reads(params)
+        # self.fixup_reads(params)
 
         # Generate submit script
         (total_size_gigs) = self.get_total_gigs(params)
@@ -435,7 +363,12 @@ class hipmerUtils:
         if 'usedebug' in params and params['usedebug'] > 0:
             debug = True
         submit_file = self.generate_submit(total_size_gigs, params, debug=debug)
+        return submit_file
 
+    def submit(self):
+        p = {'submit_script': self.submit_script}
+        res = self.sr.slurm(p)
+        print('slurm:'+str(res))
 
     def finish_run(self, params):
         """
@@ -452,21 +385,16 @@ class hipmerUtils:
         output_contigs = ''
         for root, subdirs, files in os.walk(self.scratch):
             for f in files:
-                if f == 'final_assembly.fa':
+                if f == 'final_assembly.fasta':
                     output_contigs = os.path.join(root,f)
                     print("found OUTPUT CONTIGS {}".format(output_contigs))
                     continue
 
         output_name = params['output_contigset_name']
-        slurm_out = os.path.join(self.scratch, 'slurm.out')
 
         if not os.path.exists(output_contigs):
             self.log(console, "It looks like HipMER failed. Could not find the output contigs.")
-            self.log(console, "Show errors in log file")
-            with open(slurm_out, 'r') as f:
-                for line in f:
-                    if line.lower().find('error') >= 0:
-                        self.log(console, line)
+            self.log(console, "Check the log for errors")
             raise RuntimeError("Error in HipMER execution")
 
         wsname = params['workspace_name']
@@ -545,9 +473,8 @@ class hipmerUtils:
             # not really any way to test this, all inputs have been checked earlier and should be
             # ok
             print('Logging exception from creating report object')
-            print((str(e)))
             # TODO delete shock node
-            raise
+            raise e
 
         # STEP 6: contruct the output to send back
         output = {'report_name': report_info['name'],

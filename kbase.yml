@@ -2,13 +2,13 @@ module-name:
     hipmer
 
 module-description:
-    The HipMer assembler (version 1.2.1.48)
+    The HipMer assembler (version v2.0.2a-148)
 
 service-language:
     python
 
 module-version:
-    1.1.1
+    2.1.0
 
 owners:
     [scanon,dylan,jfroula,seanjungbluth]
