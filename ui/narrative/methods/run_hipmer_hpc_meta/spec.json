@@ -72,7 +72,8 @@
     },
     "categories": [
         "active",
-        "assembly"
+        "assembly",
+        "communities"
     ],
     "contact": "http://www.kbase.us/support/",
     "job_id_output_field": "docker",
