@@ -113,7 +113,8 @@ class hipmerUtils:
                 total_bases += int(this_reads_metadata['Total_Number_of_Bases'])
 
             if total_bases > read_Gbp_limit:
-                err_msg = "reads size exceeds limit for running MetaHipMer.  Input reads total bp {} > {}".format(total_bases, read_Gbp_limit)
+                err_msg = "ERROR: reads size exceeds limit for running MetaHipMer.  Input reads total bp {} > {}".format(total_bases, read_Gbp_limit)
+                err_msg += "\nYou can either reduce the number of libraries in your input or increase the limit in the advanced settings.  If you choose the latter, please get approval from KBase support at http://www.kbase.us/support prior to submitting your job"
                 self.log(console, err_msg)
                 raise ValueError (err_msg)
             else:
