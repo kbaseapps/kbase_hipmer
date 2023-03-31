@@ -116,7 +116,8 @@ class hipmerUtils:
                 self.log(console, "GOT TO D")
                 this_reads_metadata = self.rapi.get_reads_info_all_formatted ({'workspace_obj_ref':ref})
                 self.log(console, "GOT TO E")
-                total_bases += int(this_reads_metadata['Total_Number_of_Bases'])
+                these_bases = this_reads_metadata['Total_Number_of_Bases'].replace(',','')
+                total_bases += int(these_bases)
                 self.log(console, "GOT TO F")
 
             if total_bases > read_Gbp_limit:

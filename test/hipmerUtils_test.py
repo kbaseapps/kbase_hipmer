@@ -85,6 +85,7 @@ MOCK_GET_INFO = {
 PARAMS = {
     'mer_sizes': '21,41,127',
     'scaff_mer_lens': '99,33',
+    'read_Gbp_limit': 1,
     'workspace_name': 'bogus',
     'output_contigset_name': 'hipmer.contigs',
     'usedebug': 1,
