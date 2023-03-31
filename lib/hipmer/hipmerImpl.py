@@ -25,8 +25,8 @@ class hipmer:
     # the latter method is running.
     ######################################### noqa
     VERSION = "2.2.1"
-    GIT_URL = "git@github.com:kbaseapps/kbase_hipmer.git"
-    GIT_COMMIT_HASH = "31a2f650af82b4caa11491f224f2c0c05544660f"
+    GIT_URL = "https://github.com/kbaseapps/kbase_hipmer"
+    GIT_COMMIT_HASH = "337ec50ff19ef254094a72040166a1bed5e931a4"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -40,6 +40,8 @@ class hipmer:
         self.config = config
         print("Callback=%s" % (self.callbackURL))
         #END_CONSTRUCTOR
+        pass
+
 
     def run_hipmer_hpc(self, ctx, params):
         """
@@ -62,7 +64,6 @@ class hipmer:
                              'output is not type dict as required.')
         # return the results
         return [output]
-
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK", 'message': "", 'version': self.VERSION,
