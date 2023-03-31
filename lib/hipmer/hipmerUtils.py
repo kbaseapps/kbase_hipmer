@@ -363,8 +363,8 @@ class hipmerUtils:
             if len(record.seq) >= min_contig_length:
                 rows_added += 1
                 yield record
-        print(f' - filtered out {rows - rows_added} of {rows} contigs that were shorter '
-              f'than {(min_contig_length)} bp.')
+        #print(f' - filtered out {rows - rows_added} of {rows} contigs that were shorter than {(min_contig_length)} bp.')
+        print(' - filtered out '+str(rows - rows_added)+' of '+str(rows)+' contigs that were shorter than ('+str(min_contig_length)+') bp.')
 
     def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
         """ removes all contigs less than the min_contig_length provided """
