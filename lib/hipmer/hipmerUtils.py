@@ -99,6 +99,29 @@ class hipmerUtils:
 
         return True
 
+    
+    # _validate_input_reads_sizelimit()
+    #
+    def _validate_input_reads_sizelimit (self, refs, console, params):
+        # Make sure user isn't trying to launch a job that's too big
+        if params.get('read_Gbp_limit'):
+            read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
+                                 
+            total_bases = 0
+            for ref in refs:
+                this_reads_metadata = self.rapi.get_reads_info_all_formatted ({'workspace_obj_ref':ref})
+                total_bases += int(this_reads_metadata['Total_Number_of_Bases'])
+
+            if total_bases > read_Gbp_limit:
+                err_msg = "reads size exceeds limit for running MetaHipMer.  Input reads total bp {} > {}".format(total_bases, read_Gbp_limit)
+                self.log(console, err_msg)
+                raise ValueError (err_msg)
+            else:
+                success_msg = "reads size does not exceed limit for running MetaHipMer.  Input reads total bp {} <= {}".format(total_bases, read_Gbp_limit)
+                self.log(console, success_msg)
+        return True
+    
+            
     def check_reads(self, refs, console, params):
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
@@ -225,9 +248,8 @@ class hipmerUtils:
 
             total_size_gigs += size_gigs
 
-
-
         return total_size_gigs
+
 
     def generate_command(self, params, nodes):
         """
@@ -380,6 +402,10 @@ class hipmerUtils:
         #if not self.check_reads(refs, console, params):
         #    raise ValueError('The reads failed validation\n')
 
+        # make sure not too big to run
+        self._validate_input_reads_sizelimit (refs, console, params)
+
+        # download reads to filesystem
         params['readsfiles'] = self.get_reads_RU(refs, console)
         # self.fixup_reads(params)
 

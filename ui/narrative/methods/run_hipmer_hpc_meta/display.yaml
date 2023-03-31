@@ -6,7 +6,7 @@ tooltip: |
     Assemble metagenomic reads using the MetaHipMer assembly pipeline.
 screenshots: []
 
-icon: hipmer-blue.png
+icon: metahipmer-blue.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -51,6 +51,10 @@ parameters :
             In cases where MetaHipMer is assembling a large-sized input read set with a relatively high
             level of complexity, MetaHipMer produces many very small size contigs. This parameter allows
             a user to filter short length contigs from their assembly. (default 2000bp)
+    read_Gbp_limit:
+        ui-name : input read limit in Gbp
+        short-hint : |
+            Limit on how big the input read libraries are in Giga basepairs.  Don't go forward above this threshold under expectation that it will fail.  If you wish to run a bigger job, please talk with KBase support first.
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
