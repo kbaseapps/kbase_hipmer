@@ -100,7 +100,6 @@ class hipmerUtils:
         return True
 
 
-    """
     # _validate_input_reads_sizelimit()
     #
     def _validate_input_reads_sizelimit (self, refs, console, params):
@@ -133,7 +132,6 @@ class hipmerUtils:
                 self.log(console, success_msg)
         self.log(console, "GOT TO I")
         return True
-    """
     
             
     def check_reads(self, refs, console, params):
@@ -416,12 +414,10 @@ class hipmerUtils:
         #if not self.check_reads(refs, console, params):
         #    raise ValueError('The reads failed validation\n')
 
-        """
         # make sure not too big to run
         self.log(console, "PRE VALIDATE")
         self._validate_input_reads_sizelimit (refs, console, params)
         self.log(console, "POST VALIDATE")
-        """
 
         # download reads to filesystem
         params['readsfiles'] = self.get_reads_RU(refs, console)
