@@ -104,33 +104,23 @@ class hipmerUtils:
     #
     def _validate_input_reads_sizelimit (self, refs, console, params):
         # Make sure user isn't trying to launch a job that's too big
-        self.log(console, "GOT TO A")
         if params.get('read_Gbp_limit'):
-            self.log(console, "GOT TO B")
             read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
-            self.log(console, "GOT TO C")
-
             
             total_bases = 0
             for ref in refs:
-                self.log(console, "GOT TO D")
                 this_reads_metadata = self.rapi.get_reads_info_all_formatted ({'workspace_obj_ref':ref})
-                self.log(console, "GOT TO E")
                 these_bases = this_reads_metadata['Total_Number_of_Bases'].replace(',','')
                 total_bases += int(these_bases)
-                self.log(console, "GOT TO F")
 
             if total_bases > read_Gbp_limit:
-                self.log(console, "GOT TO G")
-                err_msg = "ERROR: reads size exceeds limit for running MetaHipMer.  Input reads total bp {} > {}".format(total_bases, read_Gbp_limit)
+                err_msg = "ERROR: reads size exceeds limit for running MetaHipMer.  Input reads total {} bp > {} bp".format(total_bases, read_Gbp_limit)
                 err_msg += "\nYou can either reduce the number of libraries in your input or increase the limit in the advanced settings.  If you choose the latter, please get approval from KBase support at http://www.kbase.us/support prior to submitting your job"
                 self.log(console, err_msg)
                 raise ValueError (err_msg)
             else:
-                self.log(console, "GOT TO H")
-                success_msg = "reads size does not exceed limit for running MetaHipMer.  Input reads total bp {} <= {}".format(total_bases, read_Gbp_limit)
+                success_msg = "reads size does not exceed limit for running MetaHipMer.  Input reads total {} bp <= {} bp".format(total_bases, read_Gbp_limit)
                 self.log(console, success_msg)
-        self.log(console, "GOT TO I")
         return True
     
             
@@ -415,9 +405,7 @@ class hipmerUtils:
         #    raise ValueError('The reads failed validation\n')
 
         # make sure not too big to run
-        self.log(console, "PRE VALIDATE")
         self._validate_input_reads_sizelimit (refs, console, params)
-        self.log(console, "POST VALIDATE")
 
         # download reads to filesystem
         params['readsfiles'] = self.get_reads_RU(refs, console)
