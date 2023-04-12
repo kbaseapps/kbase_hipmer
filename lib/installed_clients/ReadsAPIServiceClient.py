@@ -12,7 +12,7 @@ from __future__ import print_function
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
     from baseclient import BaseClient as _BaseClient  # @Reimport
 
@@ -24,7 +24,7 @@ class ReadsAPI(object):
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
             auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login',
-            service_ver='release'):
+            service_ver='beta'):
         if url is None:
             url = 'https://kbase.us/services/service_wizard'
         self._service_ver = service_ver
@@ -76,9 +76,8 @@ class ReadsAPI(object):
            String, parameter "Outward_Read_Orientation" of String, parameter
            "Base_Percentages" of String
         """
-        return self._client.call_method(
-            'ReadsAPI.get_reads_info_all_formatted',
-            [params], self._service_ver, context)
+        return self._client.call_method('ReadsAPI.get_reads_info_all_formatted',
+                                        [params], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('ReadsAPI.status',
