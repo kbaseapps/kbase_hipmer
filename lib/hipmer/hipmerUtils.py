@@ -9,9 +9,10 @@ from pprint import pprint
 import subprocess
 from Bio import SeqIO
 
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+
 from installed_clients.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from installed_clients.baseclient import ServerError
-from installed_clients.ReadsAPIServiceClient import ReadsAPI  # @IgnorePep8
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.kb_quastClient import kb_quast
@@ -23,9 +24,8 @@ class hipmerUtils:
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
         print(config['service-wizard'])
-        self.rapi = ReadsAPI(config['service-wizard'], token=token)
+        self.wscli = workspaceService(config['workspace-url'], token=token)
         self.readcli = ReadsUtils(self.callbackURL, token=token)
-        # rapi = ReadsAPI(self.srv_wizard, token=self.token, service_ver='dev')
         self.sr = special(self.callbackURL, token=token)
         self.submit_script = 'slurm2.sl'
         self.token = token
@@ -109,8 +109,11 @@ class hipmerUtils:
             
             total_bases = 0
             for ref in refs:
-                this_reads_metadata = self.rapi.get_reads_info_all_formatted ({'workspace_obj_ref':ref})
-                these_bases = this_reads_metadata['Total_Number_of_Bases'].replace(',','')
+                
+                this_reads_data = self.wscli.get_objects2({'objects':[{'ref':ref}]})['data'][0]['data']
+                if 'total_bases' not in this_reads_data:
+                    raise ValueError ("Reads Lib ref:{} missing data TOTAL_BASES".format(ref))
+                these_bases = this_reads_data['total_bases']
                 total_bases += int(these_bases)
 
             if total_bases > read_Gbp_limit:

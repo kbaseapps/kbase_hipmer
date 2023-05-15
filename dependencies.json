@@ -15,10 +15,6 @@
   "type" : "sdk",
   "version_tag" : "release"
 }, {
-  "module_name" : "ReadsAPI",
-  "type" : "sdk",
-  "version_tag" : "beta"
-}, {
   "module_name" : "ReadsUtils",
   "type" : "sdk",
   "version_tag" : "release"
