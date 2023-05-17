@@ -9,9 +9,10 @@ from pprint import pprint
 import subprocess
 from Bio import SeqIO
 
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+
 from installed_clients.ReadsUtilsClient import ReadsUtils  # @IgnorePep8
 from installed_clients.baseclient import ServerError
-from installed_clients.ReadsAPIServiceClient import ReadsAPI  # @IgnorePep8
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.kb_quastClient import kb_quast
@@ -23,9 +24,8 @@ class hipmerUtils:
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
         print(config['service-wizard'])
-        self.rapi = ReadsAPI(config['service-wizard'], token=token)
+        self.wscli = workspaceService(config['workspace-url'], token=token)
         self.readcli = ReadsUtils(self.callbackURL, token=token)
-        # rapi = ReadsAPI(self.srv_wizard, token=self.token, service_ver='dev')
         self.sr = special(self.callbackURL, token=token)
         self.submit_script = 'slurm2.sl'
         self.token = token
@@ -99,6 +99,34 @@ class hipmerUtils:
 
         return True
 
+
+    # _validate_input_reads_sizelimit()
+    #
+    def _validate_input_reads_sizelimit (self, refs, console, params):
+        # Make sure user isn't trying to launch a job that's too big
+        if params.get('read_Gbp_limit'):
+            read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
+            
+            total_bases = 0
+            for ref in refs:
+                
+                this_reads_data = self.wscli.get_objects2({'objects':[{'ref':ref}]})['data'][0]['data']
+                if 'total_bases' not in this_reads_data:
+                    raise ValueError ("Reads Lib ref:{} missing data TOTAL_BASES".format(ref))
+                these_bases = this_reads_data['total_bases']
+                total_bases += int(these_bases)
+
+            if total_bases > read_Gbp_limit:
+                err_msg = "ERROR: reads size exceeds limit for running MetaHipMer.  Input reads total {} bp > {} bp".format(total_bases, read_Gbp_limit)
+                err_msg += "\nYou can either reduce the number of libraries in your input or increase the limit in the advanced settings.  If you choose the latter, please get approval from KBase support at http://www.kbase.us/support prior to submitting your job"
+                self.log(console, err_msg)
+                raise ValueError (err_msg)
+            else:
+                success_msg = "reads size does not exceed limit for running MetaHipMer.  Input reads total {} bp <= {} bp".format(total_bases, read_Gbp_limit)
+                self.log(console, success_msg)
+        return True
+    
+            
     def check_reads(self, refs, console, params):
         # Hipmer requires some parameters to be set for the reads.
         # Let's check those first before wasting time with downloads.
@@ -225,9 +253,8 @@ class hipmerUtils:
 
             total_size_gigs += size_gigs
 
-
-
         return total_size_gigs
+
 
     def generate_command(self, params, nodes):
         """
@@ -330,8 +357,8 @@ class hipmerUtils:
             if len(record.seq) >= min_contig_length:
                 rows_added += 1
                 yield record
-        print(f' - filtered out {rows - rows_added} of {rows} contigs that were shorter '
-              f'than {(min_contig_length)} bp.')
+        #print(f' - filtered out {rows - rows_added} of {rows} contigs that were shorter than {(min_contig_length)} bp.')
+        print(' - filtered out '+str(rows - rows_added)+' of '+str(rows)+' contigs that were shorter than ('+str(min_contig_length)+') bp.')
 
     def filter_contigs_by_length(self, fasta_file_path, min_contig_length):
         """ removes all contigs less than the min_contig_length provided """
@@ -380,6 +407,10 @@ class hipmerUtils:
         #if not self.check_reads(refs, console, params):
         #    raise ValueError('The reads failed validation\n')
 
+        # make sure not too big to run
+        self._validate_input_reads_sizelimit (refs, console, params)
+
+        # download reads to filesystem
         params['readsfiles'] = self.get_reads_RU(refs, console)
         # self.fixup_reads(params)
 

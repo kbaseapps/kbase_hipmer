@@ -16,7 +16,7 @@ from jsonrpcbase import JSONRPCService, InvalidParamsError, KeywordError, \
     JSONRPCError, InvalidRequestError
 from jsonrpcbase import ServerError as JSONServerError
 
-import log
+from biokbase import log
 from hipmer.authclient import KBaseAuth as _KBaseAuth
 
 try:
