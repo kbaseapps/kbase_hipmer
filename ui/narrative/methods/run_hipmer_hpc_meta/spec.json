@@ -39,6 +39,10 @@
                 {
                     "input_parameter": "assembly_size_filter",
                     "target_property": "assembly_size_filter"
+                },
+                {
+                    "input_parameter": "read_Gbp_limit",
+                    "target_property": "read_Gbp_limit"
                 }
             ],
             "method": "run_hipmer_hpc",
@@ -151,6 +155,20 @@
             }
         },
         {
+            "id": "read_Gbp_limit",
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [
+                "500"
+            ],
+            "field_type": "text",
+            "optional": false,
+            "text_options": {
+                "min_int": 1,
+                "validate_as": "int"
+            }
+        },
+        {
             "id": "usedebug",
             "advanced": true,
             "allow_multiple": false,
@@ -165,7 +183,7 @@
             "optional": false
         }
     ],
-    "ver": "2.1.0-1",
+    "ver": "2.2.1",
     "visible": true,
     "widgets": {
         "input": null,

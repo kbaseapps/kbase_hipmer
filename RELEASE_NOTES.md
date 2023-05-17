@@ -1,6 +1,11 @@
 # Hipmer release notes
 =========================================
 
+2.2.1
+-----
+* updated icon
+* added arg to limit input size by Gbp
+
 2.2.0
 -----
 * added mer size defaults of 21,33,55,77,99
