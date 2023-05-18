@@ -1,6 +1,10 @@
 # Hipmer release notes
 =========================================
 
+2.2.2
+-----
+* use release AssemblyUtil
+
 2.2.1
 -----
 * updated icon

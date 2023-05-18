@@ -373,7 +373,7 @@ class hipmerUtils:
     def save_assembly(self, wsname, output_contigs, token, name, console):
         self.log(console, 'Uploading FASTA file to Assembly')
         assemblyUtil = AssemblyUtil(self.callbackURL, token=token,
-                                    service_ver='dev')
+                                    service_ver='release')
         assemblyUtil.save_assembly_from_fasta({'file': {'path': output_contigs},
                                                'workspace_name': wsname,
                                                'assembly_name': name
