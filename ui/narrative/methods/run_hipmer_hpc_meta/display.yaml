@@ -64,7 +64,7 @@ description : |
     <p>MetaHipMer is a <i>de novo</i> metagenome short-read assembler capable of scaling up to coassemble terabase-sized metagenomes. This is the KBase App for the second version of the MetaHipMer Assembler (v2.1.0.1-357).</p>
     <p>MetaHipMer is a high performance parallelization and port of <a href="http://jgi.doe.gov/data-and-tools/meraculous/">Meraculous</a>.
        Version 2 (MHM2) is written entirely in UPC++ and CUDA, and runs efficiently on both single servers and on multi-node supercomputers.</p>
-    <p>For more details see full documentation for MetaHipMer at: https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md</p>
+    <p>For more details see full documentation for MetaHipMer at: <a href="https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md">https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md</a></p>
     <p>This project is a joint collaboration between
     <a href="http://www.eecs.berkeley.edu">UC Berkeley</a>,
     <a href="http://jgi.doe.gov">JGI</a>,
