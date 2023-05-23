@@ -94,7 +94,7 @@
             "text_options": {
                 "is_output_name": true,
                 "valid_ws_types": [
-                    "KBaseGenomes.ContigSet", "KBaseGenomeAnnotations.Assembly"
+                    "KBaseGenomeAnnotations.Assembly"
                 ]
             }
         },
@@ -183,7 +183,7 @@
             "optional": false
         }
     ],
-    "ver": "2.2.2",
+    "ver": "2.2.3",
     "visible": true,
     "widgets": {
         "input": null,

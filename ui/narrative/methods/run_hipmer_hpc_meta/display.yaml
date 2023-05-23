@@ -29,9 +29,9 @@ suggestions:
 parameters :
     reads :
         ui-name : Read Library
-        short-hint : Read library (only PairedEnd Libs supported now)
+        short-hint : PairedEnd read library to assemble.
     output_contigset_name:
-        ui-name : Output ContigSet name
+        ui-name : Output Assembly name
         short-hint : Enter a name for the assembled contigs data object
     mer_sizes:
         ui-name : k-mer sizes
@@ -42,31 +42,33 @@ parameters :
     scaff_mer_lens:
         ui-name : scaffold k-mers
         short-hint : |
-            scaffold k-mer sizes to use in the assembly process.  This is a
+            Scaffold k-mer sizes to use in the assembly process.  This is a
             comma separated list of integers to use as mer sizes.  For
-            metagenomes you may want to use 99,33
+            metagenomes you may want to use 99,33.
     assembly_size_filter:
         ui-name : filter small contigs from MetaHipMer assembly
         short-hint : |
             In cases where MetaHipMer is assembling a large-sized input read set with a relatively high
             level of complexity, MetaHipMer produces many very small size contigs. This parameter allows
-            a user to filter short length contigs from their assembly. (default 2000bp)
+            a user to filter short length contigs from their assembly (default 2000bp).
     read_Gbp_limit:
         ui-name : input read limit in Gbp
         short-hint : |
-            Limit on how big the input read libraries are in Giga basepairs.  Don't go forward above this threshold under expectation that it will fail.  If you wish to run a bigger job, please talk with KBase support first.
+            Limit on how big the input read libraries are in Giga basepairs.  Don't go forward above this threshold under expectation that it will fail.  If you wish to run a bigger job, please talk with KBase support first (http://www.kbase.us/support).
     usedebug:
         ui-name : debug queue for small jobs (30min limit)
         short-hint : |
-            use debug queue for testing or jobs < 30 min (not recomended)
+            Use debug queue for testing or jobs < 30 min (not recommended).
 
 description : |
-    <p>KBase wrapper for the MetaHipMer Assembler (v2.1.0.1-357).</p>
-    <p>MetaHipMer is a high performance parallelization and port of Meraculous ( http://jgi.doe.gov/data-and-tools/meraculous/ ).
-       Version 2 (MHM2) is written entirely in UPC++ and CUDA, and runs efficiently on both single servers and on multinode supercomputers, where it can scale up to coassemble terabase-sized metagenomes.</p>
-    <p>For more details see: https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md</p>
-    <p>This project is a joint collaboration between UC Berkeley ( http://www.eecs.berkeley.edu ),
-    JGI ( http://jgi.doe.gov ), and CRD ( http://crd.lbl.gov/ )</p>
+    <p>MetaHipMer is a <i>de novo</i> metagenome short-read assembler capable of scaling up to coassemble terabase-sized metagenomes. This is the KBase App for the second version of the MetaHipMer Assembler (v2.1.0.1-357).</p>
+    <p>MetaHipMer is a high performance parallelization and port of <a href="http://jgi.doe.gov/data-and-tools/meraculous/">Meraculous</a>.
+       Version 2 (MHM2) is written entirely in UPC++ and CUDA, and runs efficiently on both single servers and on multi-node supercomputers.</p>
+    <p>For more details see full documentation for MetaHipMer at: <a href="https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md">https://bitbucket.org/berkeleylab/mhm2/wiki/Home.md</a></p>
+    <p>This project is a joint collaboration between
+    <a href="http://www.eecs.berkeley.edu">UC Berkeley</a>,
+    <a href="http://jgi.doe.gov">JGI</a>,
+    and <a href="http://crd.lbl.gov">CRD</a>.</p>
 
     <p>Primary authors are: Evangelos Georganas, Aydin Buluc, Steven Hofmeyr, Leonid Oliker and
     Rob Egan, with direction and advice from Kathy Yelick. The original Meraculous was developed by

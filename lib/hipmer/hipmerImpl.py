@@ -24,9 +24,9 @@ class hipmer:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "2.2.2"
+    VERSION = "2.2.3"
     GIT_URL = "https://github.com/kbaseapps/kbase_hipmer"
-    GIT_COMMIT_HASH = "4be6e224e19a0739fcdc65755c8e10e9f80d9f94"
+    GIT_COMMIT_HASH = "8ad102ec408cc855161d5faf2023000fc69c980c"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
