@@ -1,6 +1,11 @@
 # Hipmer release notes
 =========================================
 
+2.2.3
+-----
+* remove deprecated ContigSet output type
+* tidy up App Docs
+
 2.2.2
 -----
 * use release AssemblyUtil
