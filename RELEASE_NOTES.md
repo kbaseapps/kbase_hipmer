@@ -1,6 +1,10 @@
 # Hipmer release notes
 =========================================
 
+2.2.4
+-----
+* hide App
+
 2.2.3
 -----
 * remove deprecated ContigSet output type
