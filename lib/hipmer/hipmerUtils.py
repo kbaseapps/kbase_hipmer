@@ -340,6 +340,7 @@ class hipmerUtils:
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('set -e\n\n')
             f.write('if [ -z "$MODULEPATH" ] ; then\n')
+            f.write('    . /etc/profile.d/zz-cray-pe.sh\n')
             f.write('    . /etc/profile.d/zzz-lmod.sh\n')
 
             f.write('fi\n')
