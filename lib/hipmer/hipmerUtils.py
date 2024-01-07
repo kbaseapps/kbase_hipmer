@@ -241,7 +241,7 @@ class hipmerUtils:
         nodes required to run hipmer.
         """
         total_size_gigs=0
-        print(params)
+        self.log(params)
         #for r in params['reads']:
         for r in params['readsfiles']:
             # we are not running the command in the docker container so the path to the fastq
@@ -251,7 +251,7 @@ class hipmerUtils:
             fsize = os.stat(fastq_path).st_size
 
             size_gigs = int(fsize)/1024/1024/1024
-            print("file size: {} {}".format(fastq_path, size_gigs))
+            self.log("file size: {} {}".format(fastq_path, size_gigs))
 
             total_size_gigs += size_gigs
 
@@ -274,7 +274,8 @@ class hipmerUtils:
         # Test if we have a metagenome
         #
 
-        for read_ref in params['reads']:
+        #for read_ref in params['reads']:
+        for read_ref in params['readsfiles']:
 
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
