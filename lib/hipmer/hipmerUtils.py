@@ -244,6 +244,7 @@ class hipmerUtils:
         for r in params['reads']:
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
+            print(params['readsfiles'][r]['files'])
             fastq_path = params['readsfiles'][r]['files']['fwd']
 
             fsize = os.stat(fastq_path).st_size
