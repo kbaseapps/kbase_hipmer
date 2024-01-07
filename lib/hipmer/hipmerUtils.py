@@ -241,10 +241,11 @@ class hipmerUtils:
         nodes required to run hipmer.
         """
         total_size_gigs=0
-        for r in params['reads']:
+        print(params)
+        #for r in params['reads']:
+        for r in params['readfiles']:
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
-            print(params['readsfiles'])
             fastq_path = params['readsfiles'][r]['files']['fwd']
 
             fsize = os.stat(fastq_path).st_size
