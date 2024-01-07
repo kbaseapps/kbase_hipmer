@@ -340,9 +340,11 @@ class hipmerUtils:
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('set -e\n\n')
             f.write('if [ -z "$MODULEPATH" ] ; then\n')
-            f.write('    . /etc/profile.d/modules.sh\n')
+            f.write('    . /etc/profile.d/zzz-lmod.sh\n')
+
             f.write('fi\n')
             f.write('# module load PrgEnv-gnu/8.3.3\n')
+            f.write('module load contrib/1.0\n')
             f.write('module load upcxx/2023.9.0\n')
             f.write('HIPMER_INSTALL=$(pwd)/v2*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
