@@ -23,6 +23,8 @@ class hipmerUtils:
         #BEGIN_CONSTRUCTOR
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        self.username = "GetThisSomehow maybe its ctx[user_id]"
+        self.authorized_expert_usernames = os.environ.get(authorized_expert_usernames,"").split(",")
         print(config['service-wizard'])
         self.wscli = workspaceService(config['workspace-url'], token=token)
         self.readcli = ReadsUtils(self.callbackURL, token=token)
@@ -102,9 +104,19 @@ class hipmerUtils:
 
     # _validate_input_reads_sizelimit()
     #
+
+    def _check_if_authorized_expert(self):
+        if self.username not in self.authorized_expert_usernames:
+            raise Exception("You entered a GBP limit > 500 and you are not an authorized expert user. If you believe you should be an expert user, please contact KBase")
+        
+    
     def _validate_input_reads_sizelimit (self, refs, console, params):
         # Make sure user isn't trying to launch a job that's too big
         if params.get('read_Gbp_limit'):
+            if params.get('read_Gbp_limit') > 500:
+                _check_if_approved_user(self)
+            
+            
             read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
             
             total_bases = 0
