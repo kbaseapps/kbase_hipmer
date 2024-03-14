@@ -241,7 +241,8 @@ class hipmerUtils:
         nodes required to run hipmer.
         """
         total_size_gigs=0
-        for r in params['reads']:
+        #for r in params['reads']:
+        for r in params['readsfiles']:
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
             fastq_path = params['readsfiles'][r]['files']['fwd']
@@ -272,7 +273,8 @@ class hipmerUtils:
         # Test if we have a metagenome
         #
 
-        for read_ref in params['reads']:
+        #for read_ref in params['reads']:
+        for read_ref in params['readsfiles']:
 
             # we are not running the command in the docker container so the path to the fastq
             # needs to be pointing to somewhere outside and not /kb/module/work/tmp
@@ -332,16 +334,19 @@ class hipmerUtils:
                 f.write('#SBATCH --time=02:00:00\n')
 
             f.write('#SBATCH --nodes=%d\n' % nodes)
-            f.write('#SBATCH -C knl,quad,cache\n')
-            f.write('#SBATCH --ntasks-per-node=68\n')
-            f.write('#SBATCH --job-name=HipMer\n')
+            f.write('#SBATCH -C cpu\n')
+            f.write('#SBATCH --ntasks-per-node=128\n')
+            f.write('#SBATCH --job-name=MHM2\n')
             f.write('#SBATCH --license=SCRATCH\n')
             f.write('set -e\n\n')
             f.write('if [ -z "$MODULEPATH" ] ; then\n')
-            f.write('    . /etc/profile.d/modules.sh\n')
+            f.write('    . /etc/profile.d/zz-cray-pe.sh\n')
+            f.write('    . /etc/profile.d/zzz-lmod.sh\n')
+
             f.write('fi\n')
-            f.write('module load PrgEnv-cray/6.0.10\n')
-            f.write('module load upcxx/2022.3.0\n')
+            f.write('# module load PrgEnv-gnu/8.3.3\n')
+            f.write('module load contrib/1.0\n')
+            f.write('module load upcxx/2023.9.0\n')
             f.write('HIPMER_INSTALL=$(pwd)/v2*/bin\n')
             f.write('${HIPMER_INSTALL}/' + hipmer_command + '\n')
             f.close()
