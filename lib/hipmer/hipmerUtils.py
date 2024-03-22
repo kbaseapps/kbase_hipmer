@@ -19,11 +19,11 @@ from installed_clients.kb_quastClient import kb_quast
 from installed_clients.specialClient import special
 
 class hipmerUtils:
-    def __init__(self, config, token):
+    def __init__(self, config, user_id, token):
         #BEGIN_CONSTRUCTOR
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
-        self.username = "GetThisSomehow maybe its ctx[user_id]"
+        self.username = user_id
         #print(os.environ)
         self.authorized_expert_usernames = os.environ.get("authorized_expert_usernames","").split(",")
         print(config['service-wizard'])
@@ -115,7 +115,7 @@ class hipmerUtils:
         # Make sure user isn't trying to launch a job that's too big
         if params.get('read_Gbp_limit'):
             if params.get('read_Gbp_limit') > 500:
-                _check_if_approved_user(self)
+                _check_if_authorized_expert(self)
             
             
             read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
