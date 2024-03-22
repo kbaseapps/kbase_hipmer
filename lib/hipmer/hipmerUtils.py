@@ -24,6 +24,7 @@ class hipmerUtils:
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
         self.username = "GetThisSomehow maybe its ctx[user_id]"
+        #print(os.environ)
         self.authorized_expert_usernames = os.environ.get("authorized_expert_usernames","").split(",")
         print(config['service-wizard'])
         self.wscli = workspaceService(config['workspace-url'], token=token)
