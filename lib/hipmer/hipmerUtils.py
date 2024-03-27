@@ -115,7 +115,7 @@ class hipmerUtils:
         # Make sure user isn't trying to launch a job that's too big
         if params.get('read_Gbp_limit'):
             if params.get('read_Gbp_limit') > 500:
-                _check_if_authorized_expert(self)
+                self._check_if_authorized_expert()
             
             
             read_Gbp_limit = int(params['read_Gbp_limit']) * 1000000000
