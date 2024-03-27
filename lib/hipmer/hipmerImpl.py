@@ -52,7 +52,7 @@ class hipmer:
         # ctx is the context object
         # return variables are: output
         #BEGIN run_hipmer_hpc
-        HU = hipmerUtils(self.config, ctx['token'])
+        HU = hipmerUtils(self.config, ctx['user_id'], ctx['token'])
         HU.prepare_run(params)
         HU.submit()
         output = HU.finish_run(params)
