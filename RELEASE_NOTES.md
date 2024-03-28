@@ -1,6 +1,14 @@
 # Hipmer release notes
 =========================================
 
+2.4.0
+-----
+* added an authorized user list which can exceed the input size limit of 500 Gbp
+
+2.3.0
+-----
+* reactivated App
+
 2.2.4
 -----
 * hide App
