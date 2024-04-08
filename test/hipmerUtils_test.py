@@ -100,6 +100,7 @@ class hipmerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.token = environ.get('KB_AUTH_TOKEN', None)
+        cls.user_id = '0'
         config_file = environ.get('KB_DEPLOYMENT_CONFIG', None)
         print(config_file)
         cls.cfg = {}
@@ -123,7 +124,7 @@ class hipmerTest(unittest.TestCase):
         params['is_meta'] = 1
         params['agressive'] = 1
         # run hipmer
-        HU = hipmerUtils(self.cfg, self.token)
+        HU = hipmerUtils(self.cfg, self.user_id, self.token)
         result = HU._validate_inputs(params)
         self.assertTrue(result)
 
@@ -154,7 +155,7 @@ class hipmerTest(unittest.TestCase):
 
 
     def test_reads(self):
-        hu = hipmerUtils(self.cfg, self.token)
+        hu = hipmerUtils(self.cfg, self.user_id, self.token)
         params = deepcopy(PARAMS)
         params['is_meta'] = 1
         params['agressive'] = 1
@@ -194,7 +195,7 @@ class hipmerTest(unittest.TestCase):
 
 
     def test_reads2(self):
-        hu = hipmerUtils(self.cfg, self.token)
+        hu = hipmerUtils(self.cfg, self.user_id, self.token)
         params = deepcopy(PARAMS)
         params['is_meta'] = 1
         params['agressive'] = 1

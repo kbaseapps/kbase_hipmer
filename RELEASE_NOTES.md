@@ -1,6 +1,12 @@
 # Hipmer release notes
 =========================================
 
+2.3.0
+-----
+* reactivated App
+* updated slurm submit specs for Perlmutter (from Cori)
+* added an authorized user list which can exceed the input size limit of 500 Gbp
+
 2.2.4
 -----
 * hide App
