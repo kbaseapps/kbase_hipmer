@@ -24,8 +24,7 @@ class hipmerUtils:
         self.scratch = os.path.abspath(config['scratch'])
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
         self.username = user_id
-        self.authorized_expert_usernames = os.environ.get("authorized_expert_usernames","").split(",")
-        print(config['service-wizard'])
+        self.authorized_expert_usernames = [username.strip() for username in os.environ.get("KBASE_SECURE_CONFIG_PARAM_authorized_expert_usernames", "").split(",") if username.strip()]
         self.wscli = workspaceService(config['workspace-url'], token=token)
         self.readcli = ReadsUtils(self.callbackURL, token=token)
         self.sr = special(self.callbackURL, token=token)
@@ -107,7 +106,7 @@ class hipmerUtils:
 
     def _check_if_authorized_expert(self):
         if self.username not in self.authorized_expert_usernames:
-            raise Exception("You entered a GBP limit > 500 and you are not an authorized expert user. If you believe you should be an expert user, please contact KBase")
+            raise Exception(f"You entered a GBP limit greater than 500 and your username {self.username} is not authorized as an expert user. If you believe that you should be an expert user, please contact KBase.")
         
     
     def _validate_input_reads_sizelimit (self, refs, console, params):
