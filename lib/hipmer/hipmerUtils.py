@@ -106,7 +106,7 @@ class hipmerUtils:
 
     def _check_if_authorized_expert(self):
         if self.username not in self.authorized_expert_usernames:
-            raise Exception(f"You entered a GBP limit > 500 and you are not an authorized expert user. If you {self.username} believe you should be an expert user, please contact KBase")
+            raise Exception(f"You entered a GBP limit > 500 and you are not an authorized expert user {self.authorized_expert_usernames}. If you username:{self.username} believe you should be an expert user, please contact KBase")
         
     
     def _validate_input_reads_sizelimit (self, refs, console, params):
